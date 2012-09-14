@@ -1,8 +1,9 @@
 package br.ufrj.jfirn.intelligent;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
 import org.apache.commons.math3.util.FastMath;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 	 */
 	private boolean endangered;
 	private Map<PointParticle, MovementStatistics> aboutObstacles = new HashMap<>();
-	private Stack<Point> targets;
+	private Deque<Point> targets = new ArrayDeque<>();
 
 	public IntelligentParticle(Point target) {
 		super();
@@ -77,12 +78,15 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 			this.speed(STOPPED);
 		}
 
-		if (this.isInReachRadius(targets.peek())) {
-			logger.debug("Arrived at " + targets.pop());
-		}
-
 		if (targets.isEmpty()) {
 			this.speed(STOPPED);
+			return;
+		}
+
+		final Point currentTarget = targets.peek();
+
+		if (this.isInReachRadius(currentTarget)) {
+			logger.debug("Arrived at " + targets.pop());
 			//TODO Should I fire some event to the simulation saying I'm done? Should this data be handled here?
 			return;
 		}
@@ -100,8 +104,8 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 		//standard move action: move towards target
 		direction (
 			FastMath.atan2(
-				targets.peek().y - this.y(),
-				targets.peek().x - this.x()
+				currentTarget.y - this.y(),
+				currentTarget.x - this.x()
 			)
 		);
 
