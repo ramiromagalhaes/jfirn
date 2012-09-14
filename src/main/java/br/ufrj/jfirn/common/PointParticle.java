@@ -1,7 +1,15 @@
 package br.ufrj.jfirn.common;
 
+import org.apache.commons.math3.util.FastMath;
+
 
 public interface PointParticle {
+
+	public static final double STOPPED = 0;
+	public static final double RIGHT = 0,
+	                           UP = FastMath.PI / 2d,
+	    	                   LEFT = FastMath.PI,
+	    	    	           DOWN = 3d * FastMath.PI / 2d;
 
 	public double x();
 	public double y();
@@ -27,7 +35,7 @@ public interface PointParticle {
 	/**
 	 * Sets a new x and y considering the particle's current x, y, speed and direction.
 	 */
-	public void move();
+	public void move(); //TODO reconsider what this method should do. Maybe only the simulator should set the particle's position.
 
 	@Override
 	public int hashCode();

@@ -2,8 +2,11 @@ package br.ufrj.jfirn.intelligent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import org.apache.commons.math3.util.FastMath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.ufrj.jfirn.common.BasicParticle;
 import br.ufrj.jfirn.common.ParticleCollider;
@@ -13,18 +16,23 @@ import br.ufrj.jfirn.common.PointParticle;
 public class IntelligentParticle extends BasicParticle implements Sight {
 
 	private static final double MAX_SPEED = 5;
+	private static final Logger logger = LoggerFactory.getLogger(IntelligentParticle.class);
 
+	/**
+	 * If endangered someone is way too close to me and I should fear for my safety.
+	 */
+	private boolean endangered;
 	private Map<PointParticle, MovementStatistics> aboutObstacles = new HashMap<>();
-	private Point target;
+	private Stack<Point> targets;
 
 	public IntelligentParticle(Point target) {
 		super();
-		this.target = target;
+		targets.push(target);
 	}
 
 	public IntelligentParticle(double x, double y, double direction, double speed, Point target) {
 		super(x, y, direction, speed);
-		this.target = target;
+		targets.push(target);
 	}
 
 	/**
@@ -34,19 +42,18 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 	 */
 	@Override
 	public void onSight(SightEvent e) {
-		//TODO yeah, I should definitely put some logging code everywhere...
-		System.out.println(this + " sees: " + e.getParticlesSighted());
+		if (logger.isDebugEnabled()) {
+			logger.debug(this + " sees: " + e.getParticlesSighted());
+		}
 
 		for (PointParticle p : e.getParticlesSighted()) {
-			//if another particle threatens the agent, stop; else cruise at maximum speed.
-			if ( this.isEndangered(p) ) {
-				this.speed(0);
+			if ( this.isInDangerRadius(p) ) {
+				this.endangered = true;
 				break;
 			} else {
 				this.speed(MAX_SPEED);
 			}
 		}
-
 
 		//I'll only keep statistics about objects I see
 		aboutObstacles.keySet().retainAll(e.getParticlesSighted());
@@ -66,22 +73,55 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 	 */
 	@Override
 	public void move() {
-		//what about all that collected data? I should use now!
+		if (endangered) {
+			this.speed(STOPPED);
+		}
+
+		if (this.isInReachRadius(targets.peek())) {
+			logger.debug("Arrived at " + targets.pop());
+		}
+
+		if (targets.isEmpty()) {
+			this.speed(STOPPED);
+			//TODO Should I fire some event to the simulation saying I'm done? Should this data be handled here?
+			return;
+		}
+
+		//In general this is what I should do here:
+		//Am I in danger?
+		//Did I reach my target?
+		//Evaluate my current data
+		//Discover my next target(s)
+		//Update direction/speed
+		//move
+
+		//TODO data evaluation can be done in many ways. The particle probably should accept many evaluation strategies.
 
 		//standard move action: move towards target
 		direction (
 			FastMath.atan2(
-				target.y - this.y(),
-				target.x - this.x()
+				targets.peek().y - this.y(),
+				targets.peek().x - this.x()
 			)
 		);
 
 		super.move();
 	}
 
+	/**
+	 * Used to verify if the particle is in danger.
+	 */
 	private final static double DANGER_RADIUS = 100;
-	private boolean isEndangered(PointParticle p) {
+	private boolean isInDangerRadius(PointParticle p) {
 		return DANGER_RADIUS <= ParticleCollider.distance(this, p);
+	}
+
+	/**
+	 * Used to verify if I'm close enougth to a target
+	 */
+	private final static double REACH_RADIUS = 10;
+	private boolean isInReachRadius(Point p) {
+		return REACH_RADIUS <= ParticleCollider.distance(this, p);
 	}
 
 }

@@ -13,10 +13,18 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.1</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
 			<version>3.0</version>
+		</dependency>
+
+		<dependency>
+			<!-- Why logback? Read http://logback.qos.ch/reasonsToSwitch.html. -->
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.6</version>
 		</dependency>
 
 		<dependency>
@@ -36,7 +44,7 @@
 				<configuration>
 					<fork>true</fork>
 					<source>1.7</source>
-					<target>1.5</target>
+					<target>1.7</target>
 					<showDeprecation>true</showDeprecation>
 					<showWarnings>true</showWarnings>
 				</configuration>

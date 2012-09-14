@@ -8,6 +8,9 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.ufrj.jfirn.common.BasicParticle;
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.PointParticle;
@@ -23,6 +26,8 @@ import br.ufrj.jfirn.intelligent.SightEvent;
  *
  */
 public class Engine {
+
+	private static final Logger logger = LoggerFactory.getLogger(Engine.class);
 
 	private int iterations = 100;
 	private Set<PointParticle> particles = new HashSet<>();
@@ -71,10 +76,6 @@ public class Engine {
 	//TODO Fix this code written for prototyping purposes
 	private void render() {
 		for (PointParticle particle : this.particles) {
-			//TODO what if I put some logging code somewhere?
-//			if (particle.hashCode() == 3) {
-//				System.out.println(particle);
-//			}
 			switch (particle.hashCode()) {
 				case 1:
 					renderer.setColor(Color.blue);
@@ -118,6 +119,6 @@ public class Engine {
 		e.particles.add( new SineParticle(200, 200, 0, 5));
 
 		e.simulate();
-		System.out.println(p);
+		logger.debug(p.toString());
 	}
 }

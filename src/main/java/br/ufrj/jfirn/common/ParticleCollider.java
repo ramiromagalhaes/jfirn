@@ -50,4 +50,30 @@ public class ParticleCollider {
 		);
 	}
 
+	/**
+	 * Returns the euclidean distance between p1 and p2.
+	 * @param p1
+	 * @param p2
+	 * @return
+	 */
+	public static double distance(Point p1, Point p2) {
+		return FastMath.hypot(
+			p1.x - p2.x,
+			p1.y - p2.y
+		);
+	}
+
+	/**
+	 * Returns the euclidean distance between p1 and p2.
+	 * @param p1
+	 * @param p2
+	 * @return
+	 */
+	public static double distance(PointParticle p1, Point p2) {
+		return FastMath.hypot(
+			p1.x() - p2.x,
+			p1.y() - p2.y
+		);
+	}
+
 }
