@@ -35,7 +35,10 @@ public interface PointParticle {
 	/**
 	 * Sets a new x and y considering the particle's current x, y, speed and direction.
 	 */
-	public void move(); //TODO reconsider what this method should do. Maybe only the simulator should set the particle's position.
+	public void move(); //TODO reconsider what this method should do. Maybe only the simulator
+	                    //should set the particle's position and the particle should only think
+	                    //about its next actions. The method signature below could be used then.
+	                    //public Status think(final double x, final double y); 
 
 	@Override
 	public int hashCode();

@@ -29,7 +29,7 @@ public class Engine {
 
 	private static final Logger logger = LoggerFactory.getLogger(Engine.class);
 
-	private int iterations = 100;
+	private int iterations = 200;
 	private Set<PointParticle> particles = new HashSet<>();
 	private Set<Eye> eyes = new HashSet<>();
 	private Graphics renderer;
@@ -100,18 +100,20 @@ public class Engine {
 		final Engine e = new Engine();
 
 		JFrame frame = new JFrame("Simulator") {
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void paint(Graphics arg0) {
 				e.render();
 			}
 		};
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(new Dimension(600, 800));
+		frame.setSize(new Dimension(1000, 800));
 		frame.setVisible(true);
 		e.renderer = frame.getGraphics();
 
 
-		IntelligentParticle p = new IntelligentParticle (200, 200, 0, 5, new Point(200, 500));
+		IntelligentParticle p = new IntelligentParticle (200, 200, 0, 5, new Point(400, 100), new Point(300, 400), new Point(200, 500));
 		e.eyes.add(new Eye(200, p));
 		e.particles.add( p );
 		e.particles.add( new BasicParticle       (200, 200, 0, 5));
