@@ -14,8 +14,8 @@ public class DumbEvaluator implements Evaluator {
 		final Point currentTarget = targets.peek();
 		p.direction (
 			FastMath.atan2(
-				currentTarget.y - p.y(),
-				currentTarget.x - p.x()
+				currentTarget.y() - p.y(),
+				currentTarget.x() - p.x()
 			)
 		);
 	}

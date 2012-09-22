@@ -1,6 +1,5 @@
 package br.ufrj.jfirn.intelligent;
 
-import br.ufrj.jfirn.common.ParticleCollider;
 import br.ufrj.jfirn.common.PointParticle;
 
 /**
@@ -28,7 +27,7 @@ public class Eye implements Sight {
 	 */
 	public boolean sees(PointParticle p) {
 		return !attachedTo.equals(p) &&
-				ParticleCollider.distance(attachedTo, p) <= sightRadius;
+				attachedTo.position().distanceTo(p.position()) <= sightRadius;
 	}
 
 	/**

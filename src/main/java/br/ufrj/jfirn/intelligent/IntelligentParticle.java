@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufrj.jfirn.common.BasicParticle;
-import br.ufrj.jfirn.common.ParticleCollider;
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.PointParticle;
 
@@ -151,7 +150,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 	 */
 	private final static double DANGER_RADIUS = 50;
 	private boolean isInDangerRadius(PointParticle p) {
-		return ParticleCollider.distance(this, p) <= DANGER_RADIUS;
+		return this.position().distanceTo(p.position()) <= DANGER_RADIUS;
 	}
 
 	/**
@@ -159,7 +158,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 	 */
 	private final static double REACH_RADIUS = 10;
 	private boolean isInReachRadius(Point p) {
-		return ParticleCollider.distance(this, p) <= REACH_RADIUS;
+		return this.position().distanceTo(p) <= REACH_RADIUS;
 	}
 
 }
