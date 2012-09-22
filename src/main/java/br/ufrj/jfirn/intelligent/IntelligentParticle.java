@@ -83,6 +83,9 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 		for (PointParticle p : e.getParticlesSighted()) { //...but check for it
 			if ( this.isInDangerRadius(p) ) {
 				this.endangered = true;
+				if (logger.isDebugEnabled()) {
+					logger.debug(this + " is endangered by " + p);
+				}
 				break;
 			}
 		}

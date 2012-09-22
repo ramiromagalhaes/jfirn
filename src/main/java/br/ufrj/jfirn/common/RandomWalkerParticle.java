@@ -15,7 +15,7 @@ public class RandomWalkerParticle extends BasicParticle {
 	@Override
 	public void move() {
 		//PI / 12 = 15 degrees
-		this.direction( (FastMath.random() - 0.5) * FastMath.PI / 6 + this.direction() );
+		this.direction( (FastMath.random() - 0.5) * FastMath.PI / 6d + this.direction() );
 		super.move();
 	}
 

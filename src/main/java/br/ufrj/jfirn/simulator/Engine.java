@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufrj.jfirn.common.BasicParticle;
+import br.ufrj.jfirn.common.CrazyParticle;
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.PointParticle;
 import br.ufrj.jfirn.common.RandomWalkerParticle;
@@ -44,6 +45,7 @@ public class Engine {
 	}
 
 	private void sense() {
+		//NOTE: sensing and particle collision should both be solved efficiently with a collision detection algorithm
 		for(Eye eye : eyes) {
 			final Set<PointParticle> seenParticles = new HashSet<>();
 			for(PointParticle p : particles) {
@@ -83,12 +85,15 @@ public class Engine {
 	public static void main(String[] args) {
 		final Engine e = new Engine();
 
-		IntelligentParticle p = new IntelligentParticle (200, 200, 0, 5, new Point(400, 100), new Point(300, 400), new Point(200, 500));
+		IntelligentParticle p = new IntelligentParticle (200, 200, 0, 5,
+				new Point(400, 100), new Point(300, 400), new Point(200, 500));
 		e.eyes.add(new Eye(200, p));
 		e.particles.add( p );
-		e.particles.add( new BasicParticle       (200, 200, 0, 5));
-		e.particles.add( new RandomWalkerParticle(200, 200, 0, 5));
-		e.particles.add( new SineParticle(200, 200, 0, 5));
+
+		e.particles.add( new BasicParticle       (100, 200, 0, 5) );
+		e.particles.add( new RandomWalkerParticle(300, 300, 0, 5) );
+		e.particles.add( new SineParticle        (250, 100, 0, 5) );
+		e.particles.add( new CrazyParticle       (400, 400, 0, 5) );
 
 		e.simulate();
 		logger.debug(p.toString());

@@ -45,6 +45,9 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 			case 4:
 				g.setColor(Color.yellow);
 				break;
+			case 5:
+				g.setColor(Color.cyan);
+				break;
 		}
 
 		g.fillRect((int)particle.x(), (int)particle.y(), 3, 3);
