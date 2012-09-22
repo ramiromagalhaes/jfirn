@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.simulator.online;
+package br.ufrj.jfirn.simulator;
 
 import java.awt.Color;
 import java.awt.Dimension;
