@@ -28,7 +28,7 @@ public class Engine {
 	private int iterations = 200;
 	private Set<PointParticle> particles = new HashSet<>();
 	private Set<Eye> eyes = new HashSet<>();
-	private SimulationRenderer renderer = new SimpleSwingRenderer();
+	private TimedSimulationRenderer renderer = new SimpleTimedSwingRenderer();
 
 	public void simulate() {
 		init();
@@ -38,6 +38,7 @@ public class Engine {
 			move();
 			render();
 		}
+		renderer.done();
 	}
 
 	private void init() {
@@ -78,6 +79,7 @@ public class Engine {
 			for (PointParticle particle : this.particles) {
 				this.renderer.draw(particle);
 			}
+			this.renderer.nextTick();
 		}
 	}
 
