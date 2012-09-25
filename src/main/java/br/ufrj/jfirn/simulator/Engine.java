@@ -19,7 +19,8 @@ import br.ufrj.jfirn.intelligent.SightEvent;
 
 /**
  * Engine to run online simulations.
- *
+ * Commit test by Kleber and Paulo Felipe 
+ * No changes in the code
  */
 public class Engine {
 
