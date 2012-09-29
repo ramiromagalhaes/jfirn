@@ -24,7 +24,7 @@ import br.ufrj.jfirn.common.PointParticle;
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-public class SimpleTimedSwingRenderer implements TimedSimulationRenderer, ChangeListener {
+public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListener {
 
 	private final JFrame frame;
 	private final JSlider tickSelector;
@@ -107,7 +107,7 @@ public class SimpleTimedSwingRenderer implements TimedSimulationRenderer, Change
 				//TODO find a nice way to set colors.
 				switch (data.hashCode) { //crazy way to set color
 					case 1:
-						g.setColor(Color.blue);
+						g.setColor(Color.pink);
 						break;
 					case 2:
 						g.setColor(Color.red);
@@ -123,7 +123,7 @@ public class SimpleTimedSwingRenderer implements TimedSimulationRenderer, Change
 						break;
 				}
 
-				g.fillRect((int)data.position.x(), (int)data.position.y(), 3, 3);
+				g.fillOval((int)data.position.x(), (int)data.position.y(), 8, 8);
 			}
 
 			componentGraphics.drawImage(image, 0, 0, 1024, 768, Color.WHITE, null);

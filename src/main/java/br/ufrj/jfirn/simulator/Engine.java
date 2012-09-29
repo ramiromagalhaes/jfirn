@@ -19,17 +19,24 @@ import br.ufrj.jfirn.intelligent.SightEvent;
 
 /**
  * Engine to run online simulations.
- * Commit test by Kleber and Paulo Felipe 
- * No changes in the code
+ * 
  */
 public class Engine {
 
 	private static final Logger logger = LoggerFactory.getLogger(Engine.class);
 
-	private int iterations = 200;
-	private Set<PointParticle> particles = new HashSet<>();
-	private Set<Eye> eyes = new HashSet<>();
-	private TimedSimulationRenderer renderer = new SimpleTimedSwingRenderer();
+	private final int iterations = 200;
+	private final Set<PointParticle> particles = new HashSet<>();
+	private final Set<Eye> eyes = new HashSet<>();
+	private final SimulationRenderer renderer;
+
+	public Engine() {
+		this.renderer = new SimpleTimedSwingRenderer();
+	}
+
+	public Engine(SimulationRenderer renderer) {
+		this.renderer = renderer;
+	}
 
 	public void simulate() {
 		init();
@@ -39,6 +46,7 @@ public class Engine {
 			move();
 			render();
 		}
+
 		renderer.done();
 	}
 
@@ -86,10 +94,11 @@ public class Engine {
 
 	//TODO this main is for prototyping purposes. Lots of bad code here.
 	public static void main(String[] args) {
-		final Engine e = new Engine();
+		final Engine e = new Engine(new SimpleTimedSwingRenderer());
 
 		IntelligentParticle p = new IntelligentParticle (200, 200, 0, 5,
-				new Point(400, 100), new Point(300, 400), new Point(200, 500));
+			new Point(400, 100), new Point(200, 400), new Point(300, 450), new Point(200, 200)
+		);
 		e.eyes.add(new Eye(200, p));
 		e.particles.add( p );
 

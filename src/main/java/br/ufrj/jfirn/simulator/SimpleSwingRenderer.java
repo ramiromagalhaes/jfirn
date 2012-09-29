@@ -24,7 +24,6 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-		frame.setVisible(true);
 	}
 
 	@Override
@@ -34,7 +33,7 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 		//TODO find a nice way to set colors.
 		switch (particle.hashCode()) { //crazy way to set color
 			case 1:
-				g.setColor(Color.blue);
+				g.setColor(Color.pink);
 				break;
 			case 2:
 				g.setColor(Color.red);
@@ -50,7 +49,7 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 				break;
 		}
 
-		g.fillRect((int)particle.x(), (int)particle.y(), 3, 3);
+		g.fillOval((int)particle.x(), (int)particle.y(), 8, 8);
 		frame.repaint();
 	}
 
@@ -70,6 +69,16 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 			super.paintComponent(g);
 			g.drawImage(SimpleSwingRenderer.this.image, 0, 0, 1024, 768, Color.WHITE, null);
 		}
+	}
+
+	@Override
+	public void nextTick() {
+		//intentionally does nothing
+	}
+
+	@Override
+	public void done() {
+		frame.setVisible(true);
 	}
 
 }

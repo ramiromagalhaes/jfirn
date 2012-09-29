@@ -1,6 +1,7 @@
 package br.ufrj.jfirn.intelligent;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Collects data about an observed object.
@@ -11,13 +12,14 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 public class MovementStatistics {
 
 	private double xLast, yLast;
+
 	private SummaryStatistics
 		x = new SummaryStatistics(),
 		y = new SummaryStatistics(),
 		speed = new SummaryStatistics(),
 		direction = new SummaryStatistics();
 
-	// TODO implement confidence interval on speed and direction (at least)
+	// TODO implement confidence intervals?
 
 	public void addEntry(double x, double y, double speed, double direction) {
 		this.xLast = x;
@@ -25,7 +27,14 @@ public class MovementStatistics {
 		this.x.addValue(x);
 		this.y.addValue(y);
 		this.speed.addValue(speed);
-		this.direction.addValue(direction);
+
+		//Weird? See http://en.wikipedia.org/wiki/Directional_statistics#The_fundamental_difference_between_linear_and_circular_statistics
+		this.direction.addValue(
+			FastMath.atan2(
+				FastMath.sin(direction),
+				FastMath.cos(direction)
+			)
+		);
 	}
 
 	public double x() {
