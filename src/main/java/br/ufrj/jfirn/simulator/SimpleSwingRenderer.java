@@ -31,9 +31,12 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 		final Graphics g = image.getGraphics();
 
 		//TODO find a nice way to set colors.
-		switch (particle.hashCode()) { //crazy way to set color
+		switch (particle.hashCode() % 8) { //crazy way to set color
+			case 0:
+				g.setColor(Color.orange);
+				break;
 			case 1:
-				g.setColor(Color.pink);
+				g.setColor(Color.blue);
 				break;
 			case 2:
 				g.setColor(Color.red);
@@ -46,6 +49,12 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 				break;
 			case 5:
 				g.setColor(Color.cyan);
+				break;
+			case 6:
+				g.setColor(Color.magenta);
+				break;
+			case 7:
+				g.setColor(Color.pink);
 				break;
 		}
 

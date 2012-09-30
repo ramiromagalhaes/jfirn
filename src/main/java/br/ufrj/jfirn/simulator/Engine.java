@@ -12,6 +12,7 @@ import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.PointParticle;
 import br.ufrj.jfirn.common.RandomWalkerParticle;
 import br.ufrj.jfirn.common.SineParticle;
+import br.ufrj.jfirn.common.SquareParticle;
 import br.ufrj.jfirn.intelligent.Eye;
 import br.ufrj.jfirn.intelligent.IntelligentParticle;
 import br.ufrj.jfirn.intelligent.SightEvent;
@@ -94,7 +95,7 @@ public class Engine {
 
 	//TODO this main is for prototyping purposes. Lots of bad code here.
 	public static void main(String[] args) {
-		final Engine e = new Engine(new SimpleTimedSwingRenderer());
+		final Engine e = new Engine(new SimpleSwingRenderer());
 
 		IntelligentParticle p = new IntelligentParticle (200, 200, 0, 5,
 			new Point(400, 100), new Point(200, 400), new Point(300, 450), new Point(200, 200)
@@ -106,6 +107,7 @@ public class Engine {
 		e.particles.add( new RandomWalkerParticle(300, 300, 0, 5) );
 		e.particles.add( new SineParticle        (250, 100, 0, 5) );
 		e.particles.add( new CrazyParticle       (400, 400, 0, 5) );
+		e.particles.add( new SquareParticle      (500, 250, 1, 5) );
 
 		e.simulate();
 		logger.debug(p.toString());
