@@ -26,4 +26,9 @@ public class Helper {
 		return new Point(x, FastMath.tan(p1.direction()) * x + p1.y() );
 	}
 
+	public static double timeToReach(PointParticle p, Point destination) {
+		//TODO this method is a strong candidate to be moved to IntelligentParticle
+		return p.position().distanceTo(destination) / p.speed();
+	}
+
 }
