@@ -95,7 +95,7 @@ public class Engine {
 
 	//TODO this main is for prototyping purposes. Lots of bad code here.
 	public static void main(String[] args) {
-		final Engine e = new Engine(new SimpleSwingRenderer());
+		final Engine e = new Engine(new SimpleTimedSwingRenderer());
 
 		IntelligentParticle p = new IntelligentParticle (200, 200, 0, 5,
 			new Point(400, 100), new Point(200, 400), new Point(300, 450), new Point(200, 200)
