@@ -27,69 +27,79 @@ public class BasicParticle implements PointParticle {
 	}
 
 	@Override
-	public double x() {
+	public final double x() {
 		return x;
 	}
 
 	@Override
-	public double y() {
+	public final double y() {
 		return y;
 	}
 
 	@Override
-	public Point position() {
+	public final Point position() {
 		return new Point(x, y);
 	}
 
 	@Override
-	public BasicParticle x(double x) {
+	public final BasicParticle x(double x) {
 		this.x = x;
 		return this;
 	}
 
 	@Override
-	public BasicParticle y(double y) {
+	public final BasicParticle y(double y) {
 		this.y = y;
 		return this;
 	}
 
 	@Override
-	public double speed() {
+	public final double speed() {
 		return this.speed;
 	}
 
 	@Override
-	public BasicParticle speed(double speed) {
+	public final BasicParticle speed(double speed) {
 		this.speed = speed;
 		return this;
 	}
 
 	@Override
-	public double direction() {
+	public final double direction() {
 		return this.direction;
 	}
 
 	@Override
-	public BasicParticle direction(double direction) {
+	public final BasicParticle direction(double direction) {
 		this.direction = direction;
 		return this;
 	}
 
 	@Override
-	public double directionDegrees() {
+	public final double directionDegrees() {
 		return FastMath.toDegrees(direction);
 	}
 
 	@Override
-	public PointParticle directionDegrees(double direction) {
+	public final PointParticle directionDegrees(double direction) {
 		this.direction = FastMath.toRadians(direction);
 		return this;
 	}
 
 	@Override
+	public final double xSpeed() {
+		return FastMath.cos(this.direction) * this.speed;
+	}
+
+	@Override
+	public final double ySpeed() {
+		return FastMath.sin(this.direction) * this.speed;
+	}
+
+	@Override
 	public void move() {
-		x += FastMath.cos(this.direction) * this.speed;
-		y += FastMath.sin(this.direction) * this.speed;
+		x += xSpeed();
+		y += ySpeed();
 	}
 
 	@Override

@@ -42,6 +42,7 @@ public class Point {
 	 * direction.
 	 */
 	public Point add(final double direction, double size) {
+		//TODO WTF is that for?
 		return new Point(
 			this.x + FastMath.cos(direction) * size,
 			this.y + FastMath.sin(direction) * size

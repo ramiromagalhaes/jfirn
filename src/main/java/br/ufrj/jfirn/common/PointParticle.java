@@ -33,6 +33,18 @@ public interface PointParticle {
 	public PointParticle directionDegrees(double direction);
 
 	/**
+	 * Considering the direction this particle is facing, return this particle
+	 * speed in respect to the X axis (horizontal).
+	 */
+	public double xSpeed();
+
+	/**
+	 * Considering the direction this particle is facing, return this particle
+	 * speed in respect to the Y axis (vertical).
+	 */
+	public double ySpeed();
+
+	/**
 	 * Sets a new x and y considering the particle's current x, y, speed and direction.
 	 */
 	public void move(); //TODO reconsider what this method should do. Maybe only the simulator
