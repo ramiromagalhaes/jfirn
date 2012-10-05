@@ -77,6 +77,8 @@ public class BasicParticle implements PointParticle {
 
 	@Override
 	public final double directionDegrees() {
+		//degrees should be used only for raw data tabulation.
+		//TODO We'll make it easier on the user if it is displayed as a positive number in the trigonometric circle.
 		return FastMath.toDegrees(direction);
 	}
 
