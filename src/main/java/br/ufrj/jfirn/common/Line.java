@@ -46,6 +46,7 @@ public class Line {
 		double s1 = FastMath.signum(z1);
 		double s2 = FastMath.signum(z2);
 
+		//TODO This check works with doubles?
 		if ((s1 == 0 || s2 == 0) || (s1 != s2))
 			return true;
 		else
