@@ -1,6 +1,9 @@
 package br.ufrj.jfirn.simulator;
 
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -29,14 +32,16 @@ public class Engine {
 	private final int iterations = 200;
 	private final Set<PointParticle> particles = new HashSet<>();
 	private final Set<Eye> eyes = new HashSet<>();
-	private final SimulationRenderer renderer;
+	private final List<SimulationRenderer> renderers = new ArrayList<>();
 
 	public Engine() {
-		this.renderer = new SimpleTimedSwingRenderer();
+		this.renderers.add( new SimpleSwingRenderer() );
+		this.renderers.add( new SimpleTimedSwingRenderer() );
+		this.renderers.add( new WriterRenderer(new OutputStreamWriter(System.out)) );
 	}
 
 	public Engine(SimulationRenderer renderer) {
-		this.renderer = renderer;
+		this.renderers.add( renderer );
 	}
 
 	public void simulate() {
@@ -48,7 +53,9 @@ public class Engine {
 			render();
 		}
 
-		renderer.done();
+		for (SimulationRenderer renderer : renderers) {
+			renderer.done();
+		}
 	}
 
 	private void init() {
@@ -85,17 +92,21 @@ public class Engine {
 	 * Render stuff (if a renderer exists).
 	 */
 	private void render() {
-		if (renderer != null) {
+		if (!renderers.isEmpty()) {
 			for (PointParticle particle : this.particles) {
-				this.renderer.draw(particle);
+				for (SimulationRenderer renderer : renderers) {
+					renderer.draw(particle);
+				}
 			}
-			this.renderer.nextTick();
+			for (SimulationRenderer renderer : renderers) {
+				renderer.nextTick();
+			}
 		}
 	}
 
 	//TODO this main is for prototyping purposes. Lots of bad code here.
 	public static void main(String[] args) {
-		final Engine e = new Engine(new SimpleTimedSwingRenderer());
+		final Engine e = new Engine();
 
 		IntelligentParticle p = new IntelligentParticle (200, 200, 0, 5,
 			new Point(400, 100), new Point(200, 400), new Point(300, 450), new Point(200, 200)

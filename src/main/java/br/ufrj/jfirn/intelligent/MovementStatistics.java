@@ -29,10 +29,10 @@ public class MovementStatistics {
 		this.speed.addValue(speed);
 
 		//Weird? See http://en.wikipedia.org/wiki/Directional_statistics#The_fundamental_difference_between_linear_and_circular_statistics
+		//See also http://en.wikipedia.org/wiki/Atan2
 		this.direction.addValue(
 			FastMath.atan2(
-				FastMath.sin(direction),
-				FastMath.cos(direction)
+				FastMath.sin(direction) , FastMath.cos(direction)
 			)
 		);
 	}

@@ -2,6 +2,9 @@ package br.ufrj.jfirn.simulator;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,6 +80,13 @@ public class WriterRenderer implements SimulationRenderer {
 		public final double direction;
 		public final double speed;
 
+		private static final DecimalFormat fmt;
+		static {
+			DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
+			otherSymbols.setDecimalSeparator(',');
+			fmt = new DecimalFormat("###.###", otherSymbols);
+		}
+
 		public ParticleData(Point position, double direction, double speed) {
 			this.position = position;
 			this.direction = direction;
@@ -84,13 +94,13 @@ public class WriterRenderer implements SimulationRenderer {
 		}
 
 		public void writeData(Writer w) throws IOException {
-			w.write( Double.toString(position.x()) );
+			w.write( fmt.format(position.x()) );
 			w.append('\t');
-			w.write( Double.toString(position.y()) );
+			w.write( fmt.format(position.y()) );
 			w.append('\t');
-			w.write( Double.toString(direction) );
+			w.write( fmt.format(direction) );
 			w.append('\t');
-			w.write( Double.toString(speed) );
+			w.write( fmt.format(speed) );
 			w.append('\t');
 		}
 	}

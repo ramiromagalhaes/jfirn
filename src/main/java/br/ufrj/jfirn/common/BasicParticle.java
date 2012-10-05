@@ -42,13 +42,13 @@ public class BasicParticle implements PointParticle {
 	}
 
 	@Override
-	public final BasicParticle x(double x) {
+	public final BasicParticle x(final double x) {
 		this.x = x;
 		return this;
 	}
 
 	@Override
-	public final BasicParticle y(double y) {
+	public final BasicParticle y(final double y) {
 		this.y = y;
 		return this;
 	}
@@ -59,7 +59,7 @@ public class BasicParticle implements PointParticle {
 	}
 
 	@Override
-	public final BasicParticle speed(double speed) {
+	public final BasicParticle speed(final double speed) {
 		this.speed = speed;
 		return this;
 	}
@@ -70,20 +70,25 @@ public class BasicParticle implements PointParticle {
 	}
 
 	@Override
-	public final BasicParticle direction(double direction) {
+	public final BasicParticle direction(final double direction) {
 		this.direction = direction;
 		return this;
 	}
 
+	/**
+	 * Return the direction on degrees. Should only be used only for
+	 * text data visualization since it takes time to properly calculate
+	 * the output.
+	 */
 	@Override
 	public final double directionDegrees() {
-		//degrees should be used only for raw data tabulation.
-		//TODO We'll make it easier on the user if it is displayed as a positive number in the trigonometric circle.
-		return FastMath.toDegrees(direction);
+		return FastMath.toDegrees(
+			FastMath.atan2(FastMath.sin(direction) , FastMath.cos(direction))
+		);
 	}
 
 	@Override
-	public final PointParticle directionDegrees(double direction) {
+	public final PointParticle directionDegrees(final double direction) {
 		this.direction = FastMath.toRadians(direction);
 		return this;
 	}
