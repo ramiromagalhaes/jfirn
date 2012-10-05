@@ -104,34 +104,7 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 			final Graphics g = image.getGraphics();
 
 			for (ParticleData data : particleData.get(tickToDisplay)) {
-				// TODO find a nice way to set colors.
-				switch (data.hashCode % 8) { // crazy way to set color
-				case 0:
-					g.setColor(Color.orange);
-					break;
-				case 1:
-					g.setColor(Color.blue);
-					break;
-				case 2:
-					g.setColor(Color.red);
-					break;
-				case 3:
-					g.setColor(Color.green);
-					break;
-				case 4:
-					g.setColor(Color.yellow);
-					break;
-				case 5:
-					g.setColor(Color.cyan);
-					break;
-				case 6:
-					g.setColor(Color.magenta);
-					break;
-				case 7:
-					g.setColor(Color.pink);
-					break;
-				}
-
+				g.setColor(ColorPaleteForRenderers.getColor(data.hashCode));
 				g.fillOval((int) data.position.x(), (int) data.position.y(), 8, 8);
 			}
 
