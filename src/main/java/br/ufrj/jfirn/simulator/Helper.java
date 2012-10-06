@@ -20,7 +20,10 @@ public class Helper {
 	}
 
 	public static Point intersection(PointParticle p1, Point p2, double p2Direction) {
-		//TODO test against infinite intersecting points?
+		if (p1.direction() == p2Direction) {
+			return null; //no intersection or infinite intersecting points
+		}
+
 		final double x = (p2.y() - p1.y()) / ( FastMath.tan(p1.direction()) - FastMath.tan(p2Direction) );
 
 		return new Point(x, FastMath.tan(p1.direction()) * x + p1.y() );
@@ -28,7 +31,11 @@ public class Helper {
 
 	public static double timeToReach(PointParticle p, Point destination) {
 		//TODO this method is a strong candidate to be moved to IntelligentParticle
-		return p.position().distanceTo(destination) / p.speed();
+		return timeToReach(p.position(), p.speed(), destination);
+	}
+
+	public static double timeToReach(Point position, double speed, Point destination) {
+		return position.distanceTo(destination) / speed;
 	}
 
 }

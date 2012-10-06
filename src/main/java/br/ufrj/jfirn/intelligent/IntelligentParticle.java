@@ -95,10 +95,10 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 
 		for (PointParticle p : e.getParticlesSighted()) {
 			if ( !aboutObstacles.containsKey(p) ) { //store data about new objects I see
-				aboutObstacles.put(p, new MovementStatistics());
+				aboutObstacles.put(p, new MovementStatistics(p.hashCode()));
 			}
 
-			aboutObstacles.get(p).addEntry(p.x(), p.y(), p.speed(), p.direction());
+			aboutObstacles.get(p).addEntry(p.position(), p.speed(), p.direction());
 		}
 	}
 
@@ -143,7 +143,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 		}
 
 		//the evaluator thinks about the robot current situation and sets its direction and speed
-		this.evaluator.evaluate(this, aboutObstacles, targets);
+		this.evaluator.evaluate(this, aboutObstacles.values(), targets);
 
 		super.move();
 	}
@@ -151,7 +151,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 	/**
 	 * Used to verify if the particle is in danger.
 	 */
-	private final static double DANGER_RADIUS = 50;
+	private final static double DANGER_RADIUS = 10;
 	private boolean isInDangerRadius(PointParticle p) {
 		return this.position().distanceTo(p.position()) <= DANGER_RADIUS;
 	}

@@ -1,7 +1,10 @@
 package br.ufrj.jfirn.intelligent;
 
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.util.FastMath;
+
+import br.ufrj.jfirn.common.Point;
 
 /**
  * Collects data about an observed object.
@@ -11,7 +14,12 @@ import org.apache.commons.math3.util.FastMath;
  */
 public class MovementStatistics {
 
-	private double xLast, yLast;
+	/**
+	 * The unique identifier of the observed particle.
+	 */
+	private final int observedObjectId;
+
+	private Point lastPosition;
 
 	private SummaryStatistics
 		x = new SummaryStatistics(),
@@ -19,13 +27,18 @@ public class MovementStatistics {
 		speed = new SummaryStatistics(),
 		direction = new SummaryStatistics();
 
-	// TODO implement confidence intervals?
+	public MovementStatistics(final int observedObjectId) {
+		this.observedObjectId = observedObjectId;
+	}
 
-	public void addEntry(double x, double y, double speed, double direction) {
-		this.xLast = x;
-		this.yLast = y;
-		this.x.addValue(x);
-		this.y.addValue(y);
+	public int getObservedObjectId() {
+		return observedObjectId;
+	}
+
+	public void addEntry(Point position, double speed, double direction) {
+		this.lastPosition = position;
+		this.x.addValue(position.x());
+		this.y.addValue(position.y());
 		this.speed.addValue(speed);
 
 		//Weird? See http://en.wikipedia.org/wiki/Directional_statistics#The_fundamental_difference_between_linear_and_circular_statistics
@@ -37,44 +50,24 @@ public class MovementStatistics {
 		);
 	}
 
-	public double x() {
-		return xLast;
+	public Point lastPosition() {
+		return lastPosition;
 	}
 
-	public double xMean() {
-		return x.getMean();
+	public StatisticalSummary xStats() {
+		return x;
 	}
 
-	public double xVariance() {
-		return x.getVariance();
+	public StatisticalSummary yStats() {
+		return y;
 	}
 
-	public double y() {
-		return yLast;
+	public StatisticalSummary speedStats() {
+		return speed;
 	}
 
-	public double yMean() {
-		return y.getMean();
-	}
-
-	public double yVariance() {
-		return y.getVariance();
-	}
-
-	public double speedMean() {
-		return speed.getMean();
-	}
-
-	public double speedVariance() {
-		return speed.getVariance();
-	}
-
-	public double directionMean() {
-		return direction.getMean();
-	}
-
-	public double directionVariance() {
-		return direction.getVariance();
+	public StatisticalSummary directionStats() {
+		return direction;
 	}
 
 }

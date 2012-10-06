@@ -1,7 +1,7 @@
 package br.ufrj.jfirn.intelligent;
 
+import java.util.Collection;
 import java.util.Deque;
-import java.util.Map;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.PointParticle;
@@ -15,6 +15,6 @@ import br.ufrj.jfirn.common.PointParticle;
  */
 public interface Evaluator {
 
-	public void evaluate(final PointParticle p, final Map<PointParticle, MovementStatistics> aboutObstacles, final Deque<Point> targets);
+	public void evaluate(final PointParticle p, Collection<MovementStatistics> aboutObstacles, final Deque<Point> targets);
 
 }
