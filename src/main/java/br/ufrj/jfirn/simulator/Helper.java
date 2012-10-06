@@ -26,7 +26,7 @@ public class Helper {
 
 		final double x = (p2.y() - p1.y()) / ( FastMath.tan(p1.direction()) - FastMath.tan(p2Direction) );
 
-		return new Point(x, FastMath.tan(p1.direction()) * x + p1.y() );
+		return new Point(x + p1.x(), FastMath.tan(p1.direction()) * x + p1.y() );
 	}
 
 	public static double timeToReach(PointParticle p, Point destination) {
