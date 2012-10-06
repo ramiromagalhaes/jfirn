@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.common;
+package br.ufrj.jfirn.intelligent;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.util.FastMath;

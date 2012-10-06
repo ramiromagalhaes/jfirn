@@ -1,10 +1,8 @@
-package br.ufrj.jfirn.common;
+package br.ufrj.jfirn.intelligent;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import br.ufrj.jfirn.common.BGD;
 
 public class BGDTest {
 
