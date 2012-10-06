@@ -113,11 +113,11 @@ public class Engine {
 		e.eyes.add(new Eye(200, p));
 		e.particles.add( p );
 
-		e.particles.add( new BasicParticle       (125, 175, 0, 5) );
+		e.particles.add( new BasicParticle       (185, 175, 0, 5) );
 		e.particles.add( new RandomWalkerParticle(300, 300, 0, 5) );
-		e.particles.add( new SineParticle        (550, 100, PointParticle.UP, 5) );
-		e.particles.add( new CrazyParticle       (350, 350, 0, 5) );
-		e.particles.add( new SquareParticle      (300, 500, PointParticle.UP, 5) );
+		e.particles.add( new SineParticle        (535, 100, PointParticle.UP, 5) );
+		e.particles.add( new CrazyParticle       (250, 375, 0, 5) );
+		e.particles.add( new SquareParticle      (300, 425, PointParticle.UP, 5) );
 
 		e.simulate();
 		logger.debug(p.toString());
