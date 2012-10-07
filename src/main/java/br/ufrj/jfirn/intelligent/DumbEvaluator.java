@@ -28,8 +28,9 @@ public class DumbEvaluator implements Evaluator {
 
 			//TODO we can define a collision as something likely to happen if the time to collision of both particles are the same?
 			if (deltaTime <= 4d //if the time to reach the collision position is almost the same...
-					//&& time <= 10 //...and will happen soon, then I'll care about it.
-					) {
+					//&& time >= 0d //...and the time of the event is in the future (i.e. non negative)...
+					//&& time <= 10 //...and will happen soon...
+					) { //...then I'll care about it.
 				final Collision collision = new Collision(stat.getObservedObjectId(), collisionPosition, time);
 				System.out.println(collision); //TODO for current debugging purposes only. Will vanish soon.
 			}

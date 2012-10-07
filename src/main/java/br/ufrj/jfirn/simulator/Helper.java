@@ -29,11 +29,16 @@ public class Helper {
 		return new Point(x + p1.x(), FastMath.tan(p1.direction()) * x + p1.y() );
 	}
 
+	/**
+	 * How much time p would take to reach destination?
+	 */
 	public static double timeToReach(PointParticle p, Point destination) {
-		//TODO this method is a strong candidate to be moved to IntelligentParticle
 		return timeToReach(p.position(), p.speed(), destination);
 	}
 
+	/**
+	 * How much time a particle at position with speed would take to reach destination?
+	 */
 	public static double timeToReach(Point position, double speed, Point destination) {
 		return position.distanceTo(destination) / speed;
 	}
