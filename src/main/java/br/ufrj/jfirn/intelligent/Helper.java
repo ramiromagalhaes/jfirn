@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.simulator;
+package br.ufrj.jfirn.intelligent;
 
 import org.apache.commons.math3.util.FastMath;
 

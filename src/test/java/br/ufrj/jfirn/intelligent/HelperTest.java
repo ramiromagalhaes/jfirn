@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.simulator;
+package br.ufrj.jfirn.intelligent;
 
 import static org.junit.Assert.assertEquals;
 

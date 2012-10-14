@@ -7,7 +7,6 @@ import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.PointParticle;
-import br.ufrj.jfirn.simulator.Helper;
 
 public class DumbEvaluator implements Evaluator {
 
