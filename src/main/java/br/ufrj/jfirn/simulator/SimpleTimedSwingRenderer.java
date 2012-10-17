@@ -26,6 +26,8 @@ import br.ufrj.jfirn.common.PointParticle;
  */
 public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListener {
 
+	private static final int AREA_HEIGHT = 768;
+
 	private final JFrame frame;
 	private final JSlider tickSelector;
 	private List<List<ParticleData>> particleData = new ArrayList<>(0);
@@ -79,14 +81,14 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 		public final int hashCode;
 
 		public ParticleData(final Point position, final int hashCode) {
-			this.position = position;
+			this.position = new Point(position.x(), AREA_HEIGHT - position.y());
 			this.hashCode = hashCode;
 		}
 	}
 
 	private class ThePane extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private final Dimension preferredSize = new Dimension(1024, 768);
+		private final Dimension preferredSize = new Dimension(1024, AREA_HEIGHT);
 
 		public ThePane() {
 		}
@@ -100,7 +102,7 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 			super.paintComponent(componentGraphics);
 
 			//Draws the selected tickSelector situation
-			final Image image = new BufferedImage(1024, 768, BufferedImage.TYPE_INT_BGR);
+			final Image image = new BufferedImage(1024, AREA_HEIGHT, BufferedImage.TYPE_INT_BGR);
 			final Graphics g = image.getGraphics();
 
 			for (ParticleData data : particleData.get(tickToDisplay)) {
@@ -108,7 +110,7 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 				g.fillOval((int) data.position.x(), (int) data.position.y(), 8, 8);
 			}
 
-			componentGraphics.drawImage(image, 0, 0, 1024, 768, Color.WHITE, null);
+			componentGraphics.drawImage(image, 0, 0, 1024, AREA_HEIGHT, Color.WHITE, null);
 		}
 	}
 

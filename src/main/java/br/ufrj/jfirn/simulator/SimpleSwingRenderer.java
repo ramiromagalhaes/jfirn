@@ -15,7 +15,8 @@ import br.ufrj.jfirn.common.PointParticle;
 public class SimpleSwingRenderer implements SimulationRenderer {
 
 	private final JFrame frame;
-	private final Image image = new BufferedImage(1024, 768, BufferedImage.TYPE_INT_BGR);
+	private final Image image = new BufferedImage(1024, AREA_HEIGHT, BufferedImage.TYPE_INT_BGR);
+	private static final int AREA_HEIGHT = 768;
 
 	public SimpleSwingRenderer() {
 		frame = new JFrame("Simulator");
@@ -31,13 +32,13 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 		final Graphics g = image.getGraphics();
 
 		g.setColor(ColorPaleteForRenderers.getColor(particle.hashCode()));
-		g.fillOval((int)particle.x(), (int)particle.y(), 8, 8);
+		g.fillOval((int)particle.x(), AREA_HEIGHT - (int)particle.y(), 8, 8);
 		frame.repaint();
 	}
 
 	private class ThePane extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private final Dimension preferredSize = new Dimension(1024, 768);
+		private final Dimension preferredSize = new Dimension(1024, AREA_HEIGHT);
 
 		public ThePane() {
 		}
@@ -49,7 +50,7 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			g.drawImage(SimpleSwingRenderer.this.image, 0, 0, 1024, 768, Color.WHITE, null);
+			g.drawImage(SimpleSwingRenderer.this.image, 0, 0, 1024, AREA_HEIGHT, Color.WHITE, null);
 		}
 	}
 
