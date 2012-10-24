@@ -31,25 +31,6 @@ public class Point {
 	}
 
 	/**
-	 * Adds a vector (i.e. an "arrow" with a certain size pointing to a a
-	 * certain direction) to this point.
-	 * 
-	 * This method creates a new instance of Point with the results.
-	 * 
-	 * @param direction angle, in radians
-	 * @param size the size of the movement 
-	 * @return a new Point at this point plus the size pointed at a certain
-	 * direction.
-	 */
-	public Point add(final double direction, double size) {
-		//TODO WTF is that for?
-		return new Point(
-			this.x + FastMath.cos(direction) * size,
-			this.y + FastMath.sin(direction) * size
-		);
-	}
-
-	/**
 	 * Returns the euclidean distance between this and p.
 	 */
 	public double distanceTo(final Point p) {
