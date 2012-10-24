@@ -7,6 +7,10 @@
 		</encoder>
 	</appender>
 
+	<!--
+	<logger name="br.ufrj.jfirn.intelligent.DumbEvaluator" level="DEBUG"/>
+ 	-->
+
 	<root level="error">
 		<appender-ref ref="STDOUT" />
 	</root>

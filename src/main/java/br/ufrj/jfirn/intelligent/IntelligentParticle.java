@@ -107,19 +107,14 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 	 * 
 	 * The following steps are executed:
 	 * <ol>
-	 * <li>Checks if this particle is way too close to someone. If it is, it stops.</li>
-	 * <li>Checks if this particle has anywhere to go. If it doesn't, stop it.</li>
+	 * <li>Checks if this particle is way too close to someone. If it is, stop.</li>
+	 * <li>Checks if this particle has anywhere to go. If it doesn't, stop.</li>
 	 * <li>Checks if this particle arrived somewhere it was supposed to go. Gets the next place.</li>
 	 * <li>Thinks about how it is going to get there and sets the course via an implementation of {@link Evaluator}.</li>
 	 * </ol>
 	 */
 	@Override
 	public void move() {
-		//In general this is what I should do here:
-		//DONE - Did I reach my target?
-		//     - Evaluate my current data, discover my next target(s) and update direction/speed
-		//DONE (BUT...) - move (probably, moving should be done by the simulation engine, not by this method)
-
 		//First things first: am I in danger?
 		if (endangered) {
 			this.speed(STOPPED);
@@ -134,7 +129,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 			return;
 		}
 
-		final Point currentTarget = targets.peek();
+		final Point currentTarget = targets.peek(); //This is where should I move to now.
 
 		//Did I arrive somewhere I wanted to?
 		if (this.isInReachRadius(currentTarget)) {
