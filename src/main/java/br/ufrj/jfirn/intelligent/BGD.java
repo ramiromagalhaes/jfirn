@@ -40,7 +40,10 @@ public class BGD {
 			sum *= FastMath.sqrt(1d - c * c) / FastMath.PI;
 
 			return sum;
-		} else if(a * b * c <= 0) {
+		}
+
+		                     //a or b may be too big and their multiplication may result in NaN.
+		if(c * a * b <= 0) { //Usually, c is smaller (like 0) and will help not result NaNs. So we multiply c first.
 			if ((a <= 0 ) && (b >= 0) && (c >= 0)) {
 				return normal.cumulativeProbability(a) - cdf(a, -b, -c);  
 			} else if ((a >= 0 ) && (b <= 0) && (c >= 0)) {
@@ -48,7 +51,7 @@ public class BGD {
 			} else if ((a >= 0 ) && (b >= 0) && (c <= 0)) {
 				return normal.cumulativeProbability(a) + normal.cumulativeProbability(b) - 1 + cdf(-a, -b, c);  
 			}
-		} else if(a * b * c >= 0) {
+		} else {
 			final double denum = FastMath.sqrt(a * a - 2d * c * a * b + b * b);
 			final double rho1 = ((c * a - b) * FastMath.signum(a)) / denum;
 			final double rho2 = ((c * b - a) * FastMath.signum(b)) / denum;
