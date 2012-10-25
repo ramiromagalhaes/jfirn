@@ -35,6 +35,7 @@ public class SimpleCollisionEvaluator {
 
 		//I'm considering there will be a collision if the time between particles to arrive at the collision position are almost the same
 		//TODO Improve this 'if', maybe considering objects direction, speed, size, etc.
+		//TODO This approach may be an oversimplification but I think I'm kinda building a fuzzy method to evaluate the collision.
 		if (FastMath.abs(meTime - otherTime) > 4d) {
 			return null;
 		}
@@ -54,7 +55,7 @@ public class SimpleCollisionEvaluator {
 			return null; //no intersection or infinite intersecting points. In both cases, we say there is no collision.
 		}
 
-		//intersection of 2 linear equations. The 'me' particle is y = alpha * x + b
+		//intersection of 2 linear equations. The 'me' particle is y = alpha * x + beta
 		final double alpha = FastMath.tan(me.direction());
 		final double beta = me.y() - alpha * me.x();
 
@@ -90,6 +91,8 @@ public class SimpleCollisionEvaluator {
 	 * true if it is going in the right direction.
 	 */
 	public static boolean isTheRightDirection(Point position, double direction, Point destination) {
+		//TODO there might be a better/faster way to do this
+
 		final double y = destination.y() - position.y();
 		final double x = destination.x() - position.x();
 		final double angle = FastMath.atan2(y, x);
@@ -106,6 +109,7 @@ public class SimpleCollisionEvaluator {
 
 
 	public static class Collision {
+		//TODO still need to define the collision area and its probability
 		public final int withObjectId;
 		public final Point position;
 		public final double time;

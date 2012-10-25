@@ -5,7 +5,7 @@ import org.apache.commons.math3.util.FastMath;
 import br.ufrj.jfirn.common.Point;
 
 /**
- * Collects data about an observed object.
+ * Remembers last information read about an observed object.
  * 
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
