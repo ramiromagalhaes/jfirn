@@ -8,7 +8,8 @@ import org.apache.commons.math3.util.FastMath;
  * 
  * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++ 
  * 
- * @author Ciro Sobral
+ * @author Ciro Sobral 
+ * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
 
