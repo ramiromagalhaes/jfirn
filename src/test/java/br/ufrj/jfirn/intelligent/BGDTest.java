@@ -7,7 +7,7 @@ import org.junit.Test;
 public class BGDTest {
 
 	@Test
-	public void test() {
+	public void testSimple() {
 		assertEquals(0.25d, BGD.cdf(0, 0, 0), 0.00001d);
 	}
 
