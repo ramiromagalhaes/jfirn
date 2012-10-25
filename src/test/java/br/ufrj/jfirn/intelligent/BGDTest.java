@@ -14,6 +14,11 @@ public class BGDTest {
 		assertEquals(0.5d, BGD.cdf(Double.MAX_VALUE, 0, 0), 0.00001d);
 
 		assertEquals(1d, BGD.cdf(Double.MAX_VALUE, Double.MAX_VALUE, 0), 0.00001d);
+
+		assertEquals(0d, BGD.cdf(-Double.MAX_VALUE, -Double.MAX_VALUE, 0), 0.00001d);
+
+		//Normalização: (valor - media) / sqrt(var)
+		
 	}
 
 }
