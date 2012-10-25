@@ -24,7 +24,7 @@ public class BGD {
 
 	/**
 	 * Returns P(X < a, Y < b, c) where X, Y are gaussian random variables N(0, 1)
-	 * of the bivariate normal distribution with correlation c in [-1, 1].
+	 * of the bivariate normal distribution with correlation between X and Y c in [-1, 1].
 	 */
 	public static double cdf(double a, double b, double c) {
 		if((a <= 0) && (b <= 0) && (c <= 0)) {
@@ -61,4 +61,5 @@ public class BGD {
 
 		throw new RuntimeException("Should never get here.");
 	}
+
 }
