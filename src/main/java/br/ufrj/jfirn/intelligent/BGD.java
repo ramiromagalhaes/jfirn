@@ -1,7 +1,14 @@
 package br.ufrj.jfirn.intelligent;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.util.FastMath;
+
+import br.ufrj.jfirn.common.Point;
 
 /**
  * Bivariate Gaussian Distribution
@@ -27,6 +34,10 @@ public class BGD {
 	 * of the bivariate normal distribution with correlation between X and Y c in [-1, 1].
 	 */
 	public static double cdf(double a, double b, double c) {
+		if (a == Double.NaN || b == Double.NaN || c == Double.NaN) {
+			throw new IllegalArgumentException("Arguments must be a number.");
+		}
+
 		if((a <= 0) && (b <= 0) && (c <= 0)) {
 			final double aprime = a/FastMath.sqrt(2d * (1d - c*c));
 			final double bprime = b/FastMath.sqrt(2d * (1d - c*c));
@@ -51,7 +62,7 @@ public class BGD {
 			} else if ((a >= 0 ) && (b >= 0) && (c <= 0)) {
 				return normal.cumulativeProbability(a) + normal.cumulativeProbability(b) - 1 + cdf(-a, -b, c);  
 			}
-		} else {
+		} else if(c * a * b >= 0) {
 			final double denum = FastMath.sqrt(a * a - 2d * c * a * b + b * b);
 			final double rho1 = ((c * a - b) * FastMath.signum(a)) / denum;
 			final double rho2 = ((c * b - a) * FastMath.signum(b)) / denum;
@@ -62,4 +73,98 @@ public class BGD {
 		throw new RuntimeException("Should never get here.");
 	}
 
+	public static double cdfOfRectangle(double higherX, double higherY, double length, double height, double c) {
+		return BGD.cdf(higherX, higherY, c) - 
+			BGD.cdf(higherX, higherY - height, c) -
+			BGD.cdf(higherX - length, higherY, c) +
+			BGD.cdf(higherX - length, higherY - height, c);
+		
+	}
+
+	public static double cdfOfRectangle(Point higherPoint, double length, double height, double c) {
+		return cdfOfRectangle(higherPoint.x(), higherPoint.y(), length, height, c);
+	}
+
+
+
+	/**
+	 * Calculates an aproximate value for the BGD inside a certain quadrilateral area delimited
+	 * by points a, b, c and d.
+	 */
+	public static double cdfOfHorizontalQuadrilaterals(Point a, Point b, Point c, Point d) {
+		final double squareHeight = FastMath.scalb(1, -4);
+
+		double total = 0; //will return this
+
+		//I need to know how are those points positioned, so I sort them.
+		final Point[] points = arrangePoints(a, b, c, d);
+
+		//The Y dimension is limited by a horizontal line. The X dimension is limited by 2 functions.
+		//These functions get the X value from the provided Y value.
+		final UnivariateFunction rightmostFunction = getFunction(points[3], points[1]);
+		final UnivariateFunction leftmostFunction = getFunction(points[2], points[0]);
+
+		double currentY = points[3].y();
+		while (currentY > points[0].y()) {
+			final double rightmostX = rightmostFunction.value(currentY - squareHeight/2d);
+			final double leftmostX = leftmostFunction.value(currentY - squareHeight/2d);
+			final double xLength = rightmostX - leftmostX;
+
+			total += BGD.cdfOfRectangle(rightmostX, currentY, xLength, squareHeight, 0);
+			currentY -= squareHeight;
+		}
+
+		return total;
+	}
+
+
+	//== Functions for #cdfOfHorizontalQuadrilaterals
+
+
+	private static Point[] arrangePoints(Point a, Point b, Point c, Point d) {
+		//I need to know how are those points positioned, so I sort them.
+		final Point[] points = new Point[] {a, b, c, d};
+		Arrays.sort(points, YComparator.instance);
+		if (points[0].x() > points[1].x()) {
+			Point temp = points[0];
+			points[0] = points[1];
+			points[1] = temp;
+		}
+		if (points[2].x() > points[3].x()) {
+			Point temp = points[2];
+			points[2] = points[3];
+			points[3] = temp;
+		}
+
+		return points;
+	}
+
+	/**
+	 * Create an UnivariateFunction that allows us to know the X position
+	 * of a certain Y. Notice: this UnivariateFunction returns the X for
+	 * a certain Y!
+	 */
+	private static UnivariateFunction getFunction(Point a, Point b) {
+		double alpha = (a.y() - b.y()) / (a.x() - b.x());
+
+		if (Double.isInfinite(alpha)) {
+			return new PolynomialFunction(new double[]{a.x()});
+		} else {
+			double beta = a.y() - alpha * a.x();
+			return new PolynomialFunction(new double[]{
+				- beta / alpha, 1 / alpha
+			});
+		}
+	}
+
+	/**
+	 * Sorts points in Y order, smaller to bigger.
+	 */
+	private static class YComparator implements Comparator<Point> {
+		public static final YComparator instance = new YComparator();
+		@Override
+		public int compare(Point p1, Point p2) {
+			return (int)(p1.y() - p2.y());
+		}
+	}
 }
