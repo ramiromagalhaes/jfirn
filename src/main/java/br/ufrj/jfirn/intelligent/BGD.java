@@ -1,7 +1,6 @@
 package br.ufrj.jfirn.intelligent;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
@@ -124,7 +123,7 @@ public class BGD {
 	private static Point[] arrangePoints(Point a, Point b, Point c, Point d) {
 		//I need to know how are those points positioned, so I sort them.
 		final Point[] points = new Point[] {a, b, c, d};
-		Arrays.sort(points, YComparator.instance);
+		Arrays.sort(points, Point.YComparator.instance);
 		if (points[0].x() > points[1].x()) {
 			Point temp = points[0];
 			points[0] = points[1];
@@ -157,14 +156,4 @@ public class BGD {
 		}
 	}
 
-	/**
-	 * Sorts points in Y order, smaller to bigger.
-	 */
-	private static class YComparator implements Comparator<Point> {
-		public static final YComparator instance = new YComparator();
-		@Override
-		public int compare(Point p1, Point p2) {
-			return (int)(p1.y() - p2.y());
-		}
-	}
 }

@@ -1,5 +1,7 @@
 package br.ufrj.jfirn.common;
 
+import java.util.Comparator;
+
 import org.apache.commons.math3.util.FastMath;
 
 
@@ -49,6 +51,28 @@ public class Point {
 			.append(y)
 			.append("]")
 			.toString();
+	}
+
+	/**
+	 * Sorts points in X order, smaller to bigger.
+	 */
+	public static class XComparator implements Comparator<Point> {
+		public static final XComparator instance = new XComparator();
+		@Override
+		public int compare(Point p1, Point p2) {
+			return (int)(p1.x - p2.x);
+		}
+	}
+
+	/**
+	 * Sorts points in Y order, smaller to bigger.
+	 */
+	public static class YComparator implements Comparator<Point> {
+		public static final YComparator instance = new YComparator();
+		@Override
+		public int compare(Point p1, Point p2) {
+			return (int)(p1.y - p2.y);
+		}
 	}
 
 }
