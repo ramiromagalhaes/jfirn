@@ -14,7 +14,7 @@ public class SimpleCollisionEvaluator {
 	public Collision eval(PointParticle me, Point otherPosition, double otherSpeed, double otherDirection, int id) {
 		//TODO I fear this will perform poorly...
 
-		//that's where we forecast a collision will happen
+		//here we forecast if a collision may happen
 		final Point collisionPosition = intersection(me, otherPosition, otherDirection);
 		if (collisionPosition == null) { //if there is no intersection, then there is no collision
 			return null;
@@ -33,10 +33,10 @@ public class SimpleCollisionEvaluator {
 		final double meTime = timeToReach(me, collisionPosition);
 		final double otherTime = timeToReach(otherPosition, otherSpeed, collisionPosition);
 
-		//I'm considering there will be a collision if the time between particles to arrive at the collision position are almost the same
+		//I'm considering there will be a collision if the time between particles to arrive at the collision position are almost the same.
 		//TODO Improve this 'if', maybe considering objects direction, speed, size, etc.
 		//TODO This approach may be an oversimplification but I think I'm kinda building a fuzzy method to evaluate the collision.
-		if (FastMath.abs(meTime - otherTime) > 4d) {
+		if (FastMath.abs(meTime - otherTime) > 6d) {
 			return null;
 		}
 
