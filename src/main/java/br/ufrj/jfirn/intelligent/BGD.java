@@ -23,13 +23,6 @@ public class BGD {
 
 	/**
 	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++. 
-	 */
-	private static double f(double x, double y, double aprime, double bprime, double rho) {
-		return FastMath.exp(aprime * (2d * x - aprime) + bprime * (2d * y - bprime) + 2d * rho * (x - aprime) * (y - bprime));
-	}
-
-	/**
-	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++. 
 	 * 
 	 * Returns P(X < a, Y < b, c) where X, Y are gaussian random variables N(0, 1)
 	 * of the bivariate normal distribution with correlation between X and Y c in [-1, 1].
@@ -74,6 +67,15 @@ public class BGD {
 		throw new RuntimeException("Should never get here.");
 	}
 
+	/**
+	 * 
+	 * @param higherX
+	 * @param higherY
+	 * @param length
+	 * @param height
+	 * @param c Correlation between distributions.
+	 * @return
+	 */
 	public static double cdfOfRectangle(double higherX, double higherY, double length, double height, double c) {
 		return BGD.cdf(higherX, higherY, c) - 
 			BGD.cdf(higherX, higherY - height, c) -
@@ -81,6 +83,14 @@ public class BGD {
 			BGD.cdf(higherX - length, higherY - height, c);
 	}
 
+	/**
+	 * 
+	 * @param higherPoint
+	 * @param length
+	 * @param height
+	 * @param c Correlation between distributions.
+	 * @return
+	 */
 	public static double cdfOfRectangle(Point higherPoint, double length, double height, double c) {
 		return cdfOfRectangle(higherPoint.x(), higherPoint.y(), length, height, c);
 	}
@@ -91,7 +101,7 @@ public class BGD {
 	 * Calculates an aproximate value for the BGD inside a certain quadrilateral area delimited
 	 * by points a, b, c and d.
 	 */
-	public static double cdfOfHorizontalQuadrilaterals(Point a, Point b, Point c, Point d) {
+	public static double cdfOfHorizontalQuadrilaterals(Point a, Point b, Point c, Point d, double correlation) {
 		final double squareHeight = FastMath.scalb(1, -4);
 
 		double total = 0; //will return this
@@ -110,7 +120,7 @@ public class BGD {
 			final double leftmostX = leftmostFunction.value(currentY - squareHeight/2d);
 			final double xLength = rightmostX - leftmostX;
 
-			total += BGD.cdfOfRectangle(rightmostX, currentY, xLength, squareHeight, 0);
+			total += BGD.cdfOfRectangle(rightmostX, currentY, xLength, squareHeight, correlation);
 			currentY -= squareHeight;
 		}
 
@@ -118,7 +128,20 @@ public class BGD {
 	}
 
 
-	//== Functions for #cdfOfHorizontalQuadrilaterals
+
+	//== This class private parts. Be gentle.
+
+
+
+	/**
+	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++. 
+	 */
+	private static double f(double x, double y, double aprime, double bprime, double rho) {
+		return FastMath.exp(aprime * (2d * x - aprime) + bprime * (2d * y - bprime) + 2d * rho * (x - aprime) * (y - bprime));
+	}
+
+
+	//== Private functions for #cdfOfHorizontalQuadrilaterals
 
 
 	private static Point[] arrangePoints(Point a, Point b, Point c, Point d) {

@@ -34,7 +34,8 @@ public class BGDTest {
 				new Point(0d, 0d),
 				new Point(1d, 0d),
 				new Point(0d, 1d),
-				new Point(1d, 1d)
+				new Point(1d, 1d),
+				0
 			),
 			0.00001d);
 	}
@@ -52,7 +53,7 @@ public class BGDTest {
 			BGD.cdfOfRectangle(2.5d * l, 2d * l, l, l, 0) +
 			BGD.cdfOfRectangle(1.5d * l,      l, l, l, 0);
 
-		assertEquals(expected, BGD.cdfOfHorizontalQuadrilaterals(a, b, c, d), 0.00001d);
+		assertEquals(expected, BGD.cdfOfHorizontalQuadrilaterals(a, b, c, d, 0), 0.00001d);
 	}
 
 }
