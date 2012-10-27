@@ -9,14 +9,16 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.ufrj.jfirn.common.BasicParticle;
+import br.ufrj.jfirn.common.BasicRobot;
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.PointParticle;
+import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.intelligent.evaluation.DumbEvaluator;
+import br.ufrj.jfirn.intelligent.evaluation.Evaluator;
 
-public class IntelligentParticle extends BasicParticle implements Sight {
+public class IntelligentAgent extends BasicRobot implements Sight {
 
 	private static final double DEFAULT_MAX_SPEED = 5;
-	private static final Logger logger = LoggerFactory.getLogger(IntelligentParticle.class);
+	private static final Logger logger = LoggerFactory.getLogger(IntelligentAgent.class);
 
 	/**
 	 * True when someone is way too close to me and I should fear for my safety.
@@ -26,7 +28,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 	/**
 	 * Stored data about other particles and obstacles.
 	 */
-	private Map<PointParticle, MovementStatistics> aboutObstacles = new HashMap<>();
+	private Map<Robot, MovementStatistics> aboutObstacles = new HashMap<>();
 
 	/**
 	 * The target points in the simulation area to where I should move.
@@ -40,14 +42,14 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 
 
 
-	public IntelligentParticle(Point... targets) {
+	public IntelligentAgent(Point... targets) {
 		super();
 		this.targets.addAll(
 			Arrays.asList(targets)
 		);
 	}
 
-	public IntelligentParticle(Evaluator evaluator, Point... targets) {
+	public IntelligentAgent(Evaluator evaluator, Point... targets) {
 		super();
 		this.evaluator = evaluator;
 		this.targets.addAll(
@@ -55,14 +57,14 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 		);
 	}
 
-	public IntelligentParticle(double x, double y, double direction, double speed, Point... targets) {
+	public IntelligentAgent(double x, double y, double direction, double speed, Point... targets) {
 		super(x, y, direction, speed);
 		this.targets.addAll(
 			Arrays.asList(targets)
 		);
 	}
 
-	public IntelligentParticle(double x, double y, double direction, double speed, Evaluator evaluator, Point... targets) {
+	public IntelligentAgent(double x, double y, double direction, double speed, Evaluator evaluator, Point... targets) {
 		this(x, y, direction, speed, targets);
 		this.evaluator = evaluator;
 	}
@@ -80,7 +82,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 
 		//Someone I see is endangering me?
 		this.endangered = false; //assume not...
-		for (PointParticle p : e.getParticlesSighted()) { //...but check for it
+		for (Robot p : e.getParticlesSighted()) { //...but check for it
 			if ( this.isInDangerRadius(p) ) {
 				this.endangered = true;
 				if (logger.isDebugEnabled()) {
@@ -93,7 +95,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 		//I'll only keep statistics about objects I see
 		aboutObstacles.keySet().retainAll(e.getParticlesSighted());
 
-		for (PointParticle p : e.getParticlesSighted()) {
+		for (Robot p : e.getParticlesSighted()) {
 			if ( !aboutObstacles.containsKey(p) ) { //store data about new objects I see
 				aboutObstacles.put(p, new MovementStatistics(p.hashCode()));
 			}
@@ -147,7 +149,7 @@ public class IntelligentParticle extends BasicParticle implements Sight {
 	 * Used to verify if the particle is in danger.
 	 */
 	private final static double DANGER_RADIUS = 10;
-	private boolean isInDangerRadius(PointParticle p) {
+	private boolean isInDangerRadius(Robot p) {
 		return this.position().distanceTo(p.position()) <= DANGER_RADIUS;
 	}
 

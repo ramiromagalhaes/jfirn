@@ -1,10 +1,11 @@
-package br.ufrj.jfirn.intelligent;
+package br.ufrj.jfirn.intelligent.evaluation;
 
 import java.util.Collection;
 import java.util.Deque;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.PointParticle;
+import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.intelligent.MovementStatistics;
 
 /**
  * Classes implementing this interface should contain the algorithm used to decide
@@ -15,6 +16,6 @@ import br.ufrj.jfirn.common.PointParticle;
  */
 public interface Evaluator {
 
-	public void evaluate(final PointParticle p, Collection<MovementStatistics> aboutObstacles, final Deque<Point> targets);
+	public void evaluate(final Robot p, Collection<MovementStatistics> aboutObstacles, final Deque<Point> targets);
 
 }

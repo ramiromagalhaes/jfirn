@@ -1,17 +1,17 @@
-package br.ufrj.jfirn.intelligent;
+package br.ufrj.jfirn.intelligent.evaluation;
 
 import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.PointParticle;
+import br.ufrj.jfirn.common.Robot;
 
 public class SimpleCollisionEvaluator {
 
-	public Collision eval(PointParticle me, PointParticle other) {
+	public Collision eval(Robot me, Robot other) {
 		return eval(me, other.position(), other.speed(), other.direction(), other.hashCode());
 	}
 
-	public Collision eval(PointParticle me, Point otherPosition, double otherSpeed, double otherDirection, int id) {
+	public Collision eval(Robot me, Point otherPosition, double otherSpeed, double otherDirection, int id) {
 		//TODO I fear this will perform poorly...
 
 		//here we forecast if a collision may happen
@@ -50,7 +50,7 @@ public class SimpleCollisionEvaluator {
 	/**
 	 * The particle paths intersect at some point?
 	 */
-	private Point intersection(PointParticle me, Point otherPosition, double otherDirection) {
+	private Point intersection(Robot me, Point otherPosition, double otherDirection) {
 		if (me.direction() == otherDirection) { //TODO verify: this does not seem to be the right way to check for intersections
 			return null; //no intersection or infinite intersecting points. In both cases, we say there is no collision.
 		}
@@ -73,7 +73,7 @@ public class SimpleCollisionEvaluator {
 	/**
 	 * How much time p would take to reach destination?
 	 */
-	private double timeToReach(PointParticle p, Point destination) {
+	private double timeToReach(Robot p, Point destination) {
 		return timeToReach(p.position(), p.speed(), destination);
 	}
 

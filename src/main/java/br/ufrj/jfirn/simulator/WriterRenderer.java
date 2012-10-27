@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.PointParticle;
+import br.ufrj.jfirn.common.Robot;
 
 /**
  * Logs objects to a Writer.
@@ -26,14 +26,14 @@ public class WriterRenderer implements SimulationRenderer {
 	//TODO improve this class's algorithm and data structure
 
 	private int currentTick = 0;
-	private Map<PointParticle, List<ParticleData>> particleData = new HashMap<>();
+	private Map<Robot, List<ParticleData>> particleData = new HashMap<>();
 
 	public WriterRenderer(Writer w) {
 		this.writer = w;
 	}
 
 	@Override
-	public void draw(PointParticle particle) {
+	public void draw(Robot particle) {
 		if ( !particleData.containsKey(particle) ) {
 			List<ParticleData> newList = new ArrayList<>(currentTick);
 			particleData.put(particle, newList);
@@ -56,10 +56,10 @@ public class WriterRenderer implements SimulationRenderer {
 	@Override
 	public void done() {
 		try {
-			final Set<PointParticle> particles = particleData.keySet();
+			final Set<Robot> particles = particleData.keySet();
 
 			for (int i = 0; i < currentTick; i++) {
-				for (PointParticle particle : particles) {
+				for (Robot particle : particles) {
 					final ParticleData d = particleData.get( particle ).get(i);
 
 					d.writeData(writer);

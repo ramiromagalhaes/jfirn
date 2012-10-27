@@ -10,7 +10,7 @@ import java.beans.Transient;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import br.ufrj.jfirn.common.PointParticle;
+import br.ufrj.jfirn.common.Robot;
 
 public class SimpleSwingRenderer implements SimulationRenderer {
 
@@ -28,7 +28,7 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 	}
 
 	@Override
-	public void draw(PointParticle particle) {
+	public void draw(Robot particle) {
 		final Graphics g = image.getGraphics();
 
 		g.setColor(ColorPaleteForRenderers.getColor(particle.hashCode()));

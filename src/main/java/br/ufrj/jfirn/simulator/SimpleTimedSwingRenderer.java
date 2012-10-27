@@ -17,7 +17,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.PointParticle;
+import br.ufrj.jfirn.common.Robot;
 
 /**
  * Very simple implementation of a {@link TimedSimulationRenderer}.
@@ -54,7 +54,7 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 	}
 
 	@Override
-	public void draw(PointParticle particle) {
+	public void draw(Robot particle) {
 		if (currentTick >= particleData.size()) {
 			particleData.add(new ArrayList<ParticleData>());
 			tickSelector.setMaximum(currentTick);

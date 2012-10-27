@@ -1,6 +1,6 @@
 package br.ufrj.jfirn.simulator;
 
-import br.ufrj.jfirn.common.PointParticle;
+import br.ufrj.jfirn.common.Robot;
 
 /**
  * Interface that abstracts the method used to effectively draw the simulation somewhere.
@@ -10,7 +10,7 @@ import br.ufrj.jfirn.common.PointParticle;
  */
 public interface SimulationRenderer {
 
-	public void draw(PointParticle particle);
+	public void draw(Robot particle);
 
 	/**
 	 * Advances the time tick. Works with simulation renderers that knows how to handle time.

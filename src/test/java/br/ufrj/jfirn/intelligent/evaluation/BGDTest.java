@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.intelligent;
+package br.ufrj.jfirn.intelligent.evaluation;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,6 +6,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
 
 import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.intelligent.evaluation.BGD;
 
 public class BGDTest {
 

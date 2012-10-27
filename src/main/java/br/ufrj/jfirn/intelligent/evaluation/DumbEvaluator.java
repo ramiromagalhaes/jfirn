@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.intelligent;
+package br.ufrj.jfirn.intelligent.evaluation;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -8,15 +8,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.PointParticle;
-import br.ufrj.jfirn.intelligent.SimpleCollisionEvaluator.Collision;
+import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.intelligent.MovementStatistics;
+import br.ufrj.jfirn.intelligent.evaluation.SimpleCollisionEvaluator.Collision;
 
 public class DumbEvaluator implements Evaluator {
 	private static final Logger logger = LoggerFactory.getLogger(DumbEvaluator.class);
 
 	private static final SimpleCollisionEvaluator collisionEvaluator = new SimpleCollisionEvaluator();
 
-	public void evaluate(final PointParticle myself, final Collection<MovementStatistics> aboutObstacles, final Deque<Point> targets) {
+	public void evaluate(final Robot myself, final Collection<MovementStatistics> aboutObstacles, final Deque<Point> targets) {
 		for (MovementStatistics stat : aboutObstacles) { //evaluate everyone I see.
 			//Check if I'll collide with someone.
 			final Collision collision = collisionEvaluator.eval(

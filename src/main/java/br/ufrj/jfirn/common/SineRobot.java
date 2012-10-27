@@ -4,25 +4,25 @@ import org.apache.commons.math3.util.FastMath;
 
 
 
-public class SineParticle extends BasicParticle {
+public class SineRobot extends BasicRobot {
 
 	private double step = 0;
 	private double heading;
 	private double frequency;
 
-	public SineParticle() {
+	public SineRobot() {
 		super();
 		this.heading = 0;
 		this.frequency = 1;
 	}
 
-	public SineParticle(double x, double y, double direction, double speed) {
+	public SineRobot(double x, double y, double direction, double speed) {
 		super(x, y, direction, speed);
 		this.heading = direction;
 		this.frequency = 1;
 	}
 
-	public SineParticle(double x, double y, double direction, double speed, double frequency) {
+	public SineRobot(double x, double y, double direction, double speed, double frequency) {
 			super(x, y, direction, speed);
 			this.heading = direction;
 			this.frequency = frequency;

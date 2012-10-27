@@ -1,11 +1,11 @@
 package br.ufrj.jfirn.intelligent;
 
-import br.ufrj.jfirn.common.PointParticle;
+import br.ufrj.jfirn.common.Robot;
 
 
 /**
  * An interface that allows its implementor to see things in the simulation.
- * More specifically, it allows its implementor to see other {@link PointParticle}s.
+ * More specifically, it allows its implementor to see other {@link Robot}s.
  */
 public interface Sight {
 

@@ -2,13 +2,13 @@ package br.ufrj.jfirn.common;
 
 import org.apache.commons.math3.util.FastMath;
 
-public class CrazyParticle extends BasicParticle {
+public class CrazyRobot extends BasicRobot {
 
-	public CrazyParticle() {
+	public CrazyRobot() {
 		super();
 	}
 
-	public CrazyParticle(double x, double y, double direction, double speed) {
+	public CrazyRobot(double x, double y, double direction, double speed) {
 		super(x, y, direction, speed);
 	}
 

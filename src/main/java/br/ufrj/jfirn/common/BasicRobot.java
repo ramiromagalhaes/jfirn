@@ -2,24 +2,24 @@ package br.ufrj.jfirn.common;
 
 import org.apache.commons.math3.util.FastMath;
 
-public class BasicParticle implements PointParticle {
+public class BasicRobot implements Robot {
 
 	private double x, y, speed, direction; //direction is in radians
 	private final int id;
 	private static int particleIdGenerator = 1;
 
 	{//this will be called prior to all constructors
-		synchronized (BasicParticle.class) { //TODO verify if this will really synchronize something
+		synchronized (BasicRobot.class) { //TODO verify if this will really synchronize something
 			this.id = particleIdGenerator++;
 		}
 	}
 
-	public BasicParticle() {
+	public BasicRobot() {
 		x = y = direction = 0;
 		speed = 1;
 	}
 
-	public BasicParticle(double x, double y, double direction, double speed) {
+	public BasicRobot(double x, double y, double direction, double speed) {
 		this.x = x;
 		this.y = y;
 		this.direction = direction;
@@ -42,13 +42,13 @@ public class BasicParticle implements PointParticle {
 	}
 
 	@Override
-	public final BasicParticle x(final double x) {
+	public final BasicRobot x(final double x) {
 		this.x = x;
 		return this;
 	}
 
 	@Override
-	public final BasicParticle y(final double y) {
+	public final BasicRobot y(final double y) {
 		this.y = y;
 		return this;
 	}
@@ -59,7 +59,7 @@ public class BasicParticle implements PointParticle {
 	}
 
 	@Override
-	public final BasicParticle speed(final double speed) {
+	public final BasicRobot speed(final double speed) {
 		this.speed = speed;
 		return this;
 	}
@@ -70,7 +70,7 @@ public class BasicParticle implements PointParticle {
 	}
 
 	@Override
-	public final BasicParticle direction(final double direction) {
+	public final BasicRobot direction(final double direction) {
 		this.direction = direction;
 		return this;
 	}
@@ -88,7 +88,7 @@ public class BasicParticle implements PointParticle {
 	}
 
 	@Override
-	public final PointParticle directionDegrees(final double direction) {
+	public final Robot directionDegrees(final double direction) {
 		this.direction = FastMath.toRadians(direction);
 		return this;
 	}
@@ -120,7 +120,7 @@ public class BasicParticle implements PointParticle {
 			return false;
 		}
 
-		BasicParticle p = (BasicParticle)o;
+		BasicRobot p = (BasicRobot)o;
 		return p.id == this.id;
 	}
 
