@@ -10,7 +10,7 @@ import org.apache.commons.math3.util.FastMath;
 import br.ufrj.jfirn.common.Point;
 
 /**
- * Bivariate Gaussian Distribution
+ * Bivariate Gaussian Distribution utility functions.
  * 
  * @author Ciro Sobral 
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
