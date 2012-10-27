@@ -17,7 +17,7 @@ import br.ufrj.jfirn.common.RandomWalkerRobot;
 import br.ufrj.jfirn.common.SineRobot;
 import br.ufrj.jfirn.common.SquareRobot;
 import br.ufrj.jfirn.intelligent.Eye;
-import br.ufrj.jfirn.intelligent.IntelligentAgent;
+import br.ufrj.jfirn.intelligent.IntelligentRobot;
 import br.ufrj.jfirn.intelligent.SightEvent;
 
 
@@ -107,7 +107,7 @@ public class Engine {
 	public static void main(String[] args) {
 		final Engine e = new Engine();
 
-		IntelligentAgent p = new IntelligentAgent (200, 200, 0, 5,
+		IntelligentRobot p = new IntelligentRobot (200, 200, 0, 5,
 			new Point(400, 100), new Point(200, 400), new Point(300, 450), new Point(200, 200) //targets
 		);
 		e.eyes.add(new Eye(200, p));

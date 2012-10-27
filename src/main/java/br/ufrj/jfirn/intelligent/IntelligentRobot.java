@@ -15,10 +15,10 @@ import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.evaluation.DumbEvaluator;
 import br.ufrj.jfirn.intelligent.evaluation.Evaluator;
 
-public class IntelligentAgent extends BasicRobot implements Sight {
+public class IntelligentRobot extends BasicRobot implements Sight {
 
 	private static final double DEFAULT_MAX_SPEED = 5;
-	private static final Logger logger = LoggerFactory.getLogger(IntelligentAgent.class);
+	private static final Logger logger = LoggerFactory.getLogger(IntelligentRobot.class);
 
 	/**
 	 * True when someone is way too close to me and I should fear for my safety.
@@ -42,14 +42,14 @@ public class IntelligentAgent extends BasicRobot implements Sight {
 
 
 
-	public IntelligentAgent(Point... targets) {
+	public IntelligentRobot(Point... targets) {
 		super();
 		this.targets.addAll(
 			Arrays.asList(targets)
 		);
 	}
 
-	public IntelligentAgent(Evaluator evaluator, Point... targets) {
+	public IntelligentRobot(Evaluator evaluator, Point... targets) {
 		super();
 		this.evaluator = evaluator;
 		this.targets.addAll(
@@ -57,14 +57,14 @@ public class IntelligentAgent extends BasicRobot implements Sight {
 		);
 	}
 
-	public IntelligentAgent(double x, double y, double direction, double speed, Point... targets) {
+	public IntelligentRobot(double x, double y, double direction, double speed, Point... targets) {
 		super(x, y, direction, speed);
 		this.targets.addAll(
 			Arrays.asList(targets)
 		);
 	}
 
-	public IntelligentAgent(double x, double y, double direction, double speed, Evaluator evaluator, Point... targets) {
+	public IntelligentRobot(double x, double y, double direction, double speed, Evaluator evaluator, Point... targets) {
 		this(x, y, direction, speed, targets);
 		this.evaluator = evaluator;
 	}
