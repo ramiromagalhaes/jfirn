@@ -12,23 +12,25 @@ import br.ufrj.jfirn.common.Point;
 /**
  * Bivariate Gaussian Distribution
  * 
- * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++ 
- * 
  * @author Ciro Sobral 
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-
 public class BGD {
 	private static final NormalDistribution normal = new NormalDistribution(0, 1);
 	private static final double A[] = {0.3253030, 0.4211071, 0.1334425, 0.006374323};
 	private static final double B[] = {0.1337764, 0.6243247, 1.3425378, 2.2626645};
 
+	/**
+	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++. 
+	 */
 	private static double f(double x, double y, double aprime, double bprime, double rho) {
 		return FastMath.exp(aprime * (2d * x - aprime) + bprime * (2d * y - bprime) + 2d * rho * (x - aprime) * (y - bprime));
 	}
 
 	/**
+	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++. 
+	 * 
 	 * Returns P(X < a, Y < b, c) where X, Y are gaussian random variables N(0, 1)
 	 * of the bivariate normal distribution with correlation between X and Y c in [-1, 1].
 	 */
@@ -77,7 +79,6 @@ public class BGD {
 			BGD.cdf(higherX, higherY - height, c) -
 			BGD.cdf(higherX - length, higherY, c) +
 			BGD.cdf(higherX - length, higherY - height, c);
-		
 	}
 
 	public static double cdfOfRectangle(Point higherPoint, double length, double height, double c) {
