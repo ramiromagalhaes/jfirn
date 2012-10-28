@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.intelligent.evaluation;
+package br.ufrj.jfirn.intelligent;
 
 import java.util.Arrays;
 

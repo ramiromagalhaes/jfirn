@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.intelligent;
+package br.ufrj.jfirn.intelligent.sensors;
 
 import java.util.Set;
 

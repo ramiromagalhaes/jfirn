@@ -11,17 +11,52 @@ public interface Robot {
 	    	                   LEFT = FastMath.PI,
 	    	    	           DOWN = 3d * FastMath.PI / 2d;
 
+	/**
+	 * The real x position of this Robot in the world. Notice
+	 * that the real position may be different from the one
+	 * that this Robot thinks it is.
+	 */
 	public double x();
+	/**
+	 * The real y position of this Robot in the world. Notice
+	 * that the real position may be different from the one
+	 * that this Robot thinks it is.
+	 */
 	public double y();
+	/**
+	 * The real position of this Robot in the world. Notice
+	 * that the real position may be different from the one
+	 * that this Robot thinks it is.
+	 */
 	public Point position();
+	/**
+	 * Sets the robot real x position.
+	 */
 	public Robot x(double x);
+	/**
+	 * Sets the robot real y position.
+	 */
 	public Robot y(double y);
 
+	/**
+	 * The real robot speed. It may be different from the one the robot
+	 * thinks it is.
+	 * @see Robot#STOPPED
+	 */
 	public double speed();
+	/**
+	 * Sets the real robot speed.
+	 */
 	public Robot speed(double speed);
 
 	/**
-	 * Angle in radians. Zero points to the right and positive is clockwise.
+	 * Return the real direction the robot is facing. It may be different
+	 * from the one the robot thinks it is going.
+	 * Angle in radians. Zero points to the right and positive is counterclockwise.
+	 * @see Robot#RIGHT
+	 * @see Robot#UP
+	 * @see Robot#LEFT
+	 * @see Robot#DOWN
 	 */
 	public double direction();
 	public Robot direction(double direction);

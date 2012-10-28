@@ -6,7 +6,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.intelligent.evaluation.BGD;
+import br.ufrj.jfirn.intelligent.BGD;
 
 public class BGDTest {
 

@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import br.ufrj.jfirn.common.BasicRobot;
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
-import br.ufrj.jfirn.intelligent.evaluation.DumbEvaluator;
-import br.ufrj.jfirn.intelligent.evaluation.Evaluator;
+import br.ufrj.jfirn.intelligent.sensors.Sight;
+import br.ufrj.jfirn.intelligent.sensors.SightEvent;
 
 public class IntelligentRobot extends BasicRobot implements Sight {
 

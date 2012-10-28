@@ -7,8 +7,6 @@ import org.junit.Test;
 
 import br.ufrj.jfirn.common.BasicRobot;
 import br.ufrj.jfirn.common.Robot;
-import br.ufrj.jfirn.intelligent.evaluation.SimpleCollisionEvaluator;
-import br.ufrj.jfirn.intelligent.evaluation.SimpleCollisionEvaluator.Collision;
 
 public class SimpleCollisionEvaluatorTest {
 	private static final double TEN_TO_MINUS_3 = .001;

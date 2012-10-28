@@ -1,6 +1,7 @@
-package br.ufrj.jfirn.intelligent;
+package br.ufrj.jfirn.intelligent.sensors;
 
 import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.intelligent.IntelligentRobot;
 
 /**
  * Eye holds specific parameters that should be used while detecting agents or objects in the

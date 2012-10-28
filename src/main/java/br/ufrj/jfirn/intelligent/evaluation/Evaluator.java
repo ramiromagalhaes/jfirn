@@ -1,11 +1,6 @@
 package br.ufrj.jfirn.intelligent.evaluation;
 
-import java.util.Collection;
-import java.util.Deque;
-
-import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.Robot;
-import br.ufrj.jfirn.intelligent.MovementStatistics;
+import br.ufrj.jfirn.intelligent.Thoughts;
 
 /**
  * Classes implementing this interface should contain the algorithm used to decide
@@ -16,6 +11,10 @@ import br.ufrj.jfirn.intelligent.MovementStatistics;
  */
 public interface Evaluator {
 
-	public void evaluate(final Robot p, Collection<MovementStatistics> aboutObstacles, final Deque<Point> targets);
+	/**
+	 * After completing your evaluation, if you want another evaluator to do its job,
+	 * invoke {@link ChainOfEvaluations#nextEvaluator(Thoughts, ChainOfEvaluations)}
+	 */
+	public void evaluate(Thoughts thoughts, ChainOfEvaluations chain);
 
 }

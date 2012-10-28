@@ -10,15 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufrj.jfirn.common.BasicRobot;
-import br.ufrj.jfirn.common.CrazyRobot;
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
-import br.ufrj.jfirn.common.RandomWalkerRobot;
-import br.ufrj.jfirn.common.SineRobot;
-import br.ufrj.jfirn.common.SquareRobot;
-import br.ufrj.jfirn.intelligent.Eye;
 import br.ufrj.jfirn.intelligent.IntelligentRobot;
-import br.ufrj.jfirn.intelligent.SightEvent;
+import br.ufrj.jfirn.intelligent.sensors.Eye;
+import br.ufrj.jfirn.intelligent.sensors.SightEvent;
+import br.ufrj.jfirn.mobileObstacle.CrazyRobot;
+import br.ufrj.jfirn.mobileObstacle.RandomWalkerRobot;
+import br.ufrj.jfirn.mobileObstacle.SineRobot;
+import br.ufrj.jfirn.mobileObstacle.SquareRobot;
 
 
 /**

@@ -1,6 +1,5 @@
 package br.ufrj.jfirn.intelligent;
 
-import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.util.FastMath;
 
@@ -12,11 +11,8 @@ import br.ufrj.jfirn.common.Point;
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-public class MovementStatistics implements ParticleDataLogger {
+public class MovementStatistics implements ParticleDataLogger, MobileObstacleStatistics {
 
-	/**
-	 * The unique identifier of the observed particle.
-	 */
 	private final int observedObjectId;
 
 	private Point lastPosition;
@@ -27,10 +23,13 @@ public class MovementStatistics implements ParticleDataLogger {
 		speed = new SummaryStatistics(),
 		direction = new SummaryStatistics();
 
+
+
 	public MovementStatistics(final int observedObjectId) {
 		this.observedObjectId = observedObjectId;
 	}
 
+	@Override
 	public int getObservedObjectId() {
 		return observedObjectId;
 	}
@@ -47,24 +46,78 @@ public class MovementStatistics implements ParticleDataLogger {
 		this.direction.addValue(FastMath.atan2(FastMath.sin(direction), FastMath.cos(direction)));
 	}
 
-	public Point lastPosition() {
+	@Override
+	public int entriesAdded() {
+		return (int)x.getN();
+	}
+
+	@Override
+	public Point lastKnownPosition() {
 		return lastPosition;
 	}
 
-	public StatisticalSummary xStats() {
-		return x;
+	@Override
+	public double xMean() {
+		return x.getMean();
 	}
 
-	public StatisticalSummary yStats() {
-		return y;
+	@Override
+	public double xVariance() {
+		return x.getVariance();
 	}
 
-	public StatisticalSummary speedStats() {
-		return speed;
+	@Override
+	public double yMean() {
+		return y.getMean();
 	}
 
-	public StatisticalSummary directionStats() {
-		return direction;
+	@Override
+	public double yVariance() {
+		return y.getVariance();
+	}
+
+	@Override
+	public double speedMean() {
+		return speed.getMean();
+	}
+
+	@Override
+	public double speedVariance() {
+		return speed.getVariance();
+	}
+
+	@Override
+	public double directionMean() {
+		return direction.getMean();
+	}
+
+	@Override
+	public double directionVariance() {
+		return direction.getVariance();
+	}
+
+	@Override
+	public double xyCorrelation() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double xyCovariance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double speedDirectionCorrelation() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double speedDirectionCovariance() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

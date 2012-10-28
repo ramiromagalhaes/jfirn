@@ -1,6 +1,8 @@
-package br.ufrj.jfirn.common;
+package br.ufrj.jfirn.mobileObstacle;
 
 import org.apache.commons.math3.util.FastMath;
+
+import br.ufrj.jfirn.common.BasicRobot;
 
 
 

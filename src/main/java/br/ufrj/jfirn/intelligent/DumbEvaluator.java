@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.intelligent.evaluation;
+package br.ufrj.jfirn.intelligent;
 
 import java.util.Collection;
 import java.util.Deque;
@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
-import br.ufrj.jfirn.intelligent.MovementStatistics;
-import br.ufrj.jfirn.intelligent.evaluation.SimpleCollisionEvaluator.Collision;
 
 public class DumbEvaluator implements Evaluator {
 	private static final Logger logger = LoggerFactory.getLogger(DumbEvaluator.class);
@@ -22,9 +20,9 @@ public class DumbEvaluator implements Evaluator {
 			//Check if I'll collide with someone.
 			final Collision collision = collisionEvaluator.eval(
 					myself,
-					stat.lastPosition(),
-					stat.speedStats().getMean(),
-					stat.directionStats().getMean(),
+					stat.lastKnownPosition(),
+					stat.speedMean(),
+					stat.directionMean(),
 					stat.getObservedObjectId());
 
 			if (collision == null) { //No collision. Verify someone else.

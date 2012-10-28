@@ -10,21 +10,21 @@ import br.ufrj.jfirn.common.Point;
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-public class LastMovementData implements ParticleDataLogger {
-
-	/**
-	 * The unique identifier of the observed particle.
-	 */
-	private final int observedObjectId;
+public class LastMovementData implements ParticleDataLogger, MobileObstacleStatistics {
 
 	private Point lastPosition;
 
-	private double x, y, speed, direction;
+	private double speed, direction;
+
+	private final int observedObjectId;
+
+	private int entriesAdded = 0;
 
 	public LastMovementData(final int observedObjectId) {
 		this.observedObjectId = observedObjectId;
 	}
 
+	@Override
 	public int getObservedObjectId() {
 		return observedObjectId;
 	}
@@ -32,8 +32,6 @@ public class LastMovementData implements ParticleDataLogger {
 	@Override
 	public void addEntry(Point position, double speed, double direction) {
 		this.lastPosition = position;
-		this.x = position.x();
-		this.y = position.y();
 		this.speed = speed;
 
 		//Weird? See http://en.wikipedia.org/wiki/Directional_statistics#The_fundamental_difference_between_linear_and_circular_statistics
@@ -41,26 +39,78 @@ public class LastMovementData implements ParticleDataLogger {
 		this.direction = FastMath.atan2(
 			FastMath.sin(direction), FastMath.cos(direction)
 		);
+
+		entriesAdded = 1;
 	}
 
-	public Point lastPosition() {
+	@Override
+	public int entriesAdded() {
+		return entriesAdded;
+	}
+
+	@Override
+	public Point lastKnownPosition() {
 		return lastPosition;
 	}
 
-	public double xStats() {
-		return x;
+	@Override
+	public double xMean() {
+		return lastPosition.x();
 	}
 
-	public double yStats() {
-		return y;
+	@Override
+	public double xVariance() {
+		return 0;
 	}
 
-	public double speedStats() {
+	@Override
+	public double yMean() {
+		return lastPosition.y();
+	}
+
+	@Override
+	public double yVariance() {
+		return 0;
+	}
+
+	@Override
+	public double speedMean() {
 		return speed;
 	}
 
-	public double directionStats() {
+	@Override
+	public double speedVariance() {
+		return 0;
+	}
+
+	@Override
+	public double directionMean() {
 		return direction;
+	}
+
+	@Override
+	public double directionVariance() {
+		return 0;
+	}
+
+	@Override
+	public double xyCorrelation() {
+		return 0;
+	}
+
+	@Override
+	public double speedDirectionCorrelation() {
+		return 0;
+	}
+
+	@Override
+	public double xyCovariance() {
+		return 0;
+	}
+
+	@Override
+	public double speedDirectionCovariance() {
+		return 0;
 	}
 
 }
