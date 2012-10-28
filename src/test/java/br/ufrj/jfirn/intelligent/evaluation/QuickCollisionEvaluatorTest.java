@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.intelligent;
+package br.ufrj.jfirn.intelligent.evaluation;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,13 +7,14 @@ import org.junit.Test;
 
 import br.ufrj.jfirn.common.BasicRobot;
 import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.intelligent.Collision;
 
-public class SimpleCollisionEvaluatorTest {
+public class QuickCollisionEvaluatorTest {
 	private static final double TEN_TO_MINUS_3 = .001;
 
 	@Test
 	public void testEval() {
-		final SimpleCollisionEvaluator evaluator = new SimpleCollisionEvaluator();
+		final QuickCollisionEvaluator evaluator = new QuickCollisionEvaluator();
 
 		Robot p1 = new BasicRobot(-10, -10, FastMath.PI / 4d, 5);
 		Robot p2 = new BasicRobot(10, -10, FastMath.PI * 3d / 4d, 5);

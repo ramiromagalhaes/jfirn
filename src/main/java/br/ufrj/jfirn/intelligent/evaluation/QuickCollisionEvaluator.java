@@ -1,21 +1,65 @@
-package br.ufrj.jfirn.intelligent;
+package br.ufrj.jfirn.intelligent.evaluation;
 
 import org.apache.commons.math3.util.FastMath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.intelligent.Collision;
+import br.ufrj.jfirn.intelligent.MobileObstacleStatisticsLogger;
+import br.ufrj.jfirn.intelligent.Thoughts;
 
-public class SimpleCollisionEvaluator {
+public class QuickCollisionEvaluator implements Evaluator {
+	private static final Logger logger = LoggerFactory.getLogger(QuickCollisionEvaluator.class);
 
-	public Collision eval(Robot me, Robot other) {
-		return eval(me, other.position(), other.speed(), other.direction(), other.hashCode());
+	@Override
+	public void evaluate(Thoughts thoughts, Instruction instruction, ChainOfEvaluations chain) {
+		//think and evaluate and change your thoughts and decide what to do next...
+		final Point myPosition = thoughts.myPosition();
+
+		for (MobileObstacleStatisticsLogger mo : thoughts.knownObstacles().values()) { //evaluate everyone I see.
+			Collision collision = evaluateCollision(
+				myPosition,
+				thoughts.myDirection(),
+				thoughts.mySpeed(),
+				mo.lastKnownPosition(),
+				mo.directionMean(),
+				mo.speedMean()
+			);
+
+			if (collision == null) { //No collision. Verify someone else.
+				continue;
+			}
+
+			//If this collision is too far in the future, forget about it. Verify someone else.
+			if (myPosition.distanceTo(collision.position) > 200d || collision.time > 10d) {
+				continue;
+			}
+
+			if (logger.isDebugEnabled()) { //TODO I think I should change this some system notifier... 
+				logger.debug(collision.toString());
+			}
+		}
+
+		final Point currentTarget = thoughts.targets().peek();
+		if (currentTarget != null) {
+			instruction.newDirection =
+				FastMath.atan2(
+					currentTarget.y() - myPosition.y(),
+					currentTarget.x() - myPosition.x()
+				);
+			instruction.newSpeed = 5;
+		}
+
+		chain.nextEvaluator(thoughts, instruction, chain); //keep thinking
 	}
 
-	public Collision eval(Robot me, Point otherPosition, double otherSpeed, double otherDirection, int id) {
-		//TODO I fear this will perform poorly...
+
+	private Collision evaluateCollision(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed) {
+		//TODO I fear this will perform poorly for something supposed to be fast...
 
 		//here we forecast if a collision may happen
-		final Point collisionPosition = intersection(me, otherPosition, otherDirection);
+		final Point collisionPosition = intersection(myPosition, myDirection, otherPosition, otherDirection);
 		if (collisionPosition == null) { //if there is no intersection, then there is no collision
 			return null;
 		}
@@ -24,13 +68,13 @@ public class SimpleCollisionEvaluator {
 
 		//but first, will it really happen?
 		if ( //if any particle has passed the evaluated collision position, then there will be no collision.
-			!isTheRightDirection(me.position(), me.direction(), collisionPosition) ||
+			!isTheRightDirection(myPosition, myDirection, collisionPosition) ||
 			!isTheRightDirection(otherPosition, otherDirection, collisionPosition) ) {
 			return null;
 		}
 
 		//when each particle will reach the collision position?
-		final double meTime = timeToReach(me, collisionPosition);
+		final double meTime = timeToReach(myPosition, mySpeed, collisionPosition);
 		final double otherTime = timeToReach(otherPosition, otherSpeed, collisionPosition);
 
 		//I'm considering there will be a collision if the time between particles to arrive at the collision position are almost the same.
@@ -43,21 +87,23 @@ public class SimpleCollisionEvaluator {
 		//estimate the collision time with the average of times
 		final double time = (meTime + otherTime) / 2d;
 
-		return new Collision(id, collisionPosition, time);
+		//TODO set the objectID
+		return new Collision(0, collisionPosition, time);
+
 	}
 
 
 	/**
 	 * The particle paths intersect at some point?
 	 */
-	private Point intersection(Robot me, Point otherPosition, double otherDirection) {
-		if (me.direction() == otherDirection) { //TODO verify: this does not seem to be the right way to check for intersections
+	private Point intersection(Point myPosition, double myDirection, Point otherPosition, double otherDirection) {
+		if (myDirection == otherDirection) { //TODO verify: this does not seem to be the right way to check for intersections
 			return null; //no intersection or infinite intersecting points. In both cases, we say there is no collision.
 		}
 
 		//intersection of 2 linear equations. The 'me' particle is y = alpha * x + beta
-		final double alpha = FastMath.tan(me.direction());
-		final double beta = me.y() - alpha * me.x();
+		final double alpha = FastMath.tan(myDirection);
+		final double beta = myPosition.y() - alpha * myPosition.x();
 
 		//The other particle is k = m * x + b
 		final double m = FastMath.tan(otherDirection);
@@ -65,17 +111,12 @@ public class SimpleCollisionEvaluator {
 
 		//the intersection is then...
 		final double x = (b - beta) / (alpha - m);
-		final double y = FastMath.tan(me.direction()) * x + beta;
+		final double y = FastMath.tan(myDirection) * x + beta;
 
 		return new Point(x, y);
 	}
 
-	/**
-	 * How much time p would take to reach destination?
-	 */
-	private double timeToReach(Robot p, Point destination) {
-		return timeToReach(p.position(), p.speed(), destination);
-	}
+
 
 	/**
 	 * How much time a particle at position with speed would take to reach destination?

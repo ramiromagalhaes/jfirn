@@ -1,9 +1,11 @@
 package br.ufrj.jfirn.intelligent;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -12,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import br.ufrj.jfirn.common.BasicRobot;
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.intelligent.evaluation.ChainOfEvaluationsImplementation;
+import br.ufrj.jfirn.intelligent.evaluation.Evaluator;
 import br.ufrj.jfirn.intelligent.sensors.Sight;
 import br.ufrj.jfirn.intelligent.sensors.SightEvent;
 
@@ -28,7 +32,7 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 	/**
 	 * Stored data about other particles and obstacles.
 	 */
-	private Map<Robot, MovementStatistics> aboutObstacles = new HashMap<>();
+	private Map<Robot, MobileObstacleStatisticsLogger> aboutObstacles = new HashMap<>();
 
 	/**
 	 * The target points in the simulation area to where I should move.
@@ -36,9 +40,14 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 	private Deque<Point> targets = new ArrayDeque<>();
 
 	/**
+	 * Known collision forecast.
+	 */
+	private final List<Collision> collisions = new ArrayList<>();
+
+	/**
 	 * Decides what this particle should do in terms of speed and direction.
 	 */
-	private Evaluator evaluator = new DumbEvaluator();
+	private ChainOfEvaluationsImplementation evaluator = new ChainOfEvaluationsImplementation();
 
 
 
@@ -49,24 +58,11 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 		);
 	}
 
-	public IntelligentRobot(Evaluator evaluator, Point... targets) {
-		super();
-		this.evaluator = evaluator;
-		this.targets.addAll(
-			Arrays.asList(targets)
-		);
-	}
-
 	public IntelligentRobot(double x, double y, double direction, double speed, Point... targets) {
 		super(x, y, direction, speed);
 		this.targets.addAll(
 			Arrays.asList(targets)
 		);
-	}
-
-	public IntelligentRobot(double x, double y, double direction, double speed, Evaluator evaluator, Point... targets) {
-		this(x, y, direction, speed, targets);
-		this.evaluator = evaluator;
 	}
 
 	/**
@@ -140,8 +136,10 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 		}
 
 		//the evaluator thinks about the robot current situation and sets its direction and speed
-		this.evaluator.evaluate(this, aboutObstacles.values(), targets);
-
+		this.evaluator.evaluate(
+			new Thoughts(this, this.aboutObstacles, this.targets, collisions)
+		).apply(this);
+		
 		super.move();
 	}
 

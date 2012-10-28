@@ -15,6 +15,6 @@ public interface Evaluator {
 	 * After completing your evaluation, if you want another evaluator to do its job,
 	 * invoke {@link ChainOfEvaluations#nextEvaluator(Thoughts, ChainOfEvaluations)}
 	 */
-	public void evaluate(Thoughts thoughts, ChainOfEvaluations chain);
+	public void evaluate(Thoughts thoughts, Instruction instruction, ChainOfEvaluations chain);
 
 }

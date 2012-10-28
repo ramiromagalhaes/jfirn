@@ -2,7 +2,7 @@ package br.ufrj.jfirn.intelligent;
 
 import br.ufrj.jfirn.common.Point;
 
-public interface MobileObstacleStatistics {
+public interface MobileObstacleStatisticsLogger extends MobileObstacleDataLogger {
 
 	public Point lastKnownPosition();
 

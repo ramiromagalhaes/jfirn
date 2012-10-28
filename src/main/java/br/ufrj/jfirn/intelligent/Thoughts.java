@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.Robot;
 
 /**
  * This class represents what are an intelligent particle's thoughts and plans.
@@ -35,7 +36,7 @@ public class Thoughts {
 	/**
 	 * Stored data about other particles and obstacles.
 	 */
-	private final Map<Integer, MovementStatistics> stats = new HashMap<>();
+	private final Map<Robot, MobileObstacleStatisticsLogger> stats = new HashMap<>();
 
 	/**
 	 * The target points of interest in the simulation area to where we want to go.
@@ -43,7 +44,7 @@ public class Thoughts {
 	private final Deque<Point> targets = new ArrayDeque<>();
 
 	/**
-	 * Known forecast collision.
+	 * Known collision forecast.
 	 */
 	private final List<Collision> collisions = new ArrayList<>();
 
@@ -61,14 +62,19 @@ public class Thoughts {
 	/**
 	 * Create an instance from an {@link IntelligentRobot} real data.
 	 */
-	public Thoughts(IntelligentRobot robot) {
+	public Thoughts(IntelligentRobot robot, Map<Robot, MobileObstacleStatisticsLogger> stats, Deque<Point> targets, List<Collision> collisions) {
+		//TODO find a nice way to set or preserve this data
 		this.x = robot.position().x();
-		this.y = robot.position().x();
+		this.y = robot.position().y();
 		this.direction = robot.direction();
 		this.speed = robot.speed();
+
+		this.stats.putAll(stats);
+		this.targets.addAll(targets);
+		this.collisions.addAll(collisions);
 	}
 
-	public Map<Integer, MovementStatistics> knownObstacles() {
+	public Map<Robot, MobileObstacleStatisticsLogger> knownObstacles() {
 		return stats;
 	}
 

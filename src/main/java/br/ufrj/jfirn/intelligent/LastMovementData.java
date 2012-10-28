@@ -10,7 +10,7 @@ import br.ufrj.jfirn.common.Point;
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-public class LastMovementData implements ParticleDataLogger, MobileObstacleStatistics {
+public class LastMovementData implements MobileObstacleDataLogger, MobileObstacleStatisticsLogger {
 
 	private Point lastPosition;
 
