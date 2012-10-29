@@ -126,9 +126,9 @@ public class BasicRobot implements Robot {
 
 	@Override
 	public String toString() {
-		//Sample: Particle 12 [x: 100, y: 1000, speed: 10, direction: 5]
+		//Sample: Robot 12 [x: 100, y: 1000, speed: 10, direction: 5]
 		return new StringBuilder()
-			.append( "Particle " )
+			.append( "Robot " )
 			.append( hashCode() )
 			.append( " [x: " )
 			.append( x )

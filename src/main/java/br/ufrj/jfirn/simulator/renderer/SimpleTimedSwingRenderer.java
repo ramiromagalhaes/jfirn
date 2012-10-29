@@ -30,7 +30,7 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 
 	private final JFrame frame;
 	private final JSlider tickSelector;
-	private List<List<ParticleData>> robotData = new ArrayList<>(0);
+	private List<List<RobotData>> robotData = new ArrayList<>(0);
 	private int currentTick;
 	private int tickToDisplay = 0;
 
@@ -56,12 +56,12 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 	@Override
 	public void draw(Robot robot) {
 		if (currentTick >= robotData.size()) {
-			robotData.add(new ArrayList<ParticleData>());
+			robotData.add(new ArrayList<RobotData>());
 			tickSelector.setMaximum(currentTick);
 		}
 
 		robotData.get(currentTick).add(
-			new ParticleData(robot.position(), robot.hashCode())
+			new RobotData(robot.position(), robot.hashCode())
 		);
 
 	}
@@ -76,11 +76,11 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 		frame.setVisible(true);
 	}
 
-	private static class ParticleData {
+	private static class RobotData {
 		public final Point position;
 		public final int hashCode;
 
-		public ParticleData(final Point position, final int hashCode) {
+		public RobotData(final Point position, final int hashCode) {
 			this.position = new Point(position.x(), AREA_HEIGHT - position.y());
 			this.hashCode = hashCode;
 		}
@@ -105,7 +105,7 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 			final Image image = new BufferedImage(1024, AREA_HEIGHT, BufferedImage.TYPE_INT_BGR);
 			final Graphics g = image.getGraphics();
 
-			for (ParticleData data : robotData.get(tickToDisplay)) {
+			for (RobotData data : robotData.get(tickToDisplay)) {
 				g.setColor(ColorPaleteForRenderers.getColor(data.hashCode));
 				g.fillOval((int) data.position.x(), (int) data.position.y(), 8, 8);
 			}

@@ -26,7 +26,7 @@ public class WriterRenderer implements SimulationRenderer {
 	//TODO improve this class's algorithm and data structure
 
 	private int currentTick = 0;
-	private Map<Robot, List<ParticleData>> robotData = new HashMap<>();
+	private Map<Robot, List<RobotData>> robotData = new HashMap<>();
 
 	public WriterRenderer(Writer w) {
 		this.writer = w;
@@ -35,12 +35,12 @@ public class WriterRenderer implements SimulationRenderer {
 	@Override
 	public void draw(Robot robot) {
 		if ( !robotData.containsKey(robot) ) {
-			List<ParticleData> newList = new ArrayList<>(currentTick);
+			List<RobotData> newList = new ArrayList<>(currentTick);
 			robotData.put(robot, newList);
 		}
 
 		robotData.get(robot).add(currentTick,
-			new ParticleData(
+			new RobotData(
 				robot.position(),
 				robot.directionDegrees(),
 				robot.speed()
@@ -60,7 +60,7 @@ public class WriterRenderer implements SimulationRenderer {
 
 			for (int i = 0; i < currentTick; i++) {
 				for (Robot robot : robots) {
-					final ParticleData d = robotData.get( robot ).get(i);
+					final RobotData d = robotData.get( robot ).get(i);
 
 					d.writeData(writer);
 				}
@@ -74,7 +74,7 @@ public class WriterRenderer implements SimulationRenderer {
 		}
 	}
 
-	private static final class ParticleData {
+	private static final class RobotData {
 		public final Point position;
 		public final double direction;
 		public final double speed;
@@ -86,7 +86,7 @@ public class WriterRenderer implements SimulationRenderer {
 			fmt = new DecimalFormat("###.###", otherSymbols);
 		}
 
-		public ParticleData(Point position, double direction, double speed) {
+		public RobotData(Point position, double direction, double speed) {
 			this.position = position;
 			this.direction = direction;
 			this.speed = speed;
