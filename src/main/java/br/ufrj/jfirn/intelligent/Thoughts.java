@@ -1,5 +1,6 @@
 package br.ufrj.jfirn.intelligent;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.Robot;
 
 /**
  * This class represents what are an intelligent particle's thoughts and plans.
@@ -16,10 +16,13 @@ import br.ufrj.jfirn.common.Robot;
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-public class Thoughts {
+public class Thoughts implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
-	 * The position I think I'm at.
+	 * The position I think I'm at. It may be different from the real position
+	 * in case the sensors get noisy data.
 	 */
 	private double x, y; //TODO maybe we should store position as a Point.
 
@@ -36,17 +39,17 @@ public class Thoughts {
 	/**
 	 * Stored data about other particles and obstacles.
 	 */
-	private final Map<Robot, MobileObstacleStatisticsLogger> stats = new HashMap<>();
+	private Map<Integer, MobileObstacleStatisticsLogger> stats = new HashMap<>();
 
 	/**
 	 * The target points of interest in the simulation area to where we want to go.
 	 */
-	private final Deque<Point> targets = new ArrayDeque<>();
+	private Deque<Point> targets = new ArrayDeque<>();
 
 	/**
 	 * Known collision forecast.
 	 */
-	private final List<Collision> collisions = new ArrayList<>();
+	private List<Collision> collisions = new ArrayList<>();
 
 	/**
 	 * Create a zeroed instance of Thoughts. I think I'm the center of
@@ -62,19 +65,23 @@ public class Thoughts {
 	/**
 	 * Create an instance from an {@link IntelligentRobot} real data.
 	 */
-	public Thoughts(IntelligentRobot robot, Map<Robot, MobileObstacleStatisticsLogger> stats, Deque<Point> targets, List<Collision> collisions) {
+	public Thoughts(IntelligentRobot robot, Map<Integer, MobileObstacleStatisticsLogger> stats, Deque<Point> targets, List<Collision> collisions) {
 		//TODO find a nice way to set or preserve this data
 		this.x = robot.position().x();
 		this.y = robot.position().y();
 		this.direction = robot.direction();
 		this.speed = robot.speed();
 
-		this.stats.putAll(stats);
-		this.targets.addAll(targets);
-		this.collisions.addAll(collisions);
+//		this.stats.putAll(stats);
+//		this.targets.addAll(targets);
+//		this.collisions.addAll(collisions);
+
+		this.stats = stats;
+		this.targets = targets;
+		this.collisions = collisions;
 	}
 
-	public Map<Robot, MobileObstacleStatisticsLogger> knownObstacles() {
+	public Map<Integer, MobileObstacleStatisticsLogger> knownObstacles() {
 		return stats;
 	}
 

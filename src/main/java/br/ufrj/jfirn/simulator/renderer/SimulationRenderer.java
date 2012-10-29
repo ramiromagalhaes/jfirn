@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.simulator;
+package br.ufrj.jfirn.simulator.renderer;
 
 import br.ufrj.jfirn.common.Robot;
 

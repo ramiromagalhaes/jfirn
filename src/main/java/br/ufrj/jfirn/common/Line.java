@@ -39,18 +39,17 @@ public class Line {
 				FastMath.max(line.p1.y, line.p2.y) >= FastMath.min(p1.y, p2.y))) {
 			return false;
 		} else {
-
-		// Tests if the points of the testing line are above or below the other. If both are above or below the lines doesn't intersect.
-		double z1 = ((line.p1.x - p1.x) * (p2.y - p1.y)) - ((line.p1.y - p1.y) * (p2.x - p1.x));
-		double z2 = ((line.p2.x - p1.x) * (p2.y - p1.y)) - ((line.p2.y - p1.y) * (p2.x - p1.x));
-		double s1 = FastMath.signum(z1);
-		double s2 = FastMath.signum(z2);
-
-		//TODO This check works with doubles?
-		if ((s1 == 0 || s2 == 0) || (s1 != s2))
-			return true;
-		else
-			return false;
+			// Tests if the points of the testing line are above or below the other. If both are above or below the lines doesn't intersect.
+			double z1 = ((line.p1.x - p1.x) * (p2.y - p1.y)) - ((line.p1.y - p1.y) * (p2.x - p1.x));
+			double z2 = ((line.p2.x - p1.x) * (p2.y - p1.y)) - ((line.p2.y - p1.y) * (p2.x - p1.x));
+			double s1 = FastMath.signum(z1);
+			double s2 = FastMath.signum(z2);
+	
+			if ((s1 == 0 || s2 == 0) || (s1 != s2)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 }

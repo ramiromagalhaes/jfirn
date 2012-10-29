@@ -14,11 +14,15 @@ import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.IntelligentRobot;
 import br.ufrj.jfirn.intelligent.sensors.Eye;
+import br.ufrj.jfirn.intelligent.sensors.RobotData;
 import br.ufrj.jfirn.intelligent.sensors.SightEvent;
 import br.ufrj.jfirn.mobileObstacle.CrazyRobot;
 import br.ufrj.jfirn.mobileObstacle.RandomWalkerRobot;
 import br.ufrj.jfirn.mobileObstacle.SineRobot;
 import br.ufrj.jfirn.mobileObstacle.SquareRobot;
+import br.ufrj.jfirn.simulator.renderer.SimpleSwingRenderer;
+import br.ufrj.jfirn.simulator.renderer.SimpleTimedSwingRenderer;
+import br.ufrj.jfirn.simulator.renderer.SimulationRenderer;
 
 
 /**
@@ -30,7 +34,7 @@ public class Engine {
 	private static final Logger logger = LoggerFactory.getLogger(Engine.class);
 
 	private final int iterations = 200;
-	private final Set<Robot> particles = new HashSet<>();
+	private final Set<Robot> robots = new HashSet<>();
 	private final Set<Eye> eyes = new HashSet<>();
 	private final List<SimulationRenderer> renderers = new ArrayList<>();
 
@@ -65,17 +69,19 @@ public class Engine {
 	private void sense() {
 		//NOTE: sensing and particle collision should both be solved efficiently with a collision detection algorithm
 		for(Eye eye : eyes) {
-			final Set<Robot> seenParticles = new HashSet<>();
-			for(Robot p : particles) {
+			final Set<RobotData> seenRobots = new HashSet<>();
+			for(Robot p : robots) {
 				if ( eye.sees(p) ) {
-					seenParticles.add(p);
+					seenRobots.add(
+						new RobotData(p.hashCode(), p.position(), p.speed(), p.direction())
+					);
 				}
 			}
-			if (!seenParticles.isEmpty()) {
+			if (!seenRobots.isEmpty()) {
 				eye.onSight(new SightEvent() {
 					@Override
-					public Set<Robot> getParticlesSighted() {
-						return seenParticles;
+					public Set<RobotData> getMobileObstaclesSighted() {
+						return seenRobots;
 					}
 				});
 			}
@@ -83,7 +89,7 @@ public class Engine {
 	}
 
 	private void move() {
-		for (Robot particle : this.particles) {
+		for (Robot particle : this.robots) {
 			particle.move();
 		}
 	}
@@ -93,7 +99,7 @@ public class Engine {
 	 */
 	private void render() {
 		if (!renderers.isEmpty()) {
-			for (Robot particle : this.particles) {
+			for (Robot particle : this.robots) {
 				for (SimulationRenderer renderer : renderers) {
 					renderer.draw(particle);
 				}
@@ -111,13 +117,13 @@ public class Engine {
 			new Point(400, 100), new Point(200, 400), new Point(300, 450), new Point(200, 200) //targets
 		);
 		e.eyes.add(new Eye(200, p));
-		e.particles.add( p );
+		e.robots.add( p );
 
-		e.particles.add( new BasicRobot       (185, 175, 0, 5) );
-		e.particles.add( new RandomWalkerRobot(300, 300, 0, 5) );
-		e.particles.add( new SineRobot        (535, 100, Robot.UP, 5) );
-		e.particles.add( new CrazyRobot       (250, 375, 0, 5) );
-		e.particles.add( new SquareRobot      (300, 425, Robot.UP, 5) );
+		e.robots.add( new BasicRobot       (185, 175, 0, 5) );
+		e.robots.add( new RandomWalkerRobot(300, 300, 0, 5) );
+		e.robots.add( new SineRobot        (535, 100, Robot.UP, 5) );
+		e.robots.add( new CrazyRobot       (250, 375, 0, 5) );
+		e.robots.add( new SquareRobot      (300, 425, Robot.UP, 5) );
 
 		e.simulate();
 		logger.debug(p.toString());

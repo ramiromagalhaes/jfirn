@@ -6,18 +6,23 @@ import java.util.List;
 
 import br.ufrj.jfirn.intelligent.Thoughts;
 
-public class ChainOfEvaluationsImplementation implements ChainOfEvaluations {
+public class ChainOfEvaluationsImplementation implements ChainOfEvaluations, ThoughtProcesor {
 
 	private final List<Evaluator> evaluators = new LinkedList<>();
 	private Iterator<Evaluator> iterator;
 
 	public ChainOfEvaluationsImplementation() {
+		evaluators.add(new ImmediateDangerEvaluator());
+		evaluators.add(new NextTargetEvaluator());
 		evaluators.add(new QuickCollisionEvaluator());
+		evaluators.add(new CollisionProbabilityEvaluator());
 	}
 
 	/**
-	 * Evaluate my thoughts and give me instructions about what I should do next.
+	 * 
+	 * @see br.ufrj.jfirn.intelligent.evaluation.ThoughtProcesor#evaluate(br.ufrj.jfirn.intelligent.Thoughts)
 	 */
+	@Override
 	public Instruction evaluate(Thoughts thoughts) {
 		iterator = evaluators.iterator();
 		Instruction instruction = new Instruction();

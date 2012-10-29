@@ -59,7 +59,7 @@ public class BasicRobot implements Robot {
 	}
 
 	@Override
-	public final BasicRobot speed(final double speed) {
+	public BasicRobot speed(final double speed) {
 		this.speed = speed;
 		return this;
 	}
@@ -70,7 +70,7 @@ public class BasicRobot implements Robot {
 	}
 
 	@Override
-	public final BasicRobot direction(final double direction) {
+	public BasicRobot direction(final double direction) {
 		this.direction = direction;
 		return this;
 	}

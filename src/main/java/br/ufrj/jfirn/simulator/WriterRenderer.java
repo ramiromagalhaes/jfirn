@@ -12,6 +12,7 @@ import java.util.Set;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.simulator.renderer.SimulationRenderer;
 
 /**
  * Logs objects to a Writer.

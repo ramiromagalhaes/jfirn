@@ -6,6 +6,8 @@ import org.apache.commons.math3.util.FastMath;
 public interface Robot {
 
 	public static final double STOPPED = 0;
+	public static final double MAX_SPEED = Double.POSITIVE_INFINITY;
+
 	public static final double RIGHT = 0,
 	                           UP = FastMath.PI / 2d,
 	    	                   LEFT = FastMath.PI,

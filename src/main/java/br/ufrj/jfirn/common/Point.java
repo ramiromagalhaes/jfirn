@@ -42,6 +42,18 @@ public class Point {
 		);
 	}
 
+	/**
+	 * Returns the angle a line would make to a horizontal
+	 * line should it pass through this and p points. Zero
+	 * points to the {@link Robot#RIGHT}.
+	 */
+	public double directionTo(final Point p) {
+		return FastMath.atan2(
+			this.y - p.y,
+			this.x - p.x
+		);
+	}
+
 	@Override
 	public String toString() {
 		return new StringBuilder()
@@ -51,6 +63,21 @@ public class Point {
 			.append(y)
 			.append("]")
 			.toString();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Point)) {
+			return false;
+		}
+
+		final Point other = (Point)obj;
+		return this.x == other.x && this.y == other.y;
+	}
+
+	@Override
+	public int hashCode() {
+		return (int)(13 * this.x + 7 * this.y);
 	}
 
 	/**

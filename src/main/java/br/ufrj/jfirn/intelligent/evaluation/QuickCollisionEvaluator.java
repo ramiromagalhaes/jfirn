@@ -8,6 +8,7 @@ import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.intelligent.Collision;
 import br.ufrj.jfirn.intelligent.MobileObstacleStatisticsLogger;
 import br.ufrj.jfirn.intelligent.Thoughts;
+import br.ufrj.jfirn.intelligent.Trajectory;
 
 public class QuickCollisionEvaluator implements Evaluator {
 	private static final Logger logger = LoggerFactory.getLogger(QuickCollisionEvaluator.class);
@@ -41,16 +42,6 @@ public class QuickCollisionEvaluator implements Evaluator {
 			}
 		}
 
-		final Point currentTarget = thoughts.targets().peek();
-		if (currentTarget != null) {
-			instruction.newDirection =
-				FastMath.atan2(
-					currentTarget.y() - myPosition.y(),
-					currentTarget.x() - myPosition.x()
-				);
-			instruction.newSpeed = 5;
-		}
-
 		chain.nextEvaluator(thoughts, instruction, chain); //keep thinking
 	}
 
@@ -59,7 +50,8 @@ public class QuickCollisionEvaluator implements Evaluator {
 		//TODO I fear this will perform poorly for something supposed to be fast...
 
 		//here we forecast if a collision may happen
-		final Point collisionPosition = intersection(myPosition, myDirection, otherPosition, otherDirection);
+		final Point collisionPosition =
+			intersection(myPosition, myDirection, otherPosition, otherDirection);
 		if (collisionPosition == null) { //if there is no intersection, then there is no collision
 			return null;
 		}
@@ -89,7 +81,6 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 		//TODO set the objectID
 		return new Collision(0, collisionPosition, time);
-
 	}
 
 
@@ -97,29 +88,15 @@ public class QuickCollisionEvaluator implements Evaluator {
 	 * The particle paths intersect at some point?
 	 */
 	private Point intersection(Point myPosition, double myDirection, Point otherPosition, double otherDirection) {
-		if (myDirection == otherDirection) { //TODO verify: this does not seem to be the right way to check for intersections
-			return null; //no intersection or infinite intersecting points. In both cases, we say there is no collision.
-		}
-
-		//intersection of 2 linear equations. The 'me' particle is y = alpha * x + beta
-		final double alpha = FastMath.tan(myDirection);
-		final double beta = myPosition.y() - alpha * myPosition.x();
-
-		//The other particle is k = m * x + b
-		final double m = FastMath.tan(otherDirection);
-		final double b = otherPosition.y() - m * otherPosition.x();
-
-		//the intersection is then...
-		final double x = (b - beta) / (alpha - m);
-		final double y = FastMath.tan(myDirection) * x + beta;
-
-		return new Point(x, y);
+		final Trajectory t1 = new Trajectory(myDirection, myPosition);
+		final Trajectory t2 = new Trajectory(otherDirection, otherPosition);
+		return t1.intersect(t2);
 	}
 
 
 
 	/**
-	 * How much time a particle at position with speed would take to reach destination?
+	 * How much time a robot at position with speed would take to reach destination?
 	 * Ignores the direction because I assume I'm going straight towards the destination.
 	 * @see #isTheRightDirection(Point, double, Point)
 	 */
@@ -128,7 +105,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 	}
 
 	/**
-	 * Is the particle going towards the collision or has it passed the destination already?
+	 * Is the robot going towards the collision or has it passed the destination already?
 	 * true if it is going in the right direction.
 	 */
 	public static boolean isTheRightDirection(Point position, double direction, Point destination) {

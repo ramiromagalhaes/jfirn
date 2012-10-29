@@ -1,68 +1,55 @@
 package br.ufrj.jfirn.intelligent;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.ufrj.jfirn.common.BasicRobot;
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.evaluation.ChainOfEvaluationsImplementation;
+import br.ufrj.jfirn.intelligent.evaluation.ThoughtProcesor;
 import br.ufrj.jfirn.intelligent.evaluation.Evaluator;
+import br.ufrj.jfirn.intelligent.sensors.RobotData;
 import br.ufrj.jfirn.intelligent.sensors.Sight;
 import br.ufrj.jfirn.intelligent.sensors.SightEvent;
 
 public class IntelligentRobot extends BasicRobot implements Sight {
 
 	private static final double DEFAULT_MAX_SPEED = 5;
-	private static final Logger logger = LoggerFactory.getLogger(IntelligentRobot.class);
 
 	/**
-	 * True when someone is way too close to me and I should fear for my safety.
+	 * Holds an instance of the class that defines the thought process
+	 * of this IntelligentRobot.
 	 */
-	private boolean endangered;
+	private ThoughtProcesor evaluator = new ChainOfEvaluationsImplementation();
 
 	/**
-	 * Stored data about other particles and obstacles.
+	 * What this robot is thinking.
 	 */
-	private Map<Robot, MobileObstacleStatisticsLogger> aboutObstacles = new HashMap<>();
-
-	/**
-	 * The target points in the simulation area to where I should move.
-	 */
-	private Deque<Point> targets = new ArrayDeque<>();
-
-	/**
-	 * Known collision forecast.
-	 */
-	private final List<Collision> collisions = new ArrayList<>();
-
-	/**
-	 * Decides what this particle should do in terms of speed and direction.
-	 */
-	private ChainOfEvaluationsImplementation evaluator = new ChainOfEvaluationsImplementation();
-
+	private Thoughts thoughts = new Thoughts();
 
 
 	public IntelligentRobot(Point... targets) {
 		super();
-		this.targets.addAll(
+		this.thoughts.targets().addAll(
 			Arrays.asList(targets)
 		);
 	}
 
 	public IntelligentRobot(double x, double y, double direction, double speed, Point... targets) {
 		super(x, y, direction, speed);
-		this.targets.addAll(
+		this.thoughts.targets().addAll(
 			Arrays.asList(targets)
 		);
+	}
+
+	@Override
+	public BasicRobot speed(double speed) {
+		if (speed > DEFAULT_MAX_SPEED) {
+			speed = DEFAULT_MAX_SPEED;
+		}
+		return super.speed(speed);
 	}
 
 	/**
@@ -72,31 +59,23 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 	 */
 	@Override
 	public void onSight(SightEvent e) {
-		if (logger.isDebugEnabled()) {
-			logger.debug(this + " sees: " + e.getParticlesSighted());
+		final Map<Integer, MobileObstacleStatisticsLogger> knownObstacles =
+			thoughts.knownObstacles();
+
+		//remove data about objects I can't see anymore
+		List<Integer> ids = new LinkedList<>();
+		for (RobotData data : e.getMobileObstaclesSighted()) {
+			ids.add(data.id);
 		}
+		knownObstacles.keySet().retainAll(ids);
 
-		//Someone I see is endangering me?
-		this.endangered = false; //assume not...
-		for (Robot p : e.getParticlesSighted()) { //...but check for it
-			if ( this.isInDangerRadius(p) ) {
-				this.endangered = true;
-				if (logger.isDebugEnabled()) {
-					logger.debug(this + " is endangered by " + p);
-				}
-				break;
-			}
-		}
-
-		//I'll only keep statistics about objects I see
-		aboutObstacles.keySet().retainAll(e.getParticlesSighted());
-
-		for (Robot p : e.getParticlesSighted()) {
-			if ( !aboutObstacles.containsKey(p) ) { //store data about new objects I see
-				aboutObstacles.put(p, new MovementStatistics(p.hashCode()));
+		//store data about new objects I see
+		for (RobotData data : e.getMobileObstaclesSighted()) {
+			if ( !knownObstacles.containsKey(data.id) ) {
+				knownObstacles.put(data.id, new MovementStatistics(data.id));
 			}
 
-			aboutObstacles.get(p).addEntry(p.position(), p.speed(), p.direction());
+			knownObstacles.get(data.id).addEntry(data.position, data.speed, data.direction);
 		}
 	}
 
@@ -113,50 +92,15 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 	 */
 	@Override
 	public void move() {
-		//First things first: am I in danger?
-		if (endangered) {
-			this.speed(STOPPED);
-		} else {
-			this.speed(DEFAULT_MAX_SPEED);
-		}
+		//first we update our know position.
+		thoughts.myPosition(this.position());
+		thoughts.myDirection(this.direction());
+		thoughts.mySpeed(this.speed());
 
-		//Do I have any additional targets to go after?
-		if (targets.isEmpty()) {
-			this.speed(STOPPED);
-			//TODO Should I fire some event to the simulation saying I'm done?
-			return;
-		}
-
-		final Point currentTarget = targets.peek(); //This is where should I move to now.
-
-		//Did I arrive somewhere I wanted to?
-		if (this.isInReachRadius(currentTarget)) {
-			logger.debug("Arrived at target " + currentTarget + ". My current position is " + this.position() + ".");
-			targets.pop();
-		}
-
-		//the evaluator thinks about the robot current situation and sets its direction and speed
-		this.evaluator.evaluate(
-			new Thoughts(this, this.aboutObstacles, this.targets, collisions)
-		).apply(this);
+		//then the evaluator thinks about the robot current situation and sets its direction and speed
+		this.evaluator.evaluate(thoughts).apply(this);
 		
 		super.move();
-	}
-
-	/**
-	 * Used to verify if the particle is in danger.
-	 */
-	private final static double DANGER_RADIUS = 10;
-	private boolean isInDangerRadius(Robot p) {
-		return this.position().distanceTo(p.position()) <= DANGER_RADIUS;
-	}
-
-	/**
-	 * Used to verify if I'm close enough to a target.
-	 */
-	private final static double REACH_RADIUS = 10;
-	private boolean isInReachRadius(Point p) {
-		return this.position().distanceTo(p) <= REACH_RADIUS;
 	}
 
 }
