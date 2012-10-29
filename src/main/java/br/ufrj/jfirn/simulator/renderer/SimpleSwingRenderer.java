@@ -28,11 +28,11 @@ public class SimpleSwingRenderer implements SimulationRenderer {
 	}
 
 	@Override
-	public void draw(Robot particle) {
+	public void draw(Robot robot) {
 		final Graphics g = image.getGraphics();
 
-		g.setColor(ColorPaleteForRenderers.getColor(particle.hashCode()));
-		g.fillOval((int)particle.x(), AREA_HEIGHT - (int)particle.y(), 8, 8);
+		g.setColor(ColorPaleteForRenderers.getColor(robot.hashCode()));
+		g.fillOval((int)robot.x(), AREA_HEIGHT - (int)robot.y(), 8, 8);
 		frame.repaint();
 	}
 

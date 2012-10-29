@@ -31,7 +31,7 @@ public class ImmediateDangerEvaluator implements Evaluator {
 	}
 
 	/**
-	 * Used to verify if the particle is in danger.
+	 * Used to verify if the robot is in danger.
 	 */
 	private final static double DANGER_RADIUS = 10;
 	private boolean isInDangerRadius(Point myPosition, Point otherPosition) {

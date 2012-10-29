@@ -84,9 +84,9 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 	 * 
 	 * The following steps are executed:
 	 * <ol>
-	 * <li>Checks if this particle is way too close to someone. If it is, stop.</li>
-	 * <li>Checks if this particle has anywhere to go. If it doesn't, stop.</li>
-	 * <li>Checks if this particle arrived somewhere it was supposed to go. Gets the next place.</li>
+	 * <li>Checks if this robot is way too close to someone. If it is, stop.</li>
+	 * <li>Checks if this robot has anywhere to go. If it doesn't, stop.</li>
+	 * <li>Checks if this robot arrived somewhere it was supposed to go. Gets the next place.</li>
 	 * <li>Thinks about how it is going to get there and sets the course via an implementation of {@link Evaluator}.</li>
 	 * </ol>
 	 */

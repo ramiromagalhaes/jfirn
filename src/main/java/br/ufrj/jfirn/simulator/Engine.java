@@ -68,7 +68,7 @@ public class Engine {
 	}
 
 	private void sense() {
-		//NOTE: sensing and particle collision should both be solved efficiently with a collision detection algorithm
+		//NOTE: sensing and robot collision should both be solved efficiently with a collision detection algorithm
 		for(Eye eye : eyes) {
 			final Set<RobotData> seenRobots = new HashSet<>();
 			for(Robot p : robots) {
@@ -90,8 +90,8 @@ public class Engine {
 	}
 
 	private void move() {
-		for (Robot particle : this.robots) {
-			particle.move();
+		for (Robot robot : this.robots) {
+			robot.move();
 		}
 	}
 
@@ -100,9 +100,9 @@ public class Engine {
 	 */
 	private void render() {
 		if (!renderers.isEmpty()) {
-			for (Robot particle : this.robots) {
+			for (Robot robot : this.robots) {
 				for (SimulationRenderer renderer : renderers) {
-					renderer.draw(particle);
+					renderer.draw(robot);
 				}
 			}
 			for (SimulationRenderer renderer : renderers) {

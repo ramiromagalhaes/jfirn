@@ -4,7 +4,7 @@ import br.ufrj.jfirn.intelligent.Thoughts;
 
 /**
  * Classes implementing this interface should contain the algorithm used to decide
- * what the particle should do considering it's current situation.
+ * what the robot should do considering it's current situation.
  * 
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *

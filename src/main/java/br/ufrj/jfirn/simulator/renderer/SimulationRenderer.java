@@ -10,7 +10,7 @@ import br.ufrj.jfirn.common.Robot;
  */
 public interface SimulationRenderer {
 
-	public void draw(Robot particle);
+	public void draw(Robot robot);
 
 	/**
 	 * Advances the time tick. Works with simulation renderers that knows how to handle time.

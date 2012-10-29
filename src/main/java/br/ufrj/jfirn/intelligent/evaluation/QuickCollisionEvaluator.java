@@ -59,17 +59,17 @@ public class QuickCollisionEvaluator implements Evaluator {
 		//now, we calculate when it's going to happen...
 
 		//but first, will it really happen?
-		if ( //if any particle has passed the evaluated collision position, then there will be no collision.
+		if ( //if any robot has passed the evaluated collision position, then there will be no collision.
 			!isTheRightDirection(myPosition, myDirection, collisionPosition) ||
 			!isTheRightDirection(otherPosition, otherDirection, collisionPosition) ) {
 			return null;
 		}
 
-		//when each particle will reach the collision position?
+		//when each robot will reach the collision position?
 		final double meTime = timeToReach(myPosition, mySpeed, collisionPosition);
 		final double otherTime = timeToReach(otherPosition, otherSpeed, collisionPosition);
 
-		//I'm considering there will be a collision if the time between particles to arrive at the collision position are almost the same.
+		//I'm considering there will be a collision if the time between robots to arrive at the collision position are almost the same.
 		//TODO Improve this 'if', maybe considering objects direction, speed, size, etc.
 		//TODO This approach may be an oversimplification but I think I'm kinda building a fuzzy method to evaluate the collision.
 		if (FastMath.abs(meTime - otherTime) > 6d) {
@@ -85,7 +85,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 
 	/**
-	 * The particle paths intersect at some point?
+	 * The robot paths intersect at some point?
 	 */
 	private Point intersection(Point myPosition, double myDirection, Point otherPosition, double otherDirection) {
 		final Trajectory t1 = new Trajectory(myDirection, myPosition);

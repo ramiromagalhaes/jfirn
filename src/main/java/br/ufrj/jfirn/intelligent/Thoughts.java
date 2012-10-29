@@ -11,7 +11,7 @@ import java.util.Map;
 import br.ufrj.jfirn.common.Point;
 
 /**
- * This class represents what are an intelligent particle's thoughts and plans.
+ * This class represents what are an intelligent robot's thoughts and plans.
  * 
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
@@ -37,7 +37,7 @@ public class Thoughts implements Serializable {
 	private boolean endangered = false;
 
 	/**
-	 * Stored data about other particles and obstacles.
+	 * Stored data about other robots and obstacles.
 	 */
 	private Map<Integer, MobileObstacleStatisticsLogger> stats = new HashMap<>();
 

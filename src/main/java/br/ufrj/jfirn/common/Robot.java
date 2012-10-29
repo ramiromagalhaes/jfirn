@@ -70,22 +70,22 @@ public interface Robot {
 	public Robot directionDegrees(double direction);
 
 	/**
-	 * Considering the direction this particle is facing, return this particle
+	 * Considering the direction this robot is facing, return this robot
 	 * speed in respect to the X axis (horizontal).
 	 */
 	public double xSpeed();
 
 	/**
-	 * Considering the direction this particle is facing, return this particle
+	 * Considering the direction this robot is facing, return this robot
 	 * speed in respect to the Y axis (vertical).
 	 */
 	public double ySpeed();
 
 	/**
-	 * Sets a new x and y considering the particle's current x, y, speed and direction.
+	 * Sets a new x and y considering the robot's current x, y, speed and direction.
 	 */
 	public void move(); //TODO reconsider what this method should do. Maybe only the simulator
-	                    //should set the particle's position and the particle should only think
+	                    //should set the robot's position and the robot should only think
 	                    //about its next actions. The method signature below could be used then.
 	                    //public Status think(final double x, final double y); 
 

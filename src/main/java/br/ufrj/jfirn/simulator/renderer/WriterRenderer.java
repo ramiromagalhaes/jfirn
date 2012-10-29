@@ -26,24 +26,24 @@ public class WriterRenderer implements SimulationRenderer {
 	//TODO improve this class's algorithm and data structure
 
 	private int currentTick = 0;
-	private Map<Robot, List<ParticleData>> particleData = new HashMap<>();
+	private Map<Robot, List<ParticleData>> robotData = new HashMap<>();
 
 	public WriterRenderer(Writer w) {
 		this.writer = w;
 	}
 
 	@Override
-	public void draw(Robot particle) {
-		if ( !particleData.containsKey(particle) ) {
+	public void draw(Robot robot) {
+		if ( !robotData.containsKey(robot) ) {
 			List<ParticleData> newList = new ArrayList<>(currentTick);
-			particleData.put(particle, newList);
+			robotData.put(robot, newList);
 		}
 
-		particleData.get(particle).add(currentTick,
+		robotData.get(robot).add(currentTick,
 			new ParticleData(
-				particle.position(),
-				particle.directionDegrees(),
-				particle.speed()
+				robot.position(),
+				robot.directionDegrees(),
+				robot.speed()
 			)
 		);
 	}
@@ -56,11 +56,11 @@ public class WriterRenderer implements SimulationRenderer {
 	@Override
 	public void done() {
 		try {
-			final Set<Robot> particles = particleData.keySet();
+			final Set<Robot> robots = robotData.keySet();
 
 			for (int i = 0; i < currentTick; i++) {
-				for (Robot particle : particles) {
-					final ParticleData d = particleData.get( particle ).get(i);
+				for (Robot robot : robots) {
+					final ParticleData d = robotData.get( robot ).get(i);
 
 					d.writeData(writer);
 				}

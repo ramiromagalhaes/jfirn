@@ -6,11 +6,11 @@ public class BasicRobot implements Robot {
 
 	private double x, y, speed, direction; //direction is in radians
 	private final int id;
-	private static int particleIdGenerator = 1;
+	private static int robotIdGenerator = 1;
 
 	{//this will be called prior to all constructors
 		synchronized (BasicRobot.class) { //TODO verify if this will really synchronize something
-			this.id = particleIdGenerator++;
+			this.id = robotIdGenerator++;
 		}
 	}
 
