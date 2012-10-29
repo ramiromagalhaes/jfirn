@@ -23,6 +23,7 @@ import br.ufrj.jfirn.mobileObstacle.SquareRobot;
 import br.ufrj.jfirn.simulator.renderer.SimpleSwingRenderer;
 import br.ufrj.jfirn.simulator.renderer.SimpleTimedSwingRenderer;
 import br.ufrj.jfirn.simulator.renderer.SimulationRenderer;
+import br.ufrj.jfirn.simulator.renderer.WriterRenderer;
 
 
 /**

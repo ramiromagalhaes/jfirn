@@ -1,4 +1,4 @@
-package br.ufrj.jfirn.simulator;
+package br.ufrj.jfirn.simulator.renderer;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -12,7 +12,6 @@ import java.util.Set;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
-import br.ufrj.jfirn.simulator.renderer.SimulationRenderer;
 
 /**
  * Logs objects to a Writer.
