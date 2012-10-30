@@ -32,10 +32,10 @@ public class Trajectory {
 		final double mean = stats.directionMean();
 		final double stdDeviation = FastMath.sqrt(stats.directionVariance());
 
-		final Trajectory[] trajectory = new Trajectory[3];
-		trajectory[0] = new Trajectory(mean - stdDeviation, lkp);
-		trajectory[1] = new Trajectory(mean               , lkp);
-		trajectory[2] = new Trajectory(mean + stdDeviation, lkp);
+		final Trajectory[] trajectory = new Trajectory[] {
+			new Trajectory(mean - stdDeviation, lkp),
+			new Trajectory(mean + stdDeviation, lkp)
+		};
 
 		return trajectory;
 	}
