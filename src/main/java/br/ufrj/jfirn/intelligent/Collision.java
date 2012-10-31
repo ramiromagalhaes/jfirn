@@ -8,7 +8,7 @@ public class Collision {
 	public final double time;
 	public double probability;
 
-	//TODO how I'm defining the intersection area? A circle? The effective collision area?
+	//TODO how I'm defining the collision area? A circle? The effective collision polygon?
 
 	public Collision(int withObjectId, Point position, double time) {
 		this.withObjectId = withObjectId;
@@ -24,7 +24,9 @@ public class Collision {
 			.append(position)
 			.append(" in ")
 			.append(time)
-			.append(" time units.")
+			.append(" time units with ")
+			.append(probability)
+			.append(" chance.")
 			.toString();
 	}
 }
