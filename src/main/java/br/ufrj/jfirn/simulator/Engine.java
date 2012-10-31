@@ -6,9 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.ufrj.jfirn.common.BasicRobot;
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
@@ -20,7 +17,6 @@ import br.ufrj.jfirn.mobileObstacle.CrazyRobot;
 import br.ufrj.jfirn.mobileObstacle.RandomWalkerRobot;
 import br.ufrj.jfirn.mobileObstacle.SineRobot;
 import br.ufrj.jfirn.mobileObstacle.SquareRobot;
-import br.ufrj.jfirn.simulator.renderer.SimpleSwingRenderer;
 import br.ufrj.jfirn.simulator.renderer.SimpleTimedSwingRenderer;
 import br.ufrj.jfirn.simulator.renderer.SimulationRenderer;
 import br.ufrj.jfirn.simulator.renderer.WriterRenderer;
@@ -32,15 +28,12 @@ import br.ufrj.jfirn.simulator.renderer.WriterRenderer;
  */
 public class Engine {
 
-	private static final Logger logger = LoggerFactory.getLogger(Engine.class);
-
 	private final int iterations = 200;
 	private final Set<Robot> robots = new HashSet<>();
 	private final Set<Eye> eyes = new HashSet<>();
 	private final List<SimulationRenderer> renderers = new ArrayList<>();
 
 	public Engine() {
-		this.renderers.add( new SimpleSwingRenderer() );
 		this.renderers.add( new SimpleTimedSwingRenderer() );
 		this.renderers.add( new WriterRenderer(new OutputStreamWriter(System.out)) );
 	}
@@ -114,11 +107,16 @@ public class Engine {
 	public static void main(String[] args) {
 		final Engine e = new Engine();
 
-		IntelligentRobot p = new IntelligentRobot (200, 200, 0, 5,
-			new Point(400, 100), new Point(200, 400), new Point(300, 450), new Point(200, 200) //targets
-		);
-		e.eyes.add(new Eye(200, p));
-		e.robots.add( p );
+		{ //TODO need to improve the IntelligentRobot registration process.
+			final IntelligentRobot p = new IntelligentRobot (200, 200, 0,
+				new Point(400, 100),
+				new Point(200, 400),
+				new Point(300, 450),
+				new Point(200, 200)
+			);
+			e.eyes.add(new Eye(400, p));
+			e.robots.add( p );
+		}
 
 		e.robots.add( new BasicRobot       (185, 175, 0, 5) );
 		e.robots.add( new RandomWalkerRobot(300, 300, 0, 5) );
@@ -127,6 +125,5 @@ public class Engine {
 		e.robots.add( new SquareRobot      (300, 425, Robot.UP, 5) );
 
 		e.simulate();
-		logger.debug(p.toString());
 	}
 }

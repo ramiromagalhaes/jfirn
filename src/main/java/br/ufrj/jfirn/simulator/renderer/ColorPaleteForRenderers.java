@@ -4,13 +4,11 @@ import java.awt.Color;
 
 final class ColorPaleteForRenderers {
 
-	//TODO we can still improve the color selection for the renderers
-
 	private static final Color[] colorArray = {
 		Color.orange, Color.blue,
 		Color.red, Color.green,
-		Color.yellow, Color.cyan,
-		Color.magenta, Color.pink
+		Color.darkGray, Color.magenta,
+		new Color(0x9c00ff), new Color(0x23707e)
 	};
 
 	public static final Color getColor(int id) {

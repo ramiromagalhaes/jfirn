@@ -31,13 +31,13 @@ public class SquareRobot extends BasicRobot {
 	public void move() {
 		if (sideCount == 3) {
 			if (step++ % (size + displacement) == 0) {
-				this.direction(this.direction() + FastMath.PI / 2);
+				this.direction(this.direction() + FastMath.PI / 2d);
 				sideCount = 0;
 				step = 0;
 			}
 		} else {
 			if (step++ % size == 0) {
-				this.direction(this.direction() + FastMath.PI / 2);
+				this.direction(this.direction() + FastMath.PI / 2d);
 				sideCount++;
 			}
 		}

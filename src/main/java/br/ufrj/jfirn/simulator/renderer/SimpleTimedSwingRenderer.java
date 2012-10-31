@@ -26,6 +26,7 @@ import br.ufrj.jfirn.common.Robot;
  */
 public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListener {
 
+	private static final int AREA_WIDTH = 1024;
 	private static final int AREA_HEIGHT = 768;
 
 	private final JFrame frame;
@@ -37,10 +38,8 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 	public SimpleTimedSwingRenderer() {
 		tickSelector = new JSlider(JSlider.HORIZONTAL);
 		tickSelector.setMinimum(0);
-		tickSelector.setMajorTickSpacing(50);
-		tickSelector.setMinorTickSpacing(10);
-		tickSelector.setPaintTicks(true);
-		tickSelector.setPaintLabels(true);
+		tickSelector.setPaintTicks(false);
+		tickSelector.setPaintLabels(false);
 		tickSelector.addChangeListener(this);
 
 		frame = new JFrame("Simulator");
@@ -61,7 +60,7 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 		}
 
 		robotData.get(currentTick).add(
-			new RobotData(robot.position(), robot.hashCode())
+			new RobotData(robot.position(), robot.direction(), robot.hashCode())
 		);
 
 	}
@@ -78,17 +77,19 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 
 	private static class RobotData {
 		public final Point position;
+		public final double direction;
 		public final int hashCode;
 
-		public RobotData(final Point position, final int hashCode) {
+		public RobotData(final Point position, final double direction, final int hashCode) {
 			this.position = new Point(position.x(), AREA_HEIGHT - position.y());
+			this.direction = direction;
 			this.hashCode = hashCode;
 		}
 	}
 
 	private class ThePane extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private final Dimension preferredSize = new Dimension(1024, AREA_HEIGHT);
+		private final Dimension preferredSize = new Dimension(AREA_WIDTH, AREA_HEIGHT);
 
 		public ThePane() {
 		}
@@ -102,15 +103,19 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 			super.paintComponent(componentGraphics);
 
 			//Draws the selected tickSelector situation
-			final Image image = new BufferedImage(1024, AREA_HEIGHT, BufferedImage.TYPE_INT_BGR);
+			final Image image = new BufferedImage(AREA_WIDTH, AREA_HEIGHT, BufferedImage.TYPE_INT_BGR);
 			final Graphics g = image.getGraphics();
+			g.setColor(Color.white);
+			g.fillRect(0, 0, AREA_WIDTH, AREA_HEIGHT);
 
 			for (RobotData data : robotData.get(tickToDisplay)) {
+				final Triangle t = new Triangle(data.position, data.direction);
 				g.setColor(ColorPaleteForRenderers.getColor(data.hashCode));
-				g.fillOval((int) data.position.x(), (int) data.position.y(), 8, 8);
+				g.fillPolygon(t.x, t.y, t.n);
+				//g.drawOval((int)data.position.x() - 5, (int)data.position.y() - 5, 10, 10);
 			}
 
-			componentGraphics.drawImage(image, 0, 0, 1024, AREA_HEIGHT, Color.WHITE, null);
+			componentGraphics.drawImage(image, 0, 0, AREA_WIDTH, AREA_HEIGHT, Color.WHITE, null);
 		}
 	}
 
