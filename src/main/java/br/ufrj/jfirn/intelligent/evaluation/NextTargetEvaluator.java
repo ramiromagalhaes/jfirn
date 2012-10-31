@@ -13,6 +13,7 @@ public class NextTargetEvaluator implements Evaluator {
 		if (thoughts.targets().isEmpty()) {
 			instruction.newSpeed = Robot.STOPPED;
 			//TODO Should I fire some event to the simulation saying I'm done?
+			//TODO How about logging these things? Maybe loggers should be used as debuggers.
 			return;
 		}
 
@@ -20,8 +21,6 @@ public class NextTargetEvaluator implements Evaluator {
 
 		//Did I arrive somewhere I wanted to?
 		if (isInReachRadius(thoughts.myPosition(), currentTarget)) {
-			//TODO Think about how I'm gonna log this.
-			//logger.debug("Arrived at target " + currentTarget + ". My current position is " + this.position() + ".");
 			thoughts.targets().pop();
 		}
 

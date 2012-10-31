@@ -24,7 +24,7 @@ public class Thoughts implements Serializable {
 	 * The position I think I'm at. It may be different from the real position
 	 * in case the sensors get noisy data.
 	 */
-	private double x, y; //TODO maybe we should store position as a Point.
+	private Point position;
 
 	/**
 	 * The direction and speed I think I'm going.
@@ -56,8 +56,7 @@ public class Thoughts implements Serializable {
 	 * the world.
 	 */
 	public Thoughts() {
-		this.x = 0;
-		this.y = 0;
+		this.position = new Point(0, 0);
 		this.direction = 0;
 		this.speed = 0;
 	}
@@ -65,16 +64,10 @@ public class Thoughts implements Serializable {
 	/**
 	 * Create an instance from an {@link IntelligentRobot} real data.
 	 */
-	public Thoughts(IntelligentRobot robot, Map<Integer, MobileObstacleStatisticsLogger> stats, Deque<Point> targets, List<Collision> collisions) {
-		//TODO find a nice way to set or preserve this data
-		this.x = robot.position().x();
-		this.y = robot.position().y();
+	public Thoughts(AbstractIntelligentRobot robot, Map<Integer, MobileObstacleStatisticsLogger> stats, Deque<Point> targets, List<Collision> collisions) {
+		this.position = robot.position();
 		this.direction = robot.direction();
 		this.speed = robot.speed();
-
-//		this.stats.putAll(stats);
-//		this.targets.addAll(targets);
-//		this.collisions.addAll(collisions);
 
 		this.stats = stats;
 		this.targets = targets;
@@ -102,7 +95,7 @@ public class Thoughts implements Serializable {
 	}
 
 	public Point myPosition() {
-		return new Point(x, y);
+		return position;
 	}
 
 	public double mySpeed() {
@@ -114,8 +107,7 @@ public class Thoughts implements Serializable {
 	}
 
 	public void myPosition(Point position) {
-		this.x = position.x();
-		this.y = position.y();
+		this.position = position;
 	}
 
 	public void mySpeed(double speed) {
