@@ -3,6 +3,7 @@ package br.ufrj.jfirn.intelligent;
 import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.intelligent.evaluation.RobotExtremePointsCalculator;
 
 public class Trajectory {
 
@@ -32,12 +33,38 @@ public class Trajectory {
 		final double mean = stats.directionMean();
 		final double stdDeviation = FastMath.sqrt(stats.directionVariance());
 
+		final Point[] points = RobotExtremePointsCalculator.makePoint(lkp, mean);
+
+		//TODO Both trajectories will be the same if the variance is 0. How we will work then? I think I'll need to consider this object's dimension
 		final Trajectory[] trajectory = new Trajectory[] {
-			new Trajectory(mean - stdDeviation, lkp),
-			new Trajectory(mean + stdDeviation, lkp)
+			new Trajectory(mean - stdDeviation, points[0]),
+			new Trajectory(mean + stdDeviation, points[1])
 		};
 
 		return trajectory;
+	}
+
+	@Override
+	public String toString() {
+		//sample Trajectory 2 x + 10
+		StringBuilder s = new StringBuilder()
+			.append("Trajectory ")
+			.append(alpha)
+			.append(" x ");
+
+		if (FastMath.signum(beta) == 0) {
+			return s.toString();
+		}
+
+		if (FastMath.signum(beta) > 0) {
+			return s.append("+ ")
+				.append(beta)
+				.toString();
+		} else {
+			return s.append("- ")
+				.append(beta)
+				.toString();
+		}
 	}
 
 }

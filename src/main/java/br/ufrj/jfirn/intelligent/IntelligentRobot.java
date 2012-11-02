@@ -5,18 +5,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import br.ufrj.jfirn.common.BasicRobot;
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.intelligent.evaluation.ChainOfEvaluationsImplementation;
+import br.ufrj.jfirn.intelligent.evaluation.Instruction;
 import br.ufrj.jfirn.intelligent.evaluation.ThoughtProcesor;
-import br.ufrj.jfirn.intelligent.evaluation.Evaluator;
+import br.ufrj.jfirn.intelligent.sensors.Eye;
 import br.ufrj.jfirn.intelligent.sensors.RobotData;
 import br.ufrj.jfirn.intelligent.sensors.Sight;
 import br.ufrj.jfirn.intelligent.sensors.SightEvent;
 
-public class IntelligentRobot extends BasicRobot implements Sight {
-
-	private static final double DEFAULT_MAX_SPEED = 5;
+public class IntelligentRobot extends AbstractIntelligentRobot implements Sight {
 
 	/**
 	 * Holds an instance of the class that defines the thought process
@@ -25,7 +23,7 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 	private ThoughtProcesor evaluator = new ChainOfEvaluationsImplementation();
 
 	/**
-	 * What this robot is thinking.
+	 * What this robot thinks about itself and the environment.
 	 */
 	private Thoughts thoughts = new Thoughts();
 
@@ -37,36 +35,47 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 		);
 	}
 
-	public IntelligentRobot(double x, double y, double direction, double speed, Point... targets) {
-		super(x, y, direction, speed);
+	public IntelligentRobot(double x, double y, double direction, Point... targets) {
+		super(x, y, direction);
 		this.thoughts.targets().addAll(
 			Arrays.asList(targets)
 		);
 	}
 
+	/**
+	 * Makes the robot think about what it should do, set its speed and direction, and move.
+	 * @see Thoughts
+	 * @see ThoughtProcesor
+	 * @see Instruction
+	 */
 	@Override
-	public BasicRobot speed(double speed) {
-		if (speed > DEFAULT_MAX_SPEED) {
-			speed = DEFAULT_MAX_SPEED;
-		}
-		return super.speed(speed);
+	public void move() {
+		//first we update what we know about ourself.
+		thoughts.myPosition(this.position());
+		thoughts.myDirection(this.direction());
+		thoughts.mySpeed(this.speed());
+
+		//then the evaluator thinks about the robot current situation and sets its direction and speed
+		this.evaluator.evaluate(thoughts).apply(this);
+		
+		super.move();
 	}
 
 	/**
-	 * Handles {@link SightEvent}s. This method should do the minimum
-	 * necessary work here. Movement decision logic should be put
-	 * inside the {@link #move()} method.
+	 * Handles {@link SightEvent}s. This method simply stores the data
+	 * collected from this robot's {@link Eye}.
 	 */
 	@Override
 	public void onSight(SightEvent e) {
-		final Map<Integer, MobileObstacleStatisticsLogger> knownObstacles =
-			thoughts.knownObstacles();
-
 		//remove data about objects I can't see anymore
 		List<Integer> ids = new LinkedList<>();
 		for (RobotData data : e.getMobileObstaclesSighted()) {
 			ids.add(data.id);
 		}
+
+		final Map<Integer, MobileObstacleStatisticsLogger> knownObstacles =
+				thoughts.knownObstacles();
+
 		knownObstacles.keySet().retainAll(ids);
 
 		//store data about new objects I see
@@ -79,28 +88,9 @@ public class IntelligentRobot extends BasicRobot implements Sight {
 		}
 	}
 
-	/**
-	 * Moves the robot, but thinks about what move it should be.
-	 * 
-	 * The following steps are executed:
-	 * <ol>
-	 * <li>Checks if this robot is way too close to someone. If it is, stop.</li>
-	 * <li>Checks if this robot has anywhere to go. If it doesn't, stop.</li>
-	 * <li>Checks if this robot arrived somewhere it was supposed to go. Gets the next place.</li>
-	 * <li>Thinks about how it is going to get there and sets the course via an implementation of {@link Evaluator}.</li>
-	 * </ol>
-	 */
 	@Override
-	public void move() {
-		//first we update our know position.
-		thoughts.myPosition(this.position());
-		thoughts.myDirection(this.direction());
-		thoughts.mySpeed(this.speed());
-
-		//then the evaluator thinks about the robot current situation and sets its direction and speed
-		this.evaluator.evaluate(thoughts).apply(this);
-		
-		super.move();
+	protected double maximumSpeed() {
+		return 5d;
 	}
 
 }
