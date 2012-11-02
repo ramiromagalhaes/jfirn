@@ -32,6 +32,10 @@ public class BGD {
 			throw new IllegalArgumentException("Arguments must be a number.");
 		}
 
+		a = handleInfinity(a);
+		b = handleInfinity(b);
+		c = handleInfinity(c);
+
 		if((a <= 0) && (b <= 0) && (c <= 0)) {
 			final double aprime = a/FastMath.sqrt(2d * (1d - c*c));
 			final double bprime = b/FastMath.sqrt(2d * (1d - c*c));
@@ -65,6 +69,14 @@ public class BGD {
 		}
 
 		throw new RuntimeException("Should never get here.");
+	}
+
+	private static double handleInfinity(double n) {
+		if (Double.isInfinite(n)) {
+			n = FastMath.copySign(Double.MAX_VALUE, n);
+		}
+
+		return n;
 	}
 
 	/**
