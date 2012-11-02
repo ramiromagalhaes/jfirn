@@ -25,7 +25,8 @@ public class QuickCollisionEvaluator implements Evaluator {
 				thoughts.mySpeed(),
 				mo.lastKnownPosition(),
 				mo.directionMean(),
-				mo.speedMean()
+				mo.speedMean(),
+				mo.getObservedObjectId()
 			);
 
 			if (collision == null) { //No collision. Verify someone else.
@@ -37,6 +38,8 @@ public class QuickCollisionEvaluator implements Evaluator {
 				continue;
 			}
 
+			thoughts.collisions().add(collision);
+
 			if (logger.isDebugEnabled()) { //TODO I think I should change this some system notifier... 
 				logger.debug(collision.toString());
 			}
@@ -46,7 +49,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 	}
 
 
-	private Collision evaluateCollision(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed) {
+	private Collision evaluateCollision(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed, int id) {
 		//TODO I fear this will perform poorly for something supposed to be fast...
 
 		//here we forecast if a collision may happen
@@ -69,9 +72,8 @@ public class QuickCollisionEvaluator implements Evaluator {
 		final double meTime = timeToReach(myPosition, mySpeed, collisionPosition);
 		final double otherTime = timeToReach(otherPosition, otherSpeed, collisionPosition);
 
-		//I'm considering there will be a collision if the time between robots to arrive at the collision position are almost the same.
+		//Heuristic: I'm considering there will be a collision if the time between robots to arrive at the collision position are almost the same.
 		//TODO Improve this 'if', maybe considering objects direction, speed, size, etc.
-		//TODO This approach may be an oversimplification but I think I'm kinda building a fuzzy method to evaluate the collision.
 		if (FastMath.abs(meTime - otherTime) > 6d) {
 			return null;
 		}
@@ -79,8 +81,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 		//estimate the collision time with the average of times
 		final double time = (meTime + otherTime) / 2d;
 
-		//TODO set the objectID
-		return new Collision(0, collisionPosition, time);
+		return new Collision(id, collisionPosition, time);
 	}
 
 
