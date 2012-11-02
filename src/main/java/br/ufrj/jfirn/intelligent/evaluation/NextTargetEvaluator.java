@@ -26,7 +26,7 @@ public class NextTargetEvaluator implements Evaluator {
 
 		if (currentTarget != null) {
 			instruction.newDirection =
-				currentTarget.directionTo(thoughts.myPosition());
+				thoughts.myPosition().directionTo(currentTarget);
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain);
