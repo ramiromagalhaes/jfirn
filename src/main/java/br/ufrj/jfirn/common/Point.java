@@ -49,8 +49,8 @@ public class Point {
 	 */
 	public double directionTo(final Point p) {
 		return FastMath.atan2(
-			this.y - p.y,
-			this.x - p.x
+			p.y - this.y,
+			p.x - this.x
 		);
 	}
 
