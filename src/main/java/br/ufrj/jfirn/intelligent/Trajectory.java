@@ -11,6 +11,10 @@ public class Trajectory {
 	private final double alpha;
 	private final double beta;
 
+	public Trajectory(Point a, Point b) {
+		this(a.directionTo(b), a);
+	}
+
 	public Trajectory(double direction, Point origin) {
 		this.alpha = FastMath.tan(direction);
 		this.beta = origin.y() - alpha * origin.x();
