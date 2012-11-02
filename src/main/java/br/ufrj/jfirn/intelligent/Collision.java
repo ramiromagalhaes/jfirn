@@ -29,4 +29,20 @@ public class Collision {
 			.append(" chance.")
 			.toString();
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Collision)) {
+			return false;
+		}
+
+		Collision c = (Collision)o;
+		return this.withObjectId == c.withObjectId;
+	}
+
+	@Override
+	public int hashCode() {
+		return withObjectId;
+	}
+
 }

@@ -1,6 +1,9 @@
 package br.ufrj.jfirn.intelligent.evaluation;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
@@ -52,7 +55,7 @@ public class BGD {
 		}
 
 		                     //a or b may be too big and their multiplication may result in NaN.
-		if(c * a * b <= 0) { //Usually, c is smaller (like 0) and will help not result NaNs. So we multiply c first.
+		if(c * a * b <= 0) { //c is smaller (between [-1, 1]) and will help not result NaNs. So we multiply c first.
 			if ((a <= 0 ) && (b >= 0) && (c >= 0)) {
 				return normal.cumulativeProbability(a) - cdf(a, -b, -c);  
 			} else if ((a >= 0 ) && (b <= 0) && (c >= 0)) {
@@ -69,14 +72,6 @@ public class BGD {
 		}
 
 		throw new RuntimeException("Should never get here.");
-	}
-
-	private static double handleInfinity(double n) {
-		if (Double.isInfinite(n)) {
-			n = FastMath.copySign(Double.MAX_VALUE, n);
-		}
-
-		return n;
 	}
 
 	/**
@@ -108,18 +103,17 @@ public class BGD {
 	}
 
 
+	private static final double squareHeight = FastMath.scalb(1, -4);
 
 	/**
 	 * Calculates an aproximate value for the BGD inside a certain quadrilateral area delimited
 	 * by points a, b, c and d.
 	 */
 	public static double cdfOfHorizontalQuadrilaterals(Point a, Point b, Point c, Point d, double correlation) {
-		final double squareHeight = FastMath.scalb(1, -4);
-
 		double total = 0; //will return this
 
 		//I need to know how are those points positioned, so I sort them.
-		final Point[] points = arrangePoints(a, b, c, d);
+		final Point[] points = arrangePointsAsConvexQuadrilateral(a, b, c, d);
 
 		//The Y dimension is limited by a horizontal line. The X dimension is limited by 2 functions.
 		//These functions get the X value from the provided Y value.
@@ -156,22 +150,29 @@ public class BGD {
 	//== Private functions for #cdfOfHorizontalQuadrilaterals
 
 
-	private static Point[] arrangePoints(Point a, Point b, Point c, Point d) {
-		//I need to know how are those points positioned, so I sort them.
-		final Point[] points = new Point[] {a, b, c, d};
-		Arrays.sort(points, Point.YComparator.instance);
-		if (points[0].x() > points[1].x()) {
-			Point temp = points[0];
-			points[0] = points[1];
-			points[1] = temp;
-		}
-		if (points[2].x() > points[3].x()) {
-			Point temp = points[2];
-			points[2] = points[3];
-			points[3] = temp;
+	private static Point[] arrangePointsAsConvexQuadrilateral(Point a, Point b, Point c, Point d) {
+		//TODO Not sure if it will perform well enough.
+		final Point center = new Point(
+			(a.x() + b.x() + c.x() + d.x()) / 4d,
+			(a.y() + b.y() + c.y() + d.y()) / 4d
+		);
+
+		final Map<Double, Point> map = new HashMap<>(4);
+		map.put(center.directionTo(a), a);
+		map.put(center.directionTo(b), b);
+		map.put(center.directionTo(c), c);
+		map.put(center.directionTo(d), d);
+
+		Double[] angles = new Double[4];
+		angles = map.keySet().toArray(angles);
+		Arrays.sort(angles);
+
+		final LinkedList<Point> toReturn = new LinkedList<>();
+		for(Double angle : angles) {
+			toReturn.addLast(map.get(angle));
 		}
 
-		return points;
+		return toReturn.toArray(new Point[4]);
 	}
 
 	/**
@@ -190,6 +191,14 @@ public class BGD {
 				- beta / alpha, 1 / alpha
 			});
 		}
+	}
+
+	private static double handleInfinity(double n) {
+		if (Double.isInfinite(n)) {
+			n = FastMath.copySign(Double.MAX_VALUE, n);
+		}
+
+		return n;
 	}
 
 }

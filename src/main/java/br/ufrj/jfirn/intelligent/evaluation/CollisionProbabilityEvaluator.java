@@ -1,5 +1,6 @@
 package br.ufrj.jfirn.intelligent.evaluation;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
@@ -28,9 +29,23 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			};
 		}
 
-		for (final Collision collision : thoughts.collisions()) {
+		for (Iterator<Collision> it = thoughts.collisions().iterator(); it.hasNext(); ) {
+			final Collision collision = it.next();
+
+			//We'll clean our collision database of collisions with objects that we do not monitor anymore
+			//TODO consider moving this code to IntelligentRobot#onSight
+			if (!knownObstacles.containsKey(collision.withObjectId)) {
+				it.remove();
+				continue;
+			}
+
 			final MobileObstacleStatisticsLogger stats =
 				knownObstacles.get(collision.withObjectId);
+
+			if (stats.entriesAdded() == 0) { //Not enough data. Ignore for now.
+				continue;
+			}
+
 			final Trajectory[] trajectories =
 				Trajectory.fromStatistics(stats);
 
@@ -46,17 +61,22 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			//Convert from XY coordinates to a polar coordinates around the mobile obstacle.
 			//Normalize the input, since BGD works only with 0 mean and 1 variance: (valor - mean) / sqrt(var)
 			for(int i = 0; i < intersections.length; i++) {
+				final double direction;
+				final double speed;
+
 				if (stats.directionVariance() != 0d) {
-					intersections[i] = new Point(
-						(moPosition.directionTo(intersections[i]) - stats.directionMean()) / FastMath.sqrt(stats.directionVariance()),
-						((moPosition.distanceTo(intersections[i]) / collision.time) - stats.speedMean()) / FastMath.sqrt(stats.speedVariance())
-					);
+					direction = (moPosition.directionTo(intersections[i]) - stats.directionMean()) / FastMath.sqrt(stats.directionVariance());
 				} else {
-					intersections[i] = new Point(
-						moPosition.directionTo(intersections[i]) - stats.directionMean(),
-						(moPosition.distanceTo(intersections[i]) / collision.time) - stats.speedMean()
-					);
+					direction = moPosition.directionTo(intersections[i]) - stats.directionMean();
 				}
+
+				if (stats.speedVariance() != 0d) {
+					speed = ((moPosition.distanceTo(intersections[i]) / collision.time) - stats.speedMean()) / FastMath.sqrt(stats.speedVariance());
+				} else {
+					speed = (moPosition.distanceTo(intersections[i]) / collision.time) - stats.speedMean();
+				}
+
+				intersections[i] = new Point(direction, speed);
 			}
 
 			collision.probability =

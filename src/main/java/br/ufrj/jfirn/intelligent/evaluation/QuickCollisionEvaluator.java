@@ -38,6 +38,8 @@ public class QuickCollisionEvaluator implements Evaluator {
 				continue;
 			}
 
+			//This if may be weird, but it will work because we defined a equals and hashCode
+			//to Collision class, based on the id of the object that the robot will collide with.
 			thoughts.collisions().add(collision);
 
 			if (logger.isDebugEnabled()) { //TODO I think I should change this some system notifier... 
