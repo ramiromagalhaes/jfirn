@@ -11,6 +11,10 @@ public class Trajectory {
 	private final double alpha;
 	private final double beta;
 
+	/**
+	 * Creates an instance of this class that is a trajectory defined by the
+	 * line segment that starts in A and ends in B.
+	 */
 	public Trajectory(Point a, Point b) {
 		this(a.directionTo(b), a);
 	}
@@ -32,6 +36,10 @@ public class Trajectory {
 		return new Point(x, y);
 	}
 
+	/**
+	 * From the statistical data of a mobile obstacle movement, get me the trajectories
+	 * that represent the boundaries of its movement.
+	 */
 	public static Trajectory[] fromStatistics(MobileObstacleStatisticsLogger stats) {
 		final Point lkp = stats.lastKnownPosition();
 		final double mean = stats.directionMean();
@@ -39,13 +47,10 @@ public class Trajectory {
 
 		final Point[] points = RobotExtremePointsCalculator.makePoint(lkp, mean);
 
-		//TODO Both trajectories will be the same if the variance is 0. How we will work then? I think I'll need to consider this object's dimension
-		final Trajectory[] trajectory = new Trajectory[] {
+		return new Trajectory[] {
 			new Trajectory(mean - stdDeviation, points[0]),
 			new Trajectory(mean + stdDeviation, points[1])
 		};
-
-		return trajectory;
 	}
 
 	@Override
@@ -66,7 +71,7 @@ public class Trajectory {
 				.toString();
 		} else {
 			return s.append("- ")
-				.append(beta)
+				.append(-beta)
 				.toString();
 		}
 	}
