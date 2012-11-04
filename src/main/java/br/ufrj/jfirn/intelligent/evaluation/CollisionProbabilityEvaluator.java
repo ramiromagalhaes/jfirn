@@ -21,8 +21,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 		//The trajectory of the extremities of the IntelligentRobot, considering its movement direction
 		final Trajectory[] myTrajectory;
 		{
-			final Point points[] = RobotExtremePointsCalculator
-				.makePoint(thoughts.myPosition(), thoughts.myDirection());
+			final Point points[] = RobotExtremePointsCalculator.makePoint(thoughts.myPosition(), thoughts.myDirection());
 			myTrajectory = new Trajectory[] {
 				new Trajectory(thoughts.myDirection(), points[0]),
 				new Trajectory(thoughts.myDirection(), points[1]),
@@ -33,22 +32,23 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			final Collision collision = it.next();
 
 			//We'll clean our collision database of collisions with objects that we do not monitor anymore
-			//TODO consider moving this code to IntelligentRobot#onSight
+			//TODO consider moving code to IntelligentRobot#onSight. Will probably need to improve that
 			if (!knownObstacles.containsKey(collision.withObjectId)) {
 				it.remove();
 				continue;
 			}
 
-			final MobileObstacleStatisticsLogger stats =
-				knownObstacles.get(collision.withObjectId);
+			final MobileObstacleStatisticsLogger stats = knownObstacles.get(collision.withObjectId);
 
 			if (stats.entriesAdded() == 0) { //Not enough data. Ignore for now.
 				continue;
 			}
 
-			final Trajectory[] trajectories =
-				Trajectory.fromStatistics(stats);
+			final Trajectory[] trajectories = Trajectory.fromStatistics(stats);
 
+			//Here, intersections are points in the X, Y plane. The next step is convert them
+			//to the Angle, Speed planes because we chose to work with those probability
+			//distributions of the robot angle and the robot speed.
 			final Point[] intersections = new Point[] {
 				myTrajectory[0].intersect(trajectories[0]),
 				myTrajectory[1].intersect(trajectories[0]),
@@ -61,26 +61,27 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			//Convert from XY coordinates to a polar coordinates around the mobile obstacle.
 			//Normalize the input, since BGD works only with 0 mean and 1 variance: (valor - mean) / sqrt(var)
 			for(int i = 0; i < intersections.length; i++) {
-				final double direction;
-				final double speed;
+				final Point intersection = intersections[i];
 
-				if (stats.directionVariance() != 0d) {
-					direction = (moPosition.directionTo(intersections[i]) - stats.directionMean()) / FastMath.sqrt(stats.directionVariance());
+				double direction = moPosition.directionTo(intersection); //first, calculate the direction...
+				if (stats.directionVariance() != 0d) {//...then normalize it.
+					direction = (direction - stats.directionMean()) / FastMath.sqrt(stats.directionVariance());
 				} else {
-					direction = moPosition.directionTo(intersections[i]) - stats.directionMean();
+					direction = moPosition.directionTo(intersection) - stats.directionMean();
 				}
 
-				if (stats.speedVariance() != 0d) {
-					speed = ((moPosition.distanceTo(intersections[i]) / collision.time) - stats.speedMean()) / FastMath.sqrt(stats.speedVariance());
+				double speed = moPosition.distanceTo(intersection) / collision.time; //first, calculate the speed...
+				if (stats.speedVariance() != 0d) { //...then normalize it.
+					speed = (speed - stats.speedMean()) / FastMath.sqrt(stats.speedVariance());
 				} else {
-					speed = (moPosition.distanceTo(intersections[i]) / collision.time) - stats.speedMean();
+					speed = speed - stats.speedMean();
 				}
 
 				intersections[i] = new Point(direction, speed);
 			}
 
 			collision.probability =
-				BGD.cdfOfHorizontalQuadrilaterals(
+				BGD.cdfOfConvexQuadrilaterals(
 					intersections[0],
 					intersections[1],
 					intersections[2],

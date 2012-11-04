@@ -39,6 +39,7 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 		this.lastPosition = position;
 		this.x.addValue(position.x());
 		this.y.addValue(position.y());
+
 		this.speed.addValue(speed);
 
 		//Weird? See http://en.wikipedia.org/wiki/Directional_statistics#The_fundamental_difference_between_linear_and_circular_statistics

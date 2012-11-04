@@ -109,16 +109,24 @@ public class BGD {
 	 * Calculates an aproximate value for the BGD inside a certain quadrilateral area delimited
 	 * by points a, b, c and d.
 	 */
-	public static double cdfOfHorizontalQuadrilaterals(Point a, Point b, Point c, Point d, double correlation) {
-		double total = 0; //will return this
-
+	public static double cdfOfConvexQuadrilaterals(Point a, Point b, Point c, Point d, double correlation) {
 		//I need to know how are those points positioned, so I sort them.
 		final Point[] points = arrangePointsAsConvexQuadrilateral(a, b, c, d);
+
+		//The rainge of values this algorithm works with is [-3, 3].  
+		applyLimitsToPoints(points); //TODO after all, this method makes any sense?
+
+		final UnivariateFunction f1 = getFunction(points[1], points[0]);
+		final UnivariateFunction f2 = getFunction(points[2], points[1]);
+		final UnivariateFunction f3 = getFunction(points[3], points[2]);
+		final UnivariateFunction f4 = getFunction(points[0], points[3]);
 
 		//The Y dimension is limited by a horizontal line. The X dimension is limited by 2 functions.
 		//These functions get the X value from the provided Y value.
 		final UnivariateFunction rightmostFunction = getFunction(points[3], points[1]);
 		final UnivariateFunction leftmostFunction = getFunction(points[2], points[0]);
+
+		double total = 0; //will return this
 
 		double currentY = points[3].y();
 		while (currentY > points[0].y()) {
@@ -199,6 +207,77 @@ public class BGD {
 		}
 
 		return n;
+	}
+
+	private static void applyLimitsToPoints(Point[] points) {
+		for(int i = 0; i < points.length; i++) {
+			final double x = FastMath.abs(points[i].x()) > 3 ?
+				FastMath.copySign(3, points[i].x()) : points[i].x();
+
+			final double y = FastMath.abs(points[i].y()) > 3 ?
+				FastMath.copySign(3, points[i].y()) : points[i].y();
+
+			points[i] = new Point(x, y);
+		}
+	}
+
+
+
+	private static class Quadrilateral {
+		private final UnivariateFunction f1;
+		private final UnivariateFunction f2;
+		private final UnivariateFunction f3;
+		private final UnivariateFunction f4;
+
+		private Point[] points;
+
+		private double[] ySteps;
+
+		public Quadrilateral(Point a, Point b, Point c, Point d) {
+			points = arrangePointsAsConvexQuadrilateral(a, b, c, d);
+
+
+			f1 = getFunction(points[1], points[0]);
+			f2 = getFunction(points[2], points[1]);
+			f3 = getFunction(points[3], points[2]);
+			f4 = getFunction(points[0], points[3]);
+		}
+
+		/**
+		 * Get the left x and the right x.
+		 */
+		public double[] getX(double y) {
+			final double rightmostX = f1.value(y - squareHeight/2d);
+			final double leftmostX = f2.value(y - squareHeight/2d);
+
+			return new double[2];
+		}
+
+		private Point[] arrangePointsAsConvexQuadrilateral(Point a, Point b, Point c, Point d) {
+			//TODO Not sure if it will perform well enough.
+			final Point center = new Point(
+				(a.x() + b.x() + c.x() + d.x()) / 4d,
+				(a.y() + b.y() + c.y() + d.y()) / 4d
+			);
+
+			final Map<Double, Point> map = new HashMap<>(4);
+			map.put(center.directionTo(a), a);
+			map.put(center.directionTo(b), b);
+			map.put(center.directionTo(c), c);
+			map.put(center.directionTo(d), d);
+
+			Double[] angles = new Double[4];
+			angles = map.keySet().toArray(angles);
+			Arrays.sort(angles);
+
+			final LinkedList<Point> toReturn = new LinkedList<>();
+			for(Double angle : angles) {
+				toReturn.addLast(map.get(angle));
+			}
+
+			return toReturn.toArray(new Point[4]);
+		}
+
 	}
 
 }
