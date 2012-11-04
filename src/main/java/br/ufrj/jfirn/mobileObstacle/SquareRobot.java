@@ -5,6 +5,9 @@ import org.apache.commons.math3.util.FastMath;
 import br.ufrj.jfirn.common.BasicRobot;
 
 public class SquareRobot extends BasicRobot {
+
+	private static final long serialVersionUID = 1L;
+
 	private int step = 0;
 	private int sideCount = 0;
 	private int size;

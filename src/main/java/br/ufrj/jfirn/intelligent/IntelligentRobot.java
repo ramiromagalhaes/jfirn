@@ -11,10 +11,13 @@ import br.ufrj.jfirn.intelligent.evaluation.ChainOfEvaluationsImplementation;
 import br.ufrj.jfirn.intelligent.evaluation.Instruction;
 import br.ufrj.jfirn.intelligent.evaluation.ThoughtProcesor;
 import br.ufrj.jfirn.intelligent.sensors.Eye;
+import br.ufrj.jfirn.intelligent.sensors.PositioningSystem;
 import br.ufrj.jfirn.intelligent.sensors.Sight;
 import br.ufrj.jfirn.intelligent.sensors.SightData;
 
-public class IntelligentRobot extends AbstractIntelligentRobot implements Sight {
+public class IntelligentRobot extends AbstractIntelligentRobot implements Sight, PositioningSystem {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Holds an instance of the class that defines the thought process
@@ -42,20 +45,20 @@ public class IntelligentRobot extends AbstractIntelligentRobot implements Sight 
 		);
 	}
 
+	@Override
+	protected double maximumSpeed() {
+		return 5d;
+	}
+
 	/**
-	 * Makes the robot think about what it should do, set its speed and direction, and move.
+	 * Makes the robot think about what it should do, then move.
 	 * @see Thoughts
 	 * @see ThoughtProcesor
 	 * @see Instruction
 	 */
 	@Override
 	public void move() {
-		//first we update what we know about ourself.
-		thoughts.myPosition(this.position());
-		thoughts.myDirection(this.direction());
-		thoughts.mySpeed(this.speed());
-
-		//then the evaluator thinks about the robot current situation and sets its direction and speed
+		//first the evaluator thinks about the robot current situation and sets its direction and speed
 		this.evaluator.evaluate(thoughts).apply(this);
 		
 		super.move();
@@ -89,8 +92,10 @@ public class IntelligentRobot extends AbstractIntelligentRobot implements Sight 
 	}
 
 	@Override
-	protected double maximumSpeed() {
-		return 5d;
+	public void onPositioningData(Point position, double direction, double speed) {
+		thoughts.myPosition(position);
+		thoughts.myDirection(direction);
+		thoughts.mySpeed(speed);
 	}
 
 }

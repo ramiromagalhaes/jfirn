@@ -1,9 +1,11 @@
 package br.ufrj.jfirn.common;
 
+import java.io.Serializable;
+
 import org.apache.commons.math3.util.FastMath;
 
 
-public interface Robot {
+public interface Robot extends Serializable {
 
 	public static final double STOPPED = 0;
 	public static final double MAX_SPEED = Double.POSITIVE_INFINITY;

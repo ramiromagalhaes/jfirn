@@ -6,16 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import br.ufrj.jfirn.common.BasicRobot;
-import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
-import br.ufrj.jfirn.intelligent.IntelligentRobot;
 import br.ufrj.jfirn.intelligent.sensors.Eye;
+import br.ufrj.jfirn.intelligent.sensors.PositioningSystem;
 import br.ufrj.jfirn.intelligent.sensors.SightData;
-import br.ufrj.jfirn.mobileObstacle.CrazyRobot;
-import br.ufrj.jfirn.mobileObstacle.RandomWalkerRobot;
-import br.ufrj.jfirn.mobileObstacle.SineRobot;
-import br.ufrj.jfirn.mobileObstacle.SquareRobot;
 import br.ufrj.jfirn.simulator.renderer.SimpleTimedSwingRenderer;
 import br.ufrj.jfirn.simulator.renderer.SimulationRenderer;
 import br.ufrj.jfirn.simulator.renderer.WriterRenderer;
@@ -30,6 +24,7 @@ public class Engine {
 	private final int iterations = 200;
 	private final Set<Robot> robots = new HashSet<>();
 	private final Set<Eye> eyes = new HashSet<>();
+	private final Set<PositioningSystem> gpss = new HashSet<>();
 	private final List<SimulationRenderer> renderers = new ArrayList<>();
 
 	public Engine() {
@@ -55,12 +50,28 @@ public class Engine {
 		}
 	}
 
+	public void addRobot(Robot robot) {
+		this.robots.add(robot);
+	}
+
+	public void addIntelligentRobot(Robot robot, Eye eye, PositioningSystem gps) {
+		this.robots.add(robot);
+		this.eyes.add(eye);
+		this.gpss.add(gps);
+	}
+
 	private void init() {
 		//nothing to do yet...
 	}
 
 	private void sense() {
-		//NOTE: sensing and robot collision should both be solved efficiently with a collision detection algorithm
+		//this will send a GPS signal to all robots that have an embedded GPS
+		for (PositioningSystem gps : gpss) {
+			Robot r = (Robot)gps;
+			gps.onPositioningData(r.position(), r.direction(), r.speed());
+		}
+
+		//TODO sensing robots should both be solved efficiently. Maybe we should consider implementing a quadtree?
 		for(Eye eye : eyes) {
 			final Set<SightData> seenRobots = new HashSet<>();
 			for(Robot p : robots) {
@@ -98,26 +109,4 @@ public class Engine {
 		}
 	}
 
-	public static void main(String[] args) {
-		final Engine e = new Engine();
-
-		{ //TODO need to improve the IntelligentRobot registration process.
-			final IntelligentRobot p = new IntelligentRobot (200, 200, 0,
-				new Point(400, 100),
-				new Point(200, 400),
-				new Point(300, 450),
-				new Point(200, 200)
-			);
-			e.eyes.add(new Eye(400, p));
-			e.robots.add( p );
-		}
-
-		e.robots.add( new BasicRobot       (185, 175, 0, 5) );
-		e.robots.add( new RandomWalkerRobot(300, 300, 0, 5) );
-		e.robots.add( new SineRobot        (535, 100, Robot.UP, 5) );
-		e.robots.add( new CrazyRobot       (250, 375, 0, 5) );
-		e.robots.add( new SquareRobot      (300, 425, Robot.UP, 5) );
-
-		e.simulate();
-	}
 }

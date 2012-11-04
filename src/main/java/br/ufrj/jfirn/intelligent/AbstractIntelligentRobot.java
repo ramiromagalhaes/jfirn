@@ -4,6 +4,8 @@ import br.ufrj.jfirn.common.BasicRobot;
 
 public abstract class AbstractIntelligentRobot extends BasicRobot {
 
+	private static final long serialVersionUID = 1L;
+
 	public AbstractIntelligentRobot() {
 		super();
 	}

@@ -6,6 +6,8 @@ import br.ufrj.jfirn.common.BasicRobot;
 
 public class RandomWalkerRobot extends BasicRobot {
 
+	private static final long serialVersionUID = 1L;
+
 	public RandomWalkerRobot() {
 		super();
 	}

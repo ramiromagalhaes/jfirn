@@ -4,9 +4,9 @@ import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.BasicRobot;
 
-
-
 public class SineRobot extends BasicRobot {
+
+	private static final long serialVersionUID = 1L;
 
 	private double step = 0;
 	private double heading;

@@ -17,7 +17,7 @@ import br.ufrj.jfirn.intelligent.IntelligentRobot;
 public class Eye implements Sight {
 
 	private double sightRadius;
-	private IntelligentRobot attachedTo; //this eye is attached to a certain point
+	private IntelligentRobot attachedTo; //this eye is attached to a robot
 
 	public Eye(double sightDistance, IntelligentRobot attachedTo) {
 		this.sightRadius = sightDistance;
