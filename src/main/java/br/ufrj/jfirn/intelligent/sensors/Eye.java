@@ -1,5 +1,7 @@
 package br.ufrj.jfirn.intelligent.sensors;
 
+import java.util.Set;
+
 import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.IntelligentRobot;
 
@@ -35,8 +37,8 @@ public class Eye implements Sight {
 	 * Simply redirects the event to the object that this Eye is attached to.
 	 */
 	@Override
-	public void onSight(SightEvent e) {
-		attachedTo.onSight(e);
+	public void onSight(Set<SightData> sighted) {
+		attachedTo.onSight(sighted);
 	}
 
 }

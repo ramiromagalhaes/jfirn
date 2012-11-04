@@ -11,8 +11,7 @@ import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.IntelligentRobot;
 import br.ufrj.jfirn.intelligent.sensors.Eye;
-import br.ufrj.jfirn.intelligent.sensors.RobotData;
-import br.ufrj.jfirn.intelligent.sensors.SightEvent;
+import br.ufrj.jfirn.intelligent.sensors.SightData;
 import br.ufrj.jfirn.mobileObstacle.CrazyRobot;
 import br.ufrj.jfirn.mobileObstacle.RandomWalkerRobot;
 import br.ufrj.jfirn.mobileObstacle.SineRobot;
@@ -63,21 +62,16 @@ public class Engine {
 	private void sense() {
 		//NOTE: sensing and robot collision should both be solved efficiently with a collision detection algorithm
 		for(Eye eye : eyes) {
-			final Set<RobotData> seenRobots = new HashSet<>();
+			final Set<SightData> seenRobots = new HashSet<>();
 			for(Robot p : robots) {
 				if ( eye.sees(p) ) {
 					seenRobots.add(
-						new RobotData(p.hashCode(), p.position(), p.speed(), p.direction())
+						new SightData(p.hashCode(), p.position(), p.speed(), p.direction())
 					);
 				}
 			}
 			if (!seenRobots.isEmpty()) {
-				eye.onSight(new SightEvent() {
-					@Override
-					public Set<RobotData> getMobileObstaclesSighted() {
-						return seenRobots;
-					}
-				});
+				eye.onSight(seenRobots);
 			}
 		}
 	}

@@ -11,7 +11,7 @@ import br.ufrj.jfirn.intelligent.IntelligentRobot;
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-public class RobotData implements Serializable {
+public class SightData implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -20,7 +20,7 @@ public class RobotData implements Serializable {
 	public final double speed;
 	public final double direction;
 
-	public RobotData(int id, Point position, double speed, double direction) {
+	public SightData(int id, Point position, double speed, double direction) {
 		this.id = id;
 		this.position = position;
 		this.speed = speed;

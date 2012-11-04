@@ -1,5 +1,7 @@
 package br.ufrj.jfirn.intelligent.sensors;
 
+import java.util.Set;
+
 import br.ufrj.jfirn.common.Robot;
 
 
@@ -9,6 +11,6 @@ import br.ufrj.jfirn.common.Robot;
  */
 public interface Sight {
 
-	public void onSight(SightEvent e);
+	public void onSight(Set<SightData> sighted);
 
 }

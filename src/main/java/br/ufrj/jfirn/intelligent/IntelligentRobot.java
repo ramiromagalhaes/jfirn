@@ -4,15 +4,15 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.intelligent.evaluation.ChainOfEvaluationsImplementation;
 import br.ufrj.jfirn.intelligent.evaluation.Instruction;
 import br.ufrj.jfirn.intelligent.evaluation.ThoughtProcesor;
 import br.ufrj.jfirn.intelligent.sensors.Eye;
-import br.ufrj.jfirn.intelligent.sensors.RobotData;
 import br.ufrj.jfirn.intelligent.sensors.Sight;
-import br.ufrj.jfirn.intelligent.sensors.SightEvent;
+import br.ufrj.jfirn.intelligent.sensors.SightData;
 
 public class IntelligentRobot extends AbstractIntelligentRobot implements Sight {
 
@@ -66,10 +66,10 @@ public class IntelligentRobot extends AbstractIntelligentRobot implements Sight 
 	 * collected from this robot's {@link Eye}.
 	 */
 	@Override
-	public void onSight(SightEvent e) {
+	public void onSight(Set<SightData> sighted) {
 		//remove data about objects I can't see anymore
 		List<Integer> ids = new LinkedList<>();
-		for (RobotData data : e.getMobileObstaclesSighted()) {
+		for (SightData data : sighted) {
 			ids.add(data.id);
 		}
 
@@ -79,7 +79,7 @@ public class IntelligentRobot extends AbstractIntelligentRobot implements Sight 
 		knownObstacles.keySet().retainAll(ids);
 
 		//store data about new objects I see
-		for (RobotData data : e.getMobileObstaclesSighted()) {
+		for (SightData data : sighted) {
 			if ( !knownObstacles.containsKey(data.id) ) {
 				knownObstacles.put(data.id, new MovementStatistics(data.id));
 			}
