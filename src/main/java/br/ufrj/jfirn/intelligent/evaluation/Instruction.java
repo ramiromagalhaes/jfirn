@@ -20,7 +20,7 @@ public class Instruction {
 
 	@Override
 	public String toString() {
-		return "Instruction[direction: " + newDirection + "; speed: " + newSpeed + "]";
+		return "Instruction [direction: " + newDirection + "; speed: " + newSpeed + "]";
 	}
 
 }
