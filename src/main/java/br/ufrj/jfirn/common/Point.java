@@ -111,10 +111,10 @@ public class Point {
 	/**
 	 * Sorts points in Y order, smaller to bigger.
 	 */
-	public static class YThanXComparator implements Comparator<Point> {
-		public static final YThanXComparator instance = new YThanXComparator();
+	public static class YThenXComparator implements Comparator<Point> {
+		public static final YThenXComparator instance = new YThenXComparator();
 
-		private YThanXComparator() {}
+		private YThenXComparator() {}
 
 		@Override
 		public int compare(Point p1, Point p2) {
