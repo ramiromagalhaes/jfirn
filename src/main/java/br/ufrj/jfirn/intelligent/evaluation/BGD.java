@@ -2,7 +2,6 @@ package br.ufrj.jfirn.intelligent.evaluation;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -23,6 +22,8 @@ public class BGD {
 	private static final NormalDistribution normal = new NormalDistribution(0, 1);
 	private static final double A[] = {0.3253030, 0.4211071, 0.1334425, 0.006374323};
 	private static final double B[] = {0.1337764, 0.6243247, 1.3425378, 2.2626645};
+
+	private static final double squareHeight = FastMath.scalb(1, -4);
 
 	/**
 	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++. 
@@ -74,15 +75,7 @@ public class BGD {
 		throw new RuntimeException("Should never get here.");
 	}
 
-	/**
-	 * 
-	 * @param higherX
-	 * @param higherY
-	 * @param length
-	 * @param height
-	 * @param c Correlation between distributions.
-	 * @return
-	 */
+	//TODO write documentation
 	public static double cdfOfRectangle(double higherX, double higherY, double length, double height, double c) {
 		return BGD.cdf(higherX, higherY, c) - 
 			BGD.cdf(higherX, higherY - height, c) -
@@ -90,51 +83,32 @@ public class BGD {
 			BGD.cdf(higherX - length, higherY - height, c);
 	}
 
-	/**
-	 * 
-	 * @param higherPoint
-	 * @param length
-	 * @param height
-	 * @param c Correlation between distributions.
-	 * @return
-	 */
+	//TODO write documentation
 	public static double cdfOfRectangle(Point higherPoint, double length, double height, double c) {
 		return cdfOfRectangle(higherPoint.x(), higherPoint.y(), length, height, c);
 	}
-
-
-	private static final double squareHeight = FastMath.scalb(1, -4);
 
 	/**
 	 * Calculates an aproximate value for the BGD inside a certain quadrilateral area delimited
 	 * by points a, b, c and d.
 	 */
 	public static double cdfOfConvexQuadrilaterals(Point a, Point b, Point c, Point d, double correlation) {
-		//I need to know how are those points positioned, so I sort them.
-		final Point[] points = arrangePointsAsConvexQuadrilateral(a, b, c, d);
-
-		//The rainge of values this algorithm works with is [-3, 3].  
-		applyLimitsToPoints(points); //TODO after all, this method makes any sense?
-
-		final UnivariateFunction f1 = getFunction(points[1], points[0]);
-		final UnivariateFunction f2 = getFunction(points[2], points[1]);
-		final UnivariateFunction f3 = getFunction(points[3], points[2]);
-		final UnivariateFunction f4 = getFunction(points[0], points[3]);
-
-		//The Y dimension is limited by a horizontal line. The X dimension is limited by 2 functions.
-		//These functions get the X value from the provided Y value.
-		final UnivariateFunction rightmostFunction = getFunction(points[3], points[1]);
-		final UnivariateFunction leftmostFunction = getFunction(points[2], points[0]);
+		//We limit this algorithm to values in range [-3, 3] so it runs faster.
+		final Quadrilateral quadrilateral = new Quadrilateral(
+			applyLimitsToPoint(a),
+			applyLimitsToPoint(b),
+			applyLimitsToPoint(c),
+			applyLimitsToPoint(d)
+		);
 
 		double total = 0; //will return this
 
-		double currentY = points[3].y();
-		while (currentY > points[0].y()) {
-			final double rightmostX = rightmostFunction.value(currentY - squareHeight/2d);
-			final double leftmostX = leftmostFunction.value(currentY - squareHeight/2d);
-			final double xLength = rightmostX - leftmostX;
+		double currentY = quadrilateral.getUpperY();
+		while (currentY > quadrilateral.getLowerY()) {
+			final double[] x = quadrilateral.getX(currentY - squareHeight/2d);
 
-			total += BGD.cdfOfRectangle(rightmostX, currentY, xLength, squareHeight, correlation);
+			total += BGD.cdfOfRectangle(x[1], currentY, x[1] - x[0], squareHeight, correlation);
+
 			currentY -= squareHeight;
 		}
 
@@ -150,56 +124,13 @@ public class BGD {
 	/**
 	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++. 
 	 */
-	private static double f(double x, double y, double aprime, double bprime, double rho) {
-		return FastMath.exp(aprime * (2d * x - aprime) + bprime * (2d * y - bprime) + 2d * rho * (x - aprime) * (y - bprime));
+	private static double f(double x, double y, double aprime, double bprime, double c) {
+		return FastMath.exp(aprime * (2d * x - aprime) + bprime * (2d * y - bprime) + 2d * c * (x - aprime) * (y - bprime));
 	}
 
 
 	//== Private functions for #cdfOfHorizontalQuadrilaterals
 
-
-	private static Point[] arrangePointsAsConvexQuadrilateral(Point a, Point b, Point c, Point d) {
-		//TODO Not sure if it will perform well enough.
-		final Point center = new Point(
-			(a.x() + b.x() + c.x() + d.x()) / 4d,
-			(a.y() + b.y() + c.y() + d.y()) / 4d
-		);
-
-		final Map<Double, Point> map = new HashMap<>(4);
-		map.put(center.directionTo(a), a);
-		map.put(center.directionTo(b), b);
-		map.put(center.directionTo(c), c);
-		map.put(center.directionTo(d), d);
-
-		Double[] angles = new Double[4];
-		angles = map.keySet().toArray(angles);
-		Arrays.sort(angles);
-
-		final LinkedList<Point> toReturn = new LinkedList<>();
-		for(Double angle : angles) {
-			toReturn.addLast(map.get(angle));
-		}
-
-		return toReturn.toArray(new Point[4]);
-	}
-
-	/**
-	 * Create an UnivariateFunction that allows us to know the X position
-	 * of a certain Y. Notice: this UnivariateFunction returns the X for
-	 * a certain Y!
-	 */
-	private static UnivariateFunction getFunction(Point a, Point b) {
-		double alpha = (a.y() - b.y()) / (a.x() - b.x());
-
-		if (Double.isInfinite(alpha)) {
-			return new PolynomialFunction(new double[]{a.x()});
-		} else {
-			double beta = a.y() - alpha * a.x();
-			return new PolynomialFunction(new double[]{
-				- beta / alpha, 1 / alpha
-			});
-		}
-	}
 
 	private static double handleInfinity(double n) {
 		if (Double.isInfinite(n)) {
@@ -209,73 +140,199 @@ public class BGD {
 		return n;
 	}
 
-	private static void applyLimitsToPoints(Point[] points) {
-		for(int i = 0; i < points.length; i++) {
-			final double x = FastMath.abs(points[i].x()) > 3 ?
-				FastMath.copySign(3, points[i].x()) : points[i].x();
+	/**
+	 * If the parameter's x or y values are bigger than a limit,
+	 * create a new {@link Point} under this limit.
+	 */
+	private static Point applyLimitsToPoint(Point point) {
+		//we'll avoid creating new instances of Point
+		final double limit = 3d;
+		boolean somethingChanged = false;
+		double x = 0, y = 0;
 
-			final double y = FastMath.abs(points[i].y()) > 3 ?
-				FastMath.copySign(3, points[i].y()) : points[i].y();
+		if (FastMath.abs(point.x()) > limit) {
+			x = FastMath.copySign(limit, point.x());
+			somethingChanged = true;
+		}
 
-			points[i] = new Point(x, y);
+		if (FastMath.abs(point.y()) > 3) {
+			y = FastMath.copySign(limit, point.y());
+			somethingChanged = true;
+		}
+
+		if (somethingChanged) {
+			return new Point(x, y);
+		} else {
+			return point;
 		}
 	}
 
 
 
 	private static class Quadrilateral {
-		private final UnivariateFunction f1;
-		private final UnivariateFunction f2;
-		private final UnivariateFunction f3;
-		private final UnivariateFunction f4;
+		private final double lowerY;
+		private final double upperY;
 
-		private Point[] points;
+		/**
+		 * This map defines what functions I should use to get valid x values for a given y inside the
+		 * quadrilateral.
+		 */
+		private final Map<Interval, UnivariateFunction[]> intervalFunction = new HashMap<>(3);
 
-		private double[] ySteps;
-
+		/**
+		 * Constructs the Quadrilateral from 4 points.
+		 */
 		public Quadrilateral(Point a, Point b, Point c, Point d) {
-			points = arrangePointsAsConvexQuadrilateral(a, b, c, d);
+			//Fist, get the points sorted in a convenient way.
+			//Notice that, if there are points with the same y, the one with the smaller x goes first in the array
+			final Point ySortedPoints[] = new Point[] {a, b, c, d};
+			Arrays.sort(ySortedPoints, Point.YThanXComparator.instance);
+
+			//we'll need to provide this information later
+			this.lowerY = ySortedPoints[0].y();
+			this.upperY = ySortedPoints[3].y();
 
 
-			f1 = getFunction(points[1], points[0]);
-			f2 = getFunction(points[2], points[1]);
-			f3 = getFunction(points[3], points[2]);
-			f4 = getFunction(points[0], points[3]);
+
+			//Now we define which function to use in each limit.
+			//This code is too long (and too dumb), but it is simple.
+			//It evaluates in what situation the points are in and set the equations accordingly.
+			if (ySortedPoints[0].y() != ySortedPoints[1].y() && ySortedPoints[2].y() != ySortedPoints[3].y()) {
+				intervalFunction.put(
+					new Interval(ySortedPoints[0].y(), ySortedPoints[1].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[1], ySortedPoints[0]),
+						getFunction(ySortedPoints[2], ySortedPoints[0])
+					}
+				);
+
+				intervalFunction.put(
+					new Interval(ySortedPoints[1].y(), ySortedPoints[2].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[3], ySortedPoints[1]),
+						getFunction(ySortedPoints[2], ySortedPoints[0])
+					}
+				);
+
+				intervalFunction.put(
+					new Interval(ySortedPoints[2].y(), ySortedPoints[3].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[3], ySortedPoints[2]),
+						getFunction(ySortedPoints[3], ySortedPoints[1])
+					}
+				);
+
+			} else if (ySortedPoints[1].y() == ySortedPoints[2].y() && ySortedPoints[0].y() != ySortedPoints[3].y()) {
+				intervalFunction.put(
+					new Interval(ySortedPoints[0].y(), ySortedPoints[1].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[1], ySortedPoints[0]),
+						getFunction(ySortedPoints[2], ySortedPoints[0])
+					}
+				);
+
+				intervalFunction.put(
+					new Interval(ySortedPoints[1].y(), ySortedPoints[3].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[3], ySortedPoints[2]),
+						getFunction(ySortedPoints[3], ySortedPoints[1])
+					}
+				);
+
+			} else if (ySortedPoints[0].y() != ySortedPoints[1].y() && ySortedPoints[2].y() == ySortedPoints[3].y()) {
+				intervalFunction.put(
+					new Interval(ySortedPoints[0].y(), ySortedPoints[1].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[1], ySortedPoints[0]),
+						getFunction(ySortedPoints[2], ySortedPoints[0])
+					}
+				);
+
+				intervalFunction.put(
+					new Interval(ySortedPoints[1].y(), ySortedPoints[2].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[3], ySortedPoints[1]),
+						getFunction(ySortedPoints[2], ySortedPoints[0])
+					}
+				);
+
+			//oh god, what am I doing!!!
+			} else if (ySortedPoints[0].y() == ySortedPoints[1].y() && ySortedPoints[2].y() != ySortedPoints[3].y()) {
+				intervalFunction.put(
+					new Interval(ySortedPoints[0].y(), ySortedPoints[2].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[2], ySortedPoints[0]),
+						getFunction(ySortedPoints[3], ySortedPoints[0])
+					}
+				);
+
+				intervalFunction.put(
+					new Interval(ySortedPoints[2].y(), ySortedPoints[3].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[3], ySortedPoints[2]),
+						getFunction(ySortedPoints[3], ySortedPoints[1])
+					}
+				);
+
+			} else if (ySortedPoints[0].y() == ySortedPoints[1].y() && ySortedPoints[2].y() == ySortedPoints[3].y()) {
+				intervalFunction.put(
+					new Interval(ySortedPoints[0].y(), ySortedPoints[3].y()),
+					new UnivariateFunction[] {
+						getFunction(ySortedPoints[2], ySortedPoints[0]),
+						getFunction(ySortedPoints[3], ySortedPoints[1])
+					}
+				);
+
+			} else {
+				throw new RuntimeException("Should NEVER get here");
+			}
 		}
 
 		/**
-		 * Get the left x and the right x.
+		 * Get the left and the right x.
 		 */
 		public double[] getX(double y) {
-			final double rightmostX = f1.value(y - squareHeight/2d);
-			final double leftmostX = f2.value(y - squareHeight/2d);
+			for(Interval interval : intervalFunction.keySet()) {
+				if (interval.contains(y)) {
+					final UnivariateFunction function[] =
+						intervalFunction.get(interval);
 
-			return new double[2];
-		}
+					final double[] values = new double[] {
+						function[0].value(y), function[1].value(y)
+					};
 
-		private Point[] arrangePointsAsConvexQuadrilateral(Point a, Point b, Point c, Point d) {
-			//TODO Not sure if it will perform well enough.
-			final Point center = new Point(
-				(a.x() + b.x() + c.x() + d.x()) / 4d,
-				(a.y() + b.y() + c.y() + d.y()) / 4d
-			);
-
-			final Map<Double, Point> map = new HashMap<>(4);
-			map.put(center.directionTo(a), a);
-			map.put(center.directionTo(b), b);
-			map.put(center.directionTo(c), c);
-			map.put(center.directionTo(d), d);
-
-			Double[] angles = new Double[4];
-			angles = map.keySet().toArray(angles);
-			Arrays.sort(angles);
-
-			final LinkedList<Point> toReturn = new LinkedList<>();
-			for(Double angle : angles) {
-				toReturn.addLast(map.get(angle));
+					Arrays.sort(values);
+					return values;
+				}
 			}
 
-			return toReturn.toArray(new Point[4]);
+			return null; //input not in Quadrilateral
+		}
+
+		public double getLowerY() {
+			return lowerY;
+		}
+
+		public double getUpperY() {
+			return upperY;
+		}
+
+		/**
+		 * Create an UnivariateFunction that allows us to know the X position
+		 * of a certain Y. Notice: this UnivariateFunction returns the X for
+		 * a certain Y!
+		 */
+		private UnivariateFunction getFunction(Point a, Point b) {
+			double alpha = (a.y() - b.y()) / (a.x() - b.x());
+
+			if (Double.isInfinite(alpha)) {
+				return new PolynomialFunction(new double[]{a.x()});
+			} else {
+				double beta = a.y() - alpha * a.x();
+				return new PolynomialFunction(new double[]{
+					- beta / alpha, 1 / alpha
+				});
+			}
 		}
 
 	}

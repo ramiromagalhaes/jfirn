@@ -19,16 +19,17 @@ public class BGDTest {
 		assertEquals(1d, BGD.cdf(Double.MAX_VALUE, Double.MAX_VALUE, 0), 0.00001d);
 
 		assertEquals(0d, BGD.cdf(-Double.MAX_VALUE, -Double.MAX_VALUE, 0), 0.00001d);
+
+		assertEquals(0.99730201d, BGD.cdf(3, 3, 0), 0.00001d);
 	}
 
 	@Test
 	public void testCdfOfRectangle() {
 		assertEquals(0.116516235668598d, BGD.cdfOfRectangle(new Point(1d, 1d), 1d, 1d, 0), 0.00001d);
-		//Normalização: (valor - media) / sqrt(var)
 	}
 
 	@Test
-	public void testCdfOfHorizontalQuadrilaterals() {
+	public void testCdfOfConvexQuadrilaterals() {
 		assertEquals(0.116516235668598d,
 			BGD.cdfOfConvexQuadrilaterals(
 				new Point(0d, 0d),
@@ -41,7 +42,7 @@ public class BGDTest {
 	}
 
 	@Test
-	public void testCdfOfHorizontalQuadrilaterals2() {
+	public void testCdfOfConvexQuadrilaterals2() {
 		final double l = FastMath.scalb(1, -4);
 
 		final Point a = new Point(0, 0);
