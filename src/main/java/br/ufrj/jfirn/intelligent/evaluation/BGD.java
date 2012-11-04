@@ -104,7 +104,7 @@ public class BGD {
 		double total = 0; //will return this
 
 		double currentY = quadrilateral.getUpperY();
-		while (currentY > quadrilateral.getLowerY()) {
+		while (currentY - squareHeight/2d > quadrilateral.getLowerY()) {
 			final double[] x = quadrilateral.getX(currentY - squareHeight/2d);
 
 			total += BGD.cdfOfRectangle(x[1], currentY, x[1] - x[0], squareHeight, correlation);
@@ -186,17 +186,19 @@ public class BGD {
 			//Fist, get the points sorted in a convenient way.
 			//Notice that, if there are points with the same y, the one with the smaller x goes first in the array
 			final Point ySortedPoints[] = new Point[] {a, b, c, d};
-			Arrays.sort(ySortedPoints, Point.YThanXComparator.instance);
+			Arrays.sort(ySortedPoints, Point.YThenXComparator.instance);
 
 			//we'll need to provide this information later
 			this.lowerY = ySortedPoints[0].y();
 			this.upperY = ySortedPoints[3].y();
 
-
-
 			//Now we define which function to use in each limit.
-			//This code is too long (and too dumb), but it is simple.
-			//It evaluates in what situation the points are in and set the equations accordingly.
+			//This series of 'ifs' simply set what functions work as limits of the quadrilateral.
+			//There are 5 possibilities of interest: all points have different y positions; 2 points
+			//have the same y and they are not the upper or lower points; 2 points have the same y,
+			//and they are the highest point of the quadrilateral; 2 points have the same y, and
+			//they are the lowest point of the quadrilateral; the object is a horizontal paralelogram,
+			//with 2 points with the same upper y, and 2 points with different lower y.
 			if (ySortedPoints[0].y() != ySortedPoints[1].y() && ySortedPoints[2].y() != ySortedPoints[3].y()) {
 				intervalFunction.put(
 					new Interval(ySortedPoints[0].y(), ySortedPoints[1].y()),
@@ -256,7 +258,7 @@ public class BGD {
 					}
 				);
 
-			//oh god, what am I doing!!!
+			//oh god, what am I doing!!!?!!!
 			} else if (ySortedPoints[0].y() == ySortedPoints[1].y() && ySortedPoints[2].y() != ySortedPoints[3].y()) {
 				intervalFunction.put(
 					new Interval(ySortedPoints[0].y(), ySortedPoints[2].y()),
