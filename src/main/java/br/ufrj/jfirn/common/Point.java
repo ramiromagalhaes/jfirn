@@ -85,6 +85,9 @@ public class Point {
 	 */
 	public static class XComparator implements Comparator<Point> {
 		public static final XComparator instance = new XComparator();
+
+		private XComparator() {}
+
 		@Override
 		public int compare(Point p1, Point p2) {
 			return (int)(p1.x - p2.x);
@@ -96,6 +99,9 @@ public class Point {
 	 */
 	public static class YComparator implements Comparator<Point> {
 		public static final YComparator instance = new YComparator();
+
+		private YComparator() {}
+
 		@Override
 		public int compare(Point p1, Point p2) {
 			return (int)(p1.y - p2.y);
