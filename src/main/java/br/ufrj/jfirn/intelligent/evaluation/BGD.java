@@ -128,10 +128,12 @@ public class BGD {
 		return FastMath.exp(aprime * (2d * x - aprime) + bprime * (2d * y - bprime) + 2d * c * (x - aprime) * (y - bprime));
 	}
 
-
-	//== Private functions for #cdfOfHorizontalQuadrilaterals
-
-
+	/**
+	 * Since the algorithm to calculate the CDF of a bivariate gaussian
+	 * distribution fails with infinity, we change infinity to the
+	 * maximum value a Double can be. This allows the mentioned algorithm
+	 * to provide the appropriate answer.
+	 */
 	private static double handleInfinity(double n) {
 		if (Double.isInfinite(n)) {
 			n = FastMath.copySign(Double.MAX_VALUE, n);
@@ -169,6 +171,12 @@ public class BGD {
 
 
 
+	/**
+	 * This class helps calculate the CDF of a bivariate gaussian distribution using the
+	 * algorithm in {@link BGD#cdfOfConvexQuadrilaterals(Point, Point, Point, Point, double)}.
+	 * 
+	 * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
+	 */
 	private static class Quadrilateral {
 		private final double lowerY;
 		private final double upperY;
@@ -311,10 +319,16 @@ public class BGD {
 			return null; //input not in Quadrilateral
 		}
 
+		/**
+		 * Get the lowest y point of this Quadrilateral.
+		 */
 		public double getLowerY() {
 			return lowerY;
 		}
 
+		/**
+		 * Get the highest y point of this Quadrilateral.
+		 */
 		public double getUpperY() {
 			return upperY;
 		}
