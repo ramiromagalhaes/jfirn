@@ -16,4 +16,9 @@ public class Interval extends org.apache.commons.math3.geometry.euclidean.oned.I
 		return this.getUpper() >= x && this.getLower() <= x;
 	}
 
+	@Override
+	public String toString() {
+		return "Interval [" + this.getLower() + "," + " " + this.getUpper() + "]";
+	}
+
 }
