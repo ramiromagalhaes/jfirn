@@ -108,4 +108,22 @@ public class Point {
 		}
 	}
 
+	/**
+	 * Sorts points in Y order, smaller to bigger.
+	 */
+	public static class YThanXComparator implements Comparator<Point> {
+		public static final YThanXComparator instance = new YThanXComparator();
+
+		private YThanXComparator() {}
+
+		@Override
+		public int compare(Point p1, Point p2) {
+			if (p1.y != p2.y) {
+				return (int)(p1.y - p2.y);
+			} else {
+				return (int)(p1.x - p2.x);
+			}
+		}
+	}
+
 }
