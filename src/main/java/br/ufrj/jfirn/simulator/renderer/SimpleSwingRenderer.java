@@ -24,7 +24,7 @@ import br.ufrj.jfirn.common.Robot;
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListener {
+public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 	private static final int AREA_WIDTH = 1024;
 	private static final int AREA_HEIGHT = 768;
@@ -35,7 +35,7 @@ public class SimpleTimedSwingRenderer implements SimulationRenderer, ChangeListe
 	private int currentTick;
 	private int tickToDisplay = 0;
 
-	public SimpleTimedSwingRenderer() {
+	public SimpleSwingRenderer() {
 		tickSelector = new JSlider(JSlider.HORIZONTAL);
 		tickSelector.setMinimum(0);
 		tickSelector.setPaintTicks(false);
