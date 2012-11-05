@@ -7,8 +7,7 @@ public class Collision {
 	public final Point position;
 	public final double time;
 	public double probability;
-
-	//TODO how I'm defining the collision area? A circle? The effective collision polygon?
+	public Point[] area;
 
 	public Collision(int withObjectId, Point position, double time) {
 		this.withObjectId = withObjectId;

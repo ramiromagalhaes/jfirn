@@ -33,9 +33,8 @@ public class ImmediateDangerEvaluator implements Evaluator {
 	/**
 	 * Used to verify if the robot is in danger.
 	 */
-	private final static double DANGER_RADIUS = 10;
 	private boolean isInDangerRadius(Point myPosition, Point otherPosition) {
-		return myPosition.distanceTo(otherPosition) <= DANGER_RADIUS;
+		return myPosition.distanceTo(otherPosition) <= RobotsConstants.SIZE_RADIUS;
 	}
 
 }

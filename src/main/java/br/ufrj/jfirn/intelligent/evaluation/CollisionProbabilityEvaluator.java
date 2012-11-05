@@ -1,5 +1,6 @@
 package br.ufrj.jfirn.intelligent.evaluation;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -55,6 +56,8 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 				myTrajectory[0].intersect(trajectories[1]),
 				myTrajectory[1].intersect(trajectories[1])
 			};
+
+			collision.area = Arrays.copyOf(intersections, intersections.length);
 
 			final Point moPosition = stats.lastKnownPosition();
 

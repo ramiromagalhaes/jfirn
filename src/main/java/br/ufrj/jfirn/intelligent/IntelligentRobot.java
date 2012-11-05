@@ -64,6 +64,10 @@ public class IntelligentRobot extends AbstractIntelligentRobot implements Sight,
 		super.move();
 	}
 
+	public Thoughts getThoughts() {
+		return thoughts;
+	}
+
 	/**
 	 * Handles {@link SightEvent}s. This method simply stores the data
 	 * collected from this robot's {@link Eye}.
