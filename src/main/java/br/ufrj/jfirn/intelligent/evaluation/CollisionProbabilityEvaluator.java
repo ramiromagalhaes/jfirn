@@ -1,8 +1,6 @@
 package br.ufrj.jfirn.intelligent.evaluation;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -16,9 +14,6 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 
 	@Override
 	public void evaluate(Thoughts thoughts, Instruction instruction, ChainOfEvaluations chain) {
-		final Map<Integer, MobileObstacleStatisticsLogger> knownObstacles =
-			thoughts.knownObstacles();
-
 		//The trajectory of the extremities of the IntelligentRobot, considering its movement direction
 		final Trajectory[] myTrajectory;
 		{
@@ -29,19 +24,11 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			};
 		}
 
-		for (Iterator<Collision> it = thoughts.collisions().iterator(); it.hasNext(); ) {
-			final Collision collision = it.next();
+		for (Collision collision : thoughts.allColisions()) {
+			final MobileObstacleStatisticsLogger stats =
+				thoughts.obstacleStatistics(collision.withObjectId);
 
-			//We'll clean our collision database of collisions with objects that we do not monitor anymore
-			//TODO consider moving code to IntelligentRobot#onSight. Will probably need to improve that
-			if (!knownObstacles.containsKey(collision.withObjectId)) {
-				it.remove();
-				continue;
-			}
-
-			final MobileObstacleStatisticsLogger stats = knownObstacles.get(collision.withObjectId);
-
-			if (stats.entriesAdded() == 0) { //Not enough data. Ignore for now.
+			if (stats.entriesAdded() < 2) { //Not enough data. Ignore for now.
 				continue;
 			}
 

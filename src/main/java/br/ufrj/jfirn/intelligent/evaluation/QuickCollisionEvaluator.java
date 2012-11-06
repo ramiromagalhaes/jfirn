@@ -1,8 +1,6 @@
 package br.ufrj.jfirn.intelligent.evaluation;
 
 import org.apache.commons.math3.util.FastMath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.intelligent.Collision;
@@ -11,14 +9,13 @@ import br.ufrj.jfirn.intelligent.Thoughts;
 import br.ufrj.jfirn.intelligent.Trajectory;
 
 public class QuickCollisionEvaluator implements Evaluator {
-	private static final Logger logger = LoggerFactory.getLogger(QuickCollisionEvaluator.class);
 
 	@Override
 	public void evaluate(Thoughts thoughts, Instruction instruction, ChainOfEvaluations chain) {
 		//think and evaluate and change your thoughts and decide what to do next...
 		final Point myPosition = thoughts.myPosition();
 
-		for (MobileObstacleStatisticsLogger mo : thoughts.knownObstacles().values()) { //evaluate everyone I see.
+		for (MobileObstacleStatisticsLogger mo : thoughts.allObstacleStatistics()) { //evaluate everyone I see.
 			Collision collision = evaluateCollision(
 				myPosition,
 				thoughts.myDirection(),
@@ -40,11 +37,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 			//This if may be weird, but it will work because we defined a equals and hashCode
 			//to Collision class, based on the id of the object that the robot will collide with.
-			thoughts.collisions().add(collision);
-
-			if (logger.isDebugEnabled()) { //TODO I think I should change this some system notifier... 
-				logger.debug(collision.toString());
-			}
+			thoughts.putCollision(mo.getObservedObjectId(), collision);
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain); //keep thinking

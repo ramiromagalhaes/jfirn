@@ -1,6 +1,5 @@
 package br.ufrj.jfirn.simulator;
 
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +11,6 @@ import br.ufrj.jfirn.intelligent.sensors.PositioningSystem;
 import br.ufrj.jfirn.intelligent.sensors.SightData;
 import br.ufrj.jfirn.simulator.renderer.SimpleSwingRenderer;
 import br.ufrj.jfirn.simulator.renderer.SimulationRenderer;
-import br.ufrj.jfirn.simulator.renderer.WriterRenderer;
 
 
 /**
@@ -29,7 +27,7 @@ public class Engine {
 
 	public Engine() {
 		this.renderers.add( new SimpleSwingRenderer() );
-		this.renderers.add( new WriterRenderer(new OutputStreamWriter(System.out)) );
+		//this.renderers.add( new WriterRenderer(new OutputStreamWriter(System.out)) );
 	}
 
 	public Engine(SimulationRenderer renderer) {

@@ -3,7 +3,6 @@ package br.ufrj.jfirn.intelligent;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import br.ufrj.jfirn.common.Point;
@@ -58,9 +57,10 @@ public class IntelligentRobot extends AbstractIntelligentRobot implements Sight,
 	 */
 	@Override
 	public void move() {
-		//first the evaluator thinks about the robot current situation and sets its direction and speed
+		//the evaluator thinks about the robot current situation and sets its direction and speed..
 		this.evaluator.evaluate(thoughts).apply(this);
-		
+
+		//...then it moves.
 		super.move();
 	}
 
@@ -75,23 +75,17 @@ public class IntelligentRobot extends AbstractIntelligentRobot implements Sight,
 	@Override
 	public void onSight(Set<SightData> sighted) {
 		//remove data about objects I can't see anymore
-		List<Integer> ids = new LinkedList<>();
+		final List<Integer> ids = new LinkedList<>();
 		for (SightData data : sighted) {
 			ids.add(data.id);
 		}
 
-		final Map<Integer, MobileObstacleStatisticsLogger> knownObstacles =
-				thoughts.knownObstacles();
+		//only keep data of objects I see
+		thoughts.retainObstaclesData(ids);
 
-		knownObstacles.keySet().retainAll(ids);
-
-		//store data about new objects I see
+		//store data about what I see
 		for (SightData data : sighted) {
-			if ( !knownObstacles.containsKey(data.id) ) {
-				knownObstacles.put(data.id, new MovementStatistics(data.id));
-			}
-
-			knownObstacles.get(data.id).addEntry(data.position, data.speed, data.direction);
+			thoughts.addObstacleStatistics(data.id, data.position, data.direction, data.speed);
 		}
 	}
 

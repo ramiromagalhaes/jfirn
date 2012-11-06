@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -37,24 +38,37 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	private static final int AREA_WIDTH = 1024;
 	private static final int AREA_HEIGHT = 768;
 
-	private final JFrame frame;
+	private final JFrame simulationFrame, collisionFrame;
+	private final JLabel collisions;
 	private final JSlider tickSelector;
 	private List<List<RobotPositionData>> robotData = new ArrayList<>(0);
 	private int currentTick;
 	private int tickToDisplay = 0;
 
 	public SimpleSwingRenderer() {
-		frame = new JFrame("Simulator");
-        frame.setLayout(new BorderLayout());
+		simulationFrame = new JFrame("Simulator");
+        simulationFrame.setLayout(new BorderLayout());
 
 		tickSelector = new TimeTickSelector();
 		tickSelector.addChangeListener(this);
 
-        frame.add(new MainPane(), BorderLayout.NORTH);
-        frame.add(tickSelector, BorderLayout.SOUTH);
+        simulationFrame.add(new MainPane(), BorderLayout.NORTH);
+        simulationFrame.add(tickSelector, BorderLayout.SOUTH);
 
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
+        simulationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        simulationFrame.pack();
+
+        collisionFrame = new JFrame("Collisions");
+        collisionFrame.setLayout(new BorderLayout());
+
+        JPanel p = new JPanel();
+        p.setPreferredSize(new Dimension(AREA_WIDTH, 40));
+        collisions = new JLabel();
+        collisionFrame.add(p);
+        collisionFrame.add(collisions, BorderLayout.NORTH);
+
+        collisionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        collisionFrame.pack();
 	}
 
 	@Override
@@ -64,13 +78,16 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			tickSelector.setMaximum(currentTick);
 		}
 
-		//TODO this is smelling bad
+		//TODO find a more elegant way to add multiple robot data for future rendering.
 		if (robot instanceof IntelligentRobot) {
 			final IntelligentRobot ir = (IntelligentRobot)robot;
 			robotData.get(currentTick).add(
-				new IntelligentRobotPositionData(ir.position(), ir.direction(), ir.hashCode(),
-						ir.getThoughts().collisions().toArray(
-								new Collision[ir.getThoughts().collisions().size()]))
+				new IntelligentRobotPositionData(
+						ir.position(), ir.direction(), ir.hashCode(),
+						ir.getThoughts().allColisions().toArray(
+								new Collision[ir.getThoughts().allColisions().size()]
+						)
+				)
 			);
 		} else {
 			robotData.get(currentTick).add(
@@ -87,7 +104,8 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 	@Override
 	public void done() {
-		frame.setVisible(true);
+		simulationFrame.setVisible(true);
+		collisionFrame.setVisible(true);
 	}
 
 	/**
@@ -96,7 +114,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent evt) {
 		this.tickToDisplay = ((JSlider)evt.getSource()).getValue();
-		frame.repaint();
+		simulationFrame.repaint();
 	}
 
 	private static class RobotPositionData {
@@ -111,12 +129,18 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		}
 	}
 
+	/**
+	 * Store relevant data of an IntelligentRobot for future rendering.
+	 * 
+	 * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
+	 */
 	private static class IntelligentRobotPositionData extends RobotPositionData {
 		final public Collision[] collision;
 
-		public IntelligentRobotPositionData(final Point position, final double direction, final int hashCode, final Collision[] collision) {
+		public IntelligentRobotPositionData(final Point position, final double direction,
+				final int hashCode, final Collision[] collisions) {
 			super(position, direction, hashCode);
-			this.collision = collision;
+			this.collision = collisions;
 		}
 	}
 
@@ -131,6 +155,14 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		}
 	}
 
+
+
+	/**
+	 * The {@link JPanel} that draws the robots moving area.
+	 * 
+	 * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
+	 *
+	 */
 	private class MainPane extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private final Dimension preferredSize = new Dimension(AREA_WIDTH, AREA_HEIGHT);
@@ -143,46 +175,38 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			return preferredSize;
 		}
 
-		public void paintComponent(Graphics componentGraphics) {
+		public void paintComponent(final Graphics componentGraphics) {
 			super.paintComponent(componentGraphics);
 
 			//Draws the selected tickSelector situation
-			final Image image = new BufferedImage(AREA_WIDTH, AREA_HEIGHT, BufferedImage.TYPE_INT_BGR);
-			final Graphics g = image.getGraphics();
-			g.setColor(Color.white);
-			g.fillRect(0, 0, AREA_WIDTH, AREA_HEIGHT);
+			final Image image = new BufferedImage(AREA_WIDTH, AREA_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+			final Graphics imageGraphics = image.getGraphics();
 
-			//TODO this is smelling awful!!!!
+			//paints the whole background as white
+			imageGraphics.setColor(Color.white);
+			imageGraphics.fillRect(0, 0, AREA_WIDTH, AREA_HEIGHT);
+
+			//paint the robots
 			for (RobotPositionData data : robotData.get(tickToDisplay)) {
 				if (data instanceof IntelligentRobotPositionData) {
-					g.setColor(Color.yellow);
 					final IntelligentRobotPositionData irData = (IntelligentRobotPositionData)data;
-					for (Collision collision : irData.collision) {
-						collision.area = arrangePointsAsConvexQuadrilateral(collision.area);
-						final int[] x = new int[collision.area.length];
-						final int[] y = new int[collision.area.length];
-						for (int i = 0; i < collision.area.length; i++) {
-							x[i] = (int)collision.area[i].x();
-							y[i] = AREA_HEIGHT - (int)collision.area[i].y();
-						}
-						//g.fillPolygon(x, y, collision.area.length);
-						g.fillOval((int)collision.position.x(), AREA_HEIGHT-(int)collision.position.y(), 10, 10);
-					}
+					intelligentRobotPainter(irData, imageGraphics);
+				} else {
+					basicRobotPainter(data, imageGraphics);
 				}
-				final Triangle t = new Triangle(data.position, data.direction);
-				g.setColor(ColorPaleteForRenderers.getColor(data.hashCode));
-				g.fillPolygon(t.x, t.y, t.n);
-				g.drawOval((int)data.position.x() - 5, (int)data.position.y() - 5, 10, 10);
 			}
 
+			//draw the image in the panel.
 			componentGraphics.drawImage(image, 0, 0, AREA_WIDTH, AREA_HEIGHT, Color.WHITE, null);
 		}
 
 
 		private Point[] arrangePointsAsConvexQuadrilateral(Point[] points) {
-			// TODO Not sure if it will perform well enough.
-			final Point center = new Point((points[0].x() + points[1].x() + points[2].x() + points[3].x()) / 4d,
-					(points[0].y() + points[1].y() + points[2].y() + points[3].y()) / 4d);
+			//TODO there probably is a better algorithm for this...
+			final Point center = new Point(
+				(points[0].x() + points[1].x() + points[2].x() + points[3].x()) / 4d,
+				(points[0].y() + points[1].y() + points[2].y() + points[3].y()) / 4d
+			);
 
 			final Map<Double, Point> map = new HashMap<>(4);
 			map.put(center.directionTo(points[0]), points[0]);
@@ -201,26 +225,68 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 			return toReturn.toArray(new Point[4]);
 		}
-	}
 
-	private static class Triangle {
-		public final int x[], y[], n = 3;
-
-		private final double alpha = FastMath.PI / 6d + FastMath.PI / 2d;
-		private final double beta = 10d;
-
-		public Triangle(final Point center, final double direction) {
-			x = new int[] {
-				(int)(center.x() + FastMath.cos(direction) * beta),
-				(int)(center.x() + FastMath.cos(direction + alpha) * beta / 2d),
-				(int)(center.x() + FastMath.cos(direction - alpha) * beta / 2d)
-			};
-			y = new int[] {
-				(int)(center.y() - FastMath.sin(direction) * beta),
-				(int)(center.y() - FastMath.sin(direction + alpha) * beta / 2d),
-				(int)(center.y() - FastMath.sin(direction - alpha) * beta / 2d)
-			};
+		//TODO this is not an elegant way to draw the robots. Should probably use the Strategy pattern for that
+		private void basicRobotPainter(RobotPositionData data, Graphics imageGraphics) {
+			final Triangle t = new Triangle(data.position, data.direction);
+			imageGraphics.setColor(ColorPaleteForRobots.getColor(data.hashCode));
+			imageGraphics.fillPolygon(t.x, t.y, t.n);
+			imageGraphics.drawOval((int)data.position.x() - 5, (int)data.position.y() - 5, 10, 10);
 		}
+
+		//TODO this is not an elegant way to draw the robots. Should probably use the Strategy pattern for that
+		private void intelligentRobotPainter(IntelligentRobotPositionData irData, Graphics imageGraphics) {
+			final StringBuilder message = new StringBuilder();
+
+			for (Collision collision : irData.collision) {
+				collision.area = arrangePointsAsConvexQuadrilateral(collision.area);
+				final int[] x = new int[collision.area.length];
+				final int[] y = new int[collision.area.length];
+				for (int i = 0; i < collision.area.length; i++) {
+					x[i] = (int)collision.area[i].x();
+					y[i] = AREA_HEIGHT - (int)collision.area[i].y();
+				}
+				imageGraphics.setColor(ColorPaleteForRobots.getLighter(collision.withObjectId));
+				imageGraphics.fillPolygon(x, y, collision.area.length);
+				//imageGraphics.setColor(new Color(0xffaaff));
+				//imageGraphics.fillOval((int)collision.position.x(), AREA_HEIGHT-(int)collision.position.y(), 10, 10);
+				message.append("Collision with " + collision.withObjectId + " with probability " + collision.probability);
+				message.append('\n');
+			}
+
+			collisions.setText(message.toString());
+
+			basicRobotPainter(irData, imageGraphics);
+		}
+
+		/**
+		 * Helper class to draw the robots as triangles that points towards their movement direction.
+		 * 
+		 * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
+		 */
+		private class Triangle {
+			public final int x[], y[], n = 3;
+
+			private final double alpha = FastMath.PI / 6d + FastMath.PI / 2d;
+			private final double beta = 10d;
+
+			public Triangle(final Point center, final double direction) {
+				x = new int[] {
+					(int)(center.x() + FastMath.cos(direction) * beta),
+					(int)(center.x() + FastMath.cos(direction + alpha) * beta / 2d),
+					(int)(center.x() + FastMath.cos(direction - alpha) * beta / 2d)
+				};
+
+				//Here we use minus because the the image Y dimension orientation
+				//grows towards the bottom of the screen.
+				y = new int[] {
+					(int)(center.y() - FastMath.sin(direction) * beta),
+					(int)(center.y() - FastMath.sin(direction + alpha) * beta / 2d),
+					(int)(center.y() - FastMath.sin(direction - alpha) * beta / 2d)
+				};
+			}
+		}
+
 	}
 
 }
