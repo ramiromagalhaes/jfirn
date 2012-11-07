@@ -64,17 +64,17 @@ public class QuickCollisionEvaluator implements Evaluator {
 		}
 
 		//when each robot will reach the collision position?
-		final double meTime = timeToReach(myPosition, mySpeed, collisionPosition);
+		final double myTime = timeToReach(myPosition, mySpeed, collisionPosition);
 		final double otherTime = timeToReach(otherPosition, otherSpeed, collisionPosition);
 
 		//Heuristic: I'm considering there will be a collision if the time between robots to arrive at the collision position are almost the same.
 		//TODO Improve this 'if', maybe considering objects direction, speed, size, etc.
-		if (FastMath.abs(meTime - otherTime) > 6d) {
+		if (FastMath.abs(myTime - otherTime) > 6d) {
 			return null;
 		}
 
 		//estimate the collision time with the average of times
-		final double time = (meTime + otherTime) / 2d;
+		final double time = (myTime + otherTime) / 2d;
 
 		return new Collision(id, collisionPosition, time);
 	}
