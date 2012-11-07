@@ -28,7 +28,7 @@ public class Main {
 
 		engine.addRobot( new BasicRobot       (185, 175, Robot.RIGHT, 5) );
 		engine.addRobot( new RandomWalkerRobot(300, 300, Robot.RIGHT, 5) );
-		engine.addRobot( new SineRobot        (535, 100, Robot.UP,    5) );
+		engine.addRobot( new SineRobot        (535, 100, Robot.UP,    5, 7) );
 		engine.addRobot( new CrazyRobot       (250, 375, Robot.RIGHT, 5) );
 		engine.addRobot( new SquareRobot      (300, 425, Robot.UP,    5) );
 
