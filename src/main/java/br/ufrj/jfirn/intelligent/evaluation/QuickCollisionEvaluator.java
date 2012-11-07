@@ -16,6 +16,10 @@ public class QuickCollisionEvaluator implements Evaluator {
 		final Point myPosition = thoughts.myPosition();
 
 		for (MobileObstacleStatistics stats : thoughts.allObstacleStatistics()) { //evaluate everyone I see.
+			if (stats.entriesAdded() < 2) { //Not enough data. Ignore for now.
+				continue;
+			}
+
 			Collision collision = evaluateCollision(
 				myPosition,
 				thoughts.myDirection(),
@@ -31,7 +35,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 			}
 
 			//If this collision is too far in the future, go verify someone else.
-			if (myPosition.distanceTo(collision.position) > 200d || collision.time > 10d) {
+			if (myPosition.distanceTo(collision.position) > 400d || collision.time > 10d) {
 				continue;
 			}
 
@@ -44,7 +48,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 
 	private Collision evaluateCollision(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed, int id) {
-		//TODO I fear this will perform poorly for something supposed to be fast...
+		//TODO Try to improve performance
 
 		//here we forecast if a collision may happen
 		final Point collisionPosition =

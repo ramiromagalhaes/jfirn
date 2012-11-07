@@ -38,7 +38,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	private static final int AREA_WIDTH = 1024;
 	private static final int AREA_HEIGHT = 768;
 
-	private final JFrame simulationFrame, collisionFrame;
+	private final JFrame simulationFrame;
 	private final JLabel collisions;
 	private final JSlider tickSelector;
 	private List<List<RobotPositionData>> robotData = new ArrayList<>(0);
@@ -52,23 +52,16 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		tickSelector = new TimeTickSelector();
 		tickSelector.addChangeListener(this);
 
-        simulationFrame.add(new MainPane(), BorderLayout.NORTH);
+        collisions = new JLabel();
+        collisions.setPreferredSize(new Dimension(AREA_WIDTH, 40));
+        simulationFrame.add(collisions, BorderLayout.NORTH);
+
+        simulationFrame.add(new MainPane(), BorderLayout.CENTER);
+
         simulationFrame.add(tickSelector, BorderLayout.SOUTH);
 
         simulationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         simulationFrame.pack();
-
-        collisionFrame = new JFrame("Collisions");
-        collisionFrame.setLayout(new BorderLayout());
-
-        JPanel p = new JPanel();
-        p.setPreferredSize(new Dimension(AREA_WIDTH, 40));
-        collisions = new JLabel();
-        collisionFrame.add(p);
-        collisionFrame.add(collisions, BorderLayout.NORTH);
-
-        collisionFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        collisionFrame.pack();
 	}
 
 	@Override
@@ -105,7 +98,6 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	@Override
 	public void done() {
 		simulationFrame.setVisible(true);
-		collisionFrame.setVisible(true);
 	}
 
 	/**
@@ -251,7 +243,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 				//imageGraphics.setColor(new Color(0xffaaff));
 				//imageGraphics.fillOval((int)collision.position.x(), AREA_HEIGHT-(int)collision.position.y(), 10, 10);
 				message.append("Collision with " + collision.withObjectId + " with probability " + collision.probability);
-				message.append('\n');
+				message.append(" - ");
 			}
 
 			collisions.setText(message.toString());

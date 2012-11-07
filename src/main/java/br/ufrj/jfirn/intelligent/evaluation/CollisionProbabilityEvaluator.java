@@ -29,9 +29,6 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 				thoughts.obstacleStatistics(collision.withObjectId);
 
 			if (stats.entriesAdded() < 2) { //Not enough data. Ignore for now.
-				if (collision.probability == 0) {
-					thoughts.removeCollision(collision.withObjectId);
-				}
 				continue;
 			}
 
@@ -80,6 +77,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 					intersections[2],
 					intersections[3],
 					stats.speedDirectionCorrelation());
+
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain);
