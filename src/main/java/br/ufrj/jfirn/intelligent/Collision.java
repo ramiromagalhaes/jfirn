@@ -1,8 +1,12 @@
 package br.ufrj.jfirn.intelligent;
 
+import java.io.Serializable;
+
 import br.ufrj.jfirn.common.Point;
 
-public class Collision {
+public class Collision implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	public final int withObjectId;
 	public final Point position;
 	public final double time;

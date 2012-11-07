@@ -2,7 +2,7 @@ package br.ufrj.jfirn.intelligent.evaluation;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
-import br.ufrj.jfirn.intelligent.MobileObstacleStatisticsLogger;
+import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 import br.ufrj.jfirn.intelligent.Thoughts;
 
 public class ImmediateDangerEvaluator implements Evaluator {
@@ -14,7 +14,7 @@ public class ImmediateDangerEvaluator implements Evaluator {
 		thoughts.endangered(false); //assume not...
 
 		//...but check for it
-		for (MobileObstacleStatisticsLogger stats : thoughts.allObstacleStatistics()) {
+		for (MobileObstacleStatistics stats : thoughts.allObstacleStatistics()) {
 			if ( this.isInDangerRadius(thoughts.myPosition(), stats.lastKnownPosition()) ) {
 				thoughts.endangered(true);
 				break;

@@ -6,7 +6,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.intelligent.Collision;
-import br.ufrj.jfirn.intelligent.MobileObstacleStatisticsLogger;
+import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 import br.ufrj.jfirn.intelligent.Thoughts;
 import br.ufrj.jfirn.intelligent.Trajectory;
 
@@ -25,10 +25,13 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 		}
 
 		for (Collision collision : thoughts.allColisions()) {
-			final MobileObstacleStatisticsLogger stats =
+			final MobileObstacleStatistics stats =
 				thoughts.obstacleStatistics(collision.withObjectId);
 
 			if (stats.entriesAdded() < 2) { //Not enough data. Ignore for now.
+				if (collision.probability == 0) {
+					thoughts.removeCollision(collision.withObjectId);
+				}
 				continue;
 			}
 

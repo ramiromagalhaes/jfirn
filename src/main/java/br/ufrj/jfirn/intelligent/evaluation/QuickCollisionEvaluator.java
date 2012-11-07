@@ -4,7 +4,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.intelligent.Collision;
-import br.ufrj.jfirn.intelligent.MobileObstacleStatisticsLogger;
+import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 import br.ufrj.jfirn.intelligent.Thoughts;
 import br.ufrj.jfirn.intelligent.Trajectory;
 
@@ -15,29 +15,28 @@ public class QuickCollisionEvaluator implements Evaluator {
 		//think and evaluate and change your thoughts and decide what to do next...
 		final Point myPosition = thoughts.myPosition();
 
-		for (MobileObstacleStatisticsLogger mo : thoughts.allObstacleStatistics()) { //evaluate everyone I see.
+		for (MobileObstacleStatistics stats : thoughts.allObstacleStatistics()) { //evaluate everyone I see.
 			Collision collision = evaluateCollision(
 				myPosition,
 				thoughts.myDirection(),
 				thoughts.mySpeed(),
-				mo.lastKnownPosition(),
-				mo.directionMean(),
-				mo.speedMean(),
-				mo.getObservedObjectId()
+				stats.lastKnownPosition(),
+				stats.directionMean(),
+				stats.speedMean(),
+				stats.getObservedObjectId()
 			);
 
 			if (collision == null) { //No collision. Verify someone else.
 				continue;
 			}
 
-			//If this collision is too far in the future, forget about it. Verify someone else.
+			//If this collision is too far in the future, go verify someone else.
 			if (myPosition.distanceTo(collision.position) > 200d || collision.time > 10d) {
 				continue;
 			}
 
-			//This if may be weird, but it will work because we defined a equals and hashCode
-			//to Collision class, based on the id of the object that the robot will collide with.
-			thoughts.putCollision(mo.getObservedObjectId(), collision);
+			//We may need to evaluate a new collision
+			thoughts.putCollision(stats.getObservedObjectId(), collision);
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain); //keep thinking

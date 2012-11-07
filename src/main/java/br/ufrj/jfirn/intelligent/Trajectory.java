@@ -40,7 +40,7 @@ public class Trajectory {
 	 * From the statistical data of a mobile obstacle movement, get me the trajectories
 	 * that represent the boundaries of its movement.
 	 */
-	public static Trajectory[] fromStatistics(MobileObstacleStatisticsLogger stats) {
+	public static Trajectory[] fromStatistics(MobileObstacleStatistics stats) {
 		final Point lkp = stats.lastKnownPosition();
 		final double mean = stats.directionMean();
 		final double stdDeviation = FastMath.sqrt(stats.directionVariance());

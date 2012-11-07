@@ -39,7 +39,7 @@ public class Thoughts implements Serializable {
 	/**
 	 * Obstacles statistics data.
 	 */
-	private Map<Integer, MobileObstacleStatisticsLogger> obstacleStatistics = new HashMap<>();
+	private Map<Integer, MovementStatistics> obstacleStatistics = new HashMap<>();
 
 	/**
 	 * Known collision forecast for this object. Notice that I may have statistics
@@ -82,7 +82,7 @@ public class Thoughts implements Serializable {
 		return obstacleStatistics.containsKey(objectId);
 	}
 
-	public MobileObstacleStatisticsLogger obstacleStatistics(int objectId) {
+	public MobileObstacleStatistics obstacleStatistics(int objectId) {
 		return obstacleStatistics.get(objectId);
 	}
 
@@ -101,7 +101,7 @@ public class Thoughts implements Serializable {
 		this.collisions.put(objectId, collision);
 	}
 
-	public Collection<MobileObstacleStatisticsLogger> allObstacleStatistics() {
+	public Collection<? extends MobileObstacleStatistics> allObstacleStatistics() {
 		return this.obstacleStatistics.values();
 	}
 
@@ -114,6 +114,10 @@ public class Thoughts implements Serializable {
 			this.obstacleStatistics.remove(objectId);
 			this.collisions.remove(objectId);
 		}
+	}
+
+	public void removeCollision(int objectId) {
+		this.collisions.remove(objectId);
 	}
 
 	public void retainObstaclesData(List<Integer> objectIds) {

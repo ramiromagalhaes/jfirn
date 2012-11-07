@@ -11,7 +11,7 @@ import br.ufrj.jfirn.common.Point;
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-public class MovementStatistics implements MobileObstacleDataLogger, MobileObstacleStatisticsLogger {
+public class MovementStatistics implements MobileObstacleDataLogger, MobileObstacleStatistics {
 
 	private final int observedObjectId;
 
