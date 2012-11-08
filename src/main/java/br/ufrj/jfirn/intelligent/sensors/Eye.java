@@ -16,11 +16,11 @@ import br.ufrj.jfirn.intelligent.IntelligentRobot;
  */
 public class Eye implements Sight {
 
-	private double sightRadius;
-	private IntelligentRobot attachedTo; //this eye is attached to a robot
+	private final double sightRadius;
+	private final IntelligentRobot attachedTo; //this eye is attached to a robot
 
-	public Eye(double sightDistance, IntelligentRobot attachedTo) {
-		this.sightRadius = sightDistance;
+	public Eye(double sightRadius, IntelligentRobot attachedTo) {
+		this.sightRadius = sightRadius;
 		this.attachedTo = attachedTo;
 	}
 
@@ -28,9 +28,9 @@ public class Eye implements Sight {
 	 * Is parameter p under this Eye's sight?
 	 * Returns false if attachedTo.equals(p).
 	 */
-	public boolean sees(Robot p) {
-		return !attachedTo.equals(p) &&
-				attachedTo.position().distanceTo(p.position()) <= sightRadius;
+	public boolean sees(Robot r) {
+		return (!attachedTo.equals(r))
+			&& (attachedTo.position().distanceTo(r.position()) <= sightRadius);
 	}
 
 	/**
