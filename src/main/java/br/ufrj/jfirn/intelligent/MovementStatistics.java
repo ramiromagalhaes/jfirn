@@ -1,7 +1,6 @@
 package br.ufrj.jfirn.intelligent;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
 
@@ -24,8 +23,6 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 		speed = new SummaryStatistics(),
 		direction = new SummaryStatistics();
 
-
-
 	public MovementStatistics(final int observedObjectId) {
 		this.observedObjectId = observedObjectId;
 	}
@@ -45,7 +42,8 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 
 		//Weird? See http://en.wikipedia.org/wiki/Directional_statistics#The_fundamental_difference_between_linear_and_circular_statistics
 		//See also http://en.wikipedia.org/wiki/Atan2
-		this.direction.addValue(FastMath.atan2(FastMath.sin(direction), FastMath.cos(direction)));
+		//this.direction.addValue(FastMath.atan2(FastMath.sin(direction), FastMath.cos(direction)));
+		this.direction.addValue(direction);
 	}
 
 	@Override
