@@ -17,7 +17,8 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 		//The trajectory of the extremities of the IntelligentRobot, considering its movement direction
 		final Trajectory[] myTrajectory;
 		{
-			final Point points[] = RobotExtremePointsCalculator.makePoint(thoughts.myPosition(), thoughts.myDirection());
+			final Point points[] = RobotExtremePointsCalculator
+					.makePoint(thoughts.myPosition(), thoughts.myDirection());
 			myTrajectory = new Trajectory[] {
 				new Trajectory(thoughts.myDirection(), points[0]),
 				new Trajectory(thoughts.myDirection(), points[1]),
@@ -31,7 +32,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			final Trajectory[] trajectories = Trajectory.fromStatistics(stats);
 
 			//Here, intersections are points in the X, Y plane. The next step is convert them
-			//to the Angle, Speed planes because we chose to work with those probability
+			//to the Angle, Speed planes because we chose to work with the probability
 			//distributions of the robot angle and the robot speed.
 			final Point[] intersections = new Point[] {
 				myTrajectory[0].intersect(trajectories[0]),
@@ -66,6 +67,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 				intersections[i] = new Point(direction, speed);
 			}
 
+			//calculate the collision probability
 			collision.probability =
 				BGD.cdfOfConvexQuadrilaterals(
 					intersections[0],

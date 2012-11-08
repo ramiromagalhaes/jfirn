@@ -72,10 +72,10 @@ public class Engine {
 		//TODO sensing robots should both be solved efficiently. Maybe we should consider implementing a quadtree?
 		for(Eye eye : eyes) {
 			final Set<SightData> seenRobots = new HashSet<>();
-			for(Robot p : robots) {
-				if ( eye.sees(p) ) {
+			for(Robot r : robots) {
+				if ( eye.sees(r) ) {
 					seenRobots.add(
-						new SightData(p.hashCode(), p.position(), p.speed(), p.direction())
+						new SightData(r.hashCode(), r.position(), r.speed(), r.direction())
 					);
 				}
 			}
