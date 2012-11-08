@@ -5,6 +5,10 @@ import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.IntelligentRobot;
 import br.ufrj.jfirn.intelligent.sensors.Eye;
+import br.ufrj.jfirn.mobileObstacle.CrazyRobot;
+import br.ufrj.jfirn.mobileObstacle.RandomWalkerRobot;
+import br.ufrj.jfirn.mobileObstacle.SineRobot;
+import br.ufrj.jfirn.mobileObstacle.SquareRobot;
 
 public class Scenario2 {
 
@@ -22,11 +26,11 @@ public class Scenario2 {
 			engine.addIntelligentRobot(ir, new Eye(200, ir), ir);
 		}
 
-		engine.addRobot( new BasicRobot(185, 175, Robot.RIGHT, 5) );
-		engine.addRobot( new BasicRobot(300, 300, Robot.RIGHT, 5) );
-		engine.addRobot( new BasicRobot(535, 100, Robot.UP,    5) );
-		engine.addRobot( new BasicRobot(250, 375, Robot.RIGHT, 5) );
-		engine.addRobot( new BasicRobot(300, 425, Robot.UP,    5) );
+		engine.addRobot( new BasicRobot       (185, 175, Robot.RIGHT, 5) );
+		engine.addRobot( new RandomWalkerRobot(300, 300, Robot.RIGHT, 5) );
+		engine.addRobot( new SineRobot        (535, 100, Robot.UP,    5, 7) );
+		engine.addRobot( new CrazyRobot       (250, 375, Robot.RIGHT, 5) );
+		engine.addRobot( new SquareRobot      (300, 425, Robot.UP,    5) );
 
 		engine.simulate();
 	}
