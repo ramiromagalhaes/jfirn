@@ -33,7 +33,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 			}
 
 			//If this collision is too far in the future, go verify someone else.
-			if (myPosition.distanceTo(collision.position) > 400d || collision.time > 10d) {
+			if (myPosition.distanceTo(collision.position) > 400d || collision.time > 20d) {
 				thoughts.removeCollision(stats.getObservedObjectId()); //remove a previous collision if it existed.
 				continue;
 			}
@@ -47,7 +47,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 
 	private Collision evaluateCollision(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed, int id) {
-		//TODO Try to improve performance
+		//TODO test performance?
 
 		//here we forecast if a collision may happen
 		final Point collisionPosition =
@@ -73,7 +73,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 		final double otherTime = timeToReach(otherPosition, otherSpeed, collisionPosition);
 
 		//Heuristic: I'm considering there will be a collision if the time between robots to arrive at the collision position are almost the same.
-		//TODO Improve this 'if', maybe considering objects direction, speed, size, etc.
+		//TODO Evaluate and improve this 'if', maybe changing the time while considering objects direction, speed, size, etc.
 		if (FastMath.abs(myTime - otherTime) > 6d) {
 			return null;
 		}
