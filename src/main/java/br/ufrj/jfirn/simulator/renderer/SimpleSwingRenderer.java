@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,7 @@ import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.Collision;
 import br.ufrj.jfirn.intelligent.IntelligentRobot;
+import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 
 /**
  * Very simple implementation of a {@link TimedSimulationRenderer}.
@@ -41,7 +43,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	private final JFrame simulationFrame;
 	private final JLabel collisions;
 	private final JSlider tickSelector;
-	private List<List<RobotPositionData>> robotData = new ArrayList<>(0);
+	private List<List<RobotData>> robotData = new ArrayList<>(0);
 	private int currentTick;
 	private int tickToDisplay = 0;
 
@@ -67,7 +69,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	@Override
 	public void draw(Robot robot) {
 		if (currentTick >= robotData.size()) {
-			robotData.add(new ArrayList<RobotPositionData>());
+			robotData.add(new ArrayList<RobotData>());
 			tickSelector.setMaximum(currentTick);
 		}
 
@@ -75,16 +77,17 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		if (robot instanceof IntelligentRobot) {
 			final IntelligentRobot ir = (IntelligentRobot)robot;
 			robotData.get(currentTick).add(
-				new IntelligentRobotPositionData(
-						ir.position(), ir.direction(), ir.hashCode(),
-						ir.getThoughts().allColisions().toArray(
-								new Collision[ir.getThoughts().allColisions().size()]
-						)
+				new IntelligentRobotData(
+					ir.position(), ir.direction(), ir.hashCode(),
+					ir.getThoughts().allObstacleStatistics(),
+					ir.getThoughts().allColisions().toArray(
+						new Collision[ir.getThoughts().allColisions().size()]
+					)
 				)
 			);
 		} else {
 			robotData.get(currentTick).add(
-				new RobotPositionData(robot.position(), robot.direction(), robot.hashCode())
+				new RobotData(robot.position(), robot.direction(), robot.hashCode())
 			);
 		}
 
@@ -109,12 +112,18 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		simulationFrame.repaint();
 	}
 
-	private static class RobotPositionData {
+	/**
+	 * Stores relevant data of robots.
+	 * 
+	 * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
+	 *
+	 */
+	private static class RobotData {
 		public final Point position;
 		public final double direction;
 		public final int hashCode;
 
-		public RobotPositionData(final Point position, final double direction, final int hashCode) {
+		public RobotData(final Point position, final double direction, final int hashCode) {
 			this.position = new Point(position.x(), AREA_HEIGHT - position.y());
 			this.direction = direction;
 			this.hashCode = hashCode;
@@ -122,17 +131,41 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	}
 
 	/**
-	 * Store relevant data of an IntelligentRobot for future rendering.
+	 * Stores relevant data of an IntelligentRobot for rendering.
 	 * 
 	 * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
 	 */
-	private static class IntelligentRobotPositionData extends RobotPositionData {
-		final public Collision[] collision;
+	private static class IntelligentRobotData extends RobotData {
+		public final Collision[] collision;
+		public final Obstacle[] obstacles;
 
-		public IntelligentRobotPositionData(final Point position, final double direction,
-				final int hashCode, final Collision[] collisions) {
+		public IntelligentRobotData(final Point position, final double direction,
+				final int hashCode, Collection<MobileObstacleStatistics>statistics, final Collision[] collisions) {
 			super(position, direction, hashCode);
 			this.collision = collisions;
+
+			int i = 0;
+			obstacles = new Obstacle[statistics.size()];
+			for (MobileObstacleStatistics stats : statistics) {
+				obstacles[i] = new Obstacle(
+						stats.getObservedObjectId(),
+						stats.lastKnownPosition(),
+						stats.speedMean(), stats.directionMean());
+				i++;
+			}
+		}
+
+		public static class Obstacle {
+			final public int id;
+			final public Point position;
+			final public double meanSpeed, meanDirection;
+
+			public Obstacle(int id, Point position, double meanSpeed, double meanDirection) {
+				this.id = id;
+				this.position = new Point(position.x(), AREA_HEIGHT - position.y());
+				this.meanSpeed = meanSpeed;
+				this.meanDirection = meanDirection;
+			}
 		}
 	}
 
@@ -179,9 +212,9 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			imageGraphics.fillRect(0, 0, AREA_WIDTH, AREA_HEIGHT);
 
 			//paint the robots
-			for (RobotPositionData data : robotData.get(tickToDisplay)) {
-				if (data instanceof IntelligentRobotPositionData) {
-					final IntelligentRobotPositionData irData = (IntelligentRobotPositionData)data;
+			for (RobotData data : robotData.get(tickToDisplay)) {
+				if (data instanceof IntelligentRobotData) {
+					final IntelligentRobotData irData = (IntelligentRobotData)data;
 					intelligentRobotPainter(irData, imageGraphics);
 				} else {
 					basicRobotPainter(data, imageGraphics);
@@ -218,8 +251,20 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			return toReturn.toArray(new Point[4]);
 		}
 
+		private void obstaclePainter(IntelligentRobotData.Obstacle obstacle, Graphics imageGraphics) {
+			imageGraphics.setColor(ColorPaleteForRobots.getLighter(obstacle.id));
+
+			//final Triangle t = new Triangle(obstacle.position, obstacle.meanDirection);
+			//imageGraphics.fillPolygon(t.x, t.y, t.n);
+
+			imageGraphics.drawLine((int)obstacle.position.x(), (int)obstacle.position.y(),
+				(int)(FastMath.cos(obstacle.meanDirection) * 100 + obstacle.position.x()),
+				(int)(-FastMath.sin(obstacle.meanDirection) * 100 + obstacle.position.y())
+			);
+		}
+
 		//TODO this is not an elegant way to draw the robots. Should probably use the Strategy pattern for that
-		private void basicRobotPainter(RobotPositionData data, Graphics imageGraphics) {
+		private void basicRobotPainter(RobotData data, Graphics imageGraphics) {
 			final Triangle t = new Triangle(data.position, data.direction);
 			imageGraphics.setColor(ColorPaleteForRobots.getColor(data.hashCode));
 			imageGraphics.fillPolygon(t.x, t.y, t.n);
@@ -227,7 +272,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		}
 
 		//TODO this is not an elegant way to draw the robots. Should probably use the Strategy pattern for that
-		private void intelligentRobotPainter(IntelligentRobotPositionData irData, Graphics imageGraphics) {
+		private void intelligentRobotPainter(IntelligentRobotData irData, Graphics imageGraphics) {
 			final StringBuilder message = new StringBuilder();
 
 			for (Collision collision : irData.collision) {
@@ -242,6 +287,10 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 				imageGraphics.fillPolygon(x, y, collision.area.length);
 				message.append("Collision with " + collision.withObjectId + " with probability " + collision.probability);
 				message.append(" - ");
+			}
+
+			for (IntelligentRobotData.Obstacle obstacle : irData.obstacles) {
+				obstaclePainter(obstacle, imageGraphics);
 			}
 
 			imageGraphics.setColor(Color.gray);
