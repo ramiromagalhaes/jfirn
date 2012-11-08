@@ -17,8 +17,7 @@ public class Scenario1 {
 			final IntelligentRobot ir = new IntelligentRobot (200, 200, 0,
 				new Point(400, 100),
 				new Point(200, 400),
-				new Point(300, 450),
-				new Point(200, 200)
+				new Point(300, 450)
 			);
 
 			engine.addIntelligentRobot(ir, new Eye(200, ir), ir);

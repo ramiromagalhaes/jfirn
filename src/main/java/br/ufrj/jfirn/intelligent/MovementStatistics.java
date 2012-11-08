@@ -17,7 +17,7 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 	private Point lastPosition;
 
 	//visit this page: http://commons.apache.org/math/userguide/stat.html
-	private SummaryStatistics
+	private final SummaryStatistics
 		x = new SummaryStatistics(),
 		y = new SummaryStatistics(),
 		speed = new SummaryStatistics(),
