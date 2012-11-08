@@ -10,7 +10,7 @@ import br.ufrj.jfirn.mobileObstacle.RandomWalkerRobot;
 import br.ufrj.jfirn.mobileObstacle.SineRobot;
 import br.ufrj.jfirn.mobileObstacle.SquareRobot;
 
-public class Main {
+public class Scenario1 {
 
 	public static void main(String[] args) {
 		final Engine engine = new Engine();
@@ -23,7 +23,7 @@ public class Main {
 				new Point(200, 200)
 			);
 
-			engine.addIntelligentRobot(ir, new Eye(400, ir), ir);
+			engine.addIntelligentRobot(ir, new Eye(200, ir), ir);
 		}
 
 		engine.addRobot( new BasicRobot       (185, 175, Robot.RIGHT, 5) );
