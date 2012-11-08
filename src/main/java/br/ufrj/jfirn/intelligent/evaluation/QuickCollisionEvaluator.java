@@ -3,6 +3,7 @@ package br.ufrj.jfirn.intelligent.evaluation;
 import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.Collision;
 import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 import br.ufrj.jfirn.intelligent.Thoughts;
@@ -16,10 +17,6 @@ public class QuickCollisionEvaluator implements Evaluator {
 		final Point myPosition = thoughts.myPosition();
 
 		for (MobileObstacleStatistics stats : thoughts.allObstacleStatistics()) { //evaluate everyone I see.
-			if (stats.entriesAdded() < 2) { //Not enough data. Ignore for now.
-				continue;
-			}
-
 			Collision collision = evaluateCollision(
 				myPosition,
 				thoughts.myDirection(),
@@ -31,11 +28,13 @@ public class QuickCollisionEvaluator implements Evaluator {
 			);
 
 			if (collision == null) { //No collision. Verify someone else.
+				thoughts.removeCollision(stats.getObservedObjectId()); //remove a previous collision if it existed.
 				continue;
 			}
 
 			//If this collision is too far in the future, go verify someone else.
 			if (myPosition.distanceTo(collision.position) > 400d || collision.time > 10d) {
+				thoughts.removeCollision(stats.getObservedObjectId()); //remove a previous collision if it existed.
 				continue;
 			}
 
@@ -52,8 +51,11 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 		//here we forecast if a collision may happen
 		final Point collisionPosition =
-			intersection(myPosition, myDirection, otherPosition, otherDirection);
-		if (collisionPosition == null) { //if there is no intersection, then there is no collision
+			intersection(myPosition, myDirection, mySpeed,
+					otherPosition, otherDirection, otherSpeed);
+
+		//if there is no intersection, then there is no collision
+		if (collisionPosition == null) {
 			return null;
 		}
 
@@ -86,10 +88,20 @@ public class QuickCollisionEvaluator implements Evaluator {
 	/**
 	 * The robot paths intersect at some point?
 	 */
-	private Point intersection(Point myPosition, double myDirection, Point otherPosition, double otherDirection) {
-		final Trajectory t1 = new Trajectory(myDirection, myPosition);
-		final Trajectory t2 = new Trajectory(otherDirection, otherPosition);
-		return t1.intersect(t2);
+	private Point intersection(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed) {
+		if (mySpeed == Robot.STOPPED && otherSpeed == Robot.STOPPED) {
+			return null;
+		} else if (mySpeed == Robot.STOPPED) {
+			final Trajectory otherTrajectory = new Trajectory(otherDirection, otherPosition);
+			return otherTrajectory.intersect(myPosition) ? myPosition : null;
+		} else if (otherSpeed == Robot.STOPPED) {
+			final Trajectory myTrajectory = new Trajectory(myDirection, myPosition);
+			return myTrajectory.intersect(otherPosition) ? otherPosition : null;
+		}
+
+		final Trajectory myTrajectory = new Trajectory(myDirection, myPosition);
+		final Trajectory otherTrajectory = new Trajectory(otherDirection, otherPosition);
+		return myTrajectory.intersect(otherTrajectory);
 	}
 
 

@@ -28,10 +28,6 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			final MobileObstacleStatistics stats =
 				thoughts.obstacleStatistics(collision.withObjectId);
 
-			if (stats.entriesAdded() < 2) { //Not enough data. Ignore for now.
-				continue;
-			}
-
 			final Trajectory[] trajectories = Trajectory.fromStatistics(stats);
 
 			//Here, intersections are points in the X, Y plane. The next step is convert them
