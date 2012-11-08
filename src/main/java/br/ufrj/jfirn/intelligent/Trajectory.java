@@ -36,6 +36,10 @@ public class Trajectory {
 		return new Point(x, y);
 	}
 
+	public boolean intersect(Point p) {
+		return p.y() == alpha * p.x() + beta;
+	}
+
 	/**
 	 * From the statistical data of a mobile obstacle movement, get me the trajectories
 	 * that represent the boundaries of its movement.
