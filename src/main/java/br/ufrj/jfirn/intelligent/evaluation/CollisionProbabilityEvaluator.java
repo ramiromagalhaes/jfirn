@@ -75,7 +75,6 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 					intersections[2],
 					intersections[3],
 					stats.speedDirectionCorrelation());
-
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain);
