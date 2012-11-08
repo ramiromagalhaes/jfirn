@@ -9,6 +9,12 @@ import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 import br.ufrj.jfirn.intelligent.Thoughts;
 import br.ufrj.jfirn.intelligent.Trajectory;
 
+/**
+ * Evaluates if the IntelligentRobot and the other robots known to this robot may
+ * collide.
+ * 
+ * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
+ */
 public class QuickCollisionEvaluator implements Evaluator {
 
 	@Override
@@ -46,7 +52,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 	}
 
 
-	private Collision evaluateCollision(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed, int id) {
+	protected Collision evaluateCollision(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed, int id) {
 		//TODO test performance?
 
 		//here we forecast if a collision may happen
@@ -119,7 +125,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 	 * Is the robot going towards the collision or has it passed the destination already?
 	 * true if it is going in the right direction.
 	 */
-	public static boolean isTheRightDirection(Point position, double direction, Point destination) {
+	private static boolean isTheRightDirection(Point position, double direction, Point destination) {
 		//TODO there might be a better/faster way to do this
 
 		final double y = destination.y() - position.y();
