@@ -6,4 +6,6 @@ public interface MobileObstacleDataLogger {
 
 	public void addEntry(Point position, double speed, double direction);
 
+	public void clear();
+
 }

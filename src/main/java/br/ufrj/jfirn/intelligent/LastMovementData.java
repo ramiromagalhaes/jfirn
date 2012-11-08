@@ -89,6 +89,11 @@ public class LastMovementData implements MobileObstacleDataLogger, MobileObstacl
 	}
 
 	@Override
+	public void clear() {
+		//does nothing. Meaningless.
+	}
+
+	@Override
 	public double directionVariance() {
 		return 0;
 	}

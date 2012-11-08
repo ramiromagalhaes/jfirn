@@ -17,6 +17,7 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 
 	private Point lastPosition;
 
+	//visit this page: http://commons.apache.org/math/userguide/stat.html
 	private SummaryStatistics
 		x = new SummaryStatistics(),
 		y = new SummaryStatistics(),
@@ -95,6 +96,14 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 	@Override
 	public double directionVariance() {
 		return direction.getVariance();
+	}
+
+	@Override
+	public void clear() {
+		x.clear();
+		y.clear();
+		speed.clear();
+		direction.clear();
 	}
 
 	@Override
