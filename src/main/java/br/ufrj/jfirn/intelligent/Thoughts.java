@@ -101,8 +101,9 @@ public class Thoughts implements Serializable {
 		this.collisions.put(objectId, collision);
 	}
 
-	public Collection<? extends MobileObstacleStatistics> allObstacleStatistics() {
-		return this.obstacleStatistics.values();
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Collection<MobileObstacleStatistics> allObstacleStatistics() {
+		return (Collection)this.obstacleStatistics.values();
 	}
 
 	public Collection<Collision> allColisions() {
