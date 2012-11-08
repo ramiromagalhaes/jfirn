@@ -240,11 +240,12 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 				}
 				imageGraphics.setColor(ColorPaleteForRobots.getLighter(collision.withObjectId));
 				imageGraphics.fillPolygon(x, y, collision.area.length);
-				//imageGraphics.setColor(new Color(0xffaaff));
-				//imageGraphics.fillOval((int)collision.position.x(), AREA_HEIGHT-(int)collision.position.y(), 10, 10);
 				message.append("Collision with " + collision.withObjectId + " with probability " + collision.probability);
 				message.append(" - ");
 			}
+
+			imageGraphics.setColor(Color.gray);
+			imageGraphics.drawOval((int)irData.position.x() - 200, (int)irData.position.y() - 200, 400, 400);
 
 			collisions.setText(message.toString());
 
