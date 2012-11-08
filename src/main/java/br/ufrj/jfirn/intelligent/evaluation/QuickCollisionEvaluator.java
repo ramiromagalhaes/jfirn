@@ -94,7 +94,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 	/**
 	 * The robot paths intersect at some point?
 	 */
-	private Point intersection(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed) {
+	protected Point intersection(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed) {
 		if (mySpeed == Robot.STOPPED && otherSpeed == Robot.STOPPED) {
 			return null;
 		} else if (mySpeed == Robot.STOPPED) {
@@ -117,7 +117,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 	 * Ignores the direction because I assume I'm going straight towards the destination.
 	 * @see #isTheRightDirection(Point, double, Point)
 	 */
-	private double timeToReach(Point position, double speed, Point destination) {
+	protected double timeToReach(Point position, double speed, Point destination) {
 		return position.distanceTo(destination) / speed;
 	}
 
@@ -125,7 +125,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 	 * Is the robot going towards the collision or has it passed the destination already?
 	 * true if it is going in the right direction.
 	 */
-	private static boolean isTheRightDirection(Point position, double direction, Point destination) {
+	protected static boolean isTheRightDirection(Point position, double direction, Point destination) {
 		//TODO there might be a better/faster way to do this
 
 		final double y = destination.y() - position.y();
