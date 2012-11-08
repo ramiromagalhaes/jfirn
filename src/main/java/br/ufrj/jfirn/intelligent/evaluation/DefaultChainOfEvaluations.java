@@ -6,12 +6,12 @@ import java.util.List;
 
 import br.ufrj.jfirn.intelligent.Thoughts;
 
-public class ChainOfEvaluationsImplementation implements ChainOfEvaluations, ThoughtProcesor {
+public class DefaultChainOfEvaluations implements ChainOfEvaluations, ThoughtProcesor {
 
 	private final List<Evaluator> evaluators = new LinkedList<>();
 	private Iterator<Evaluator> iterator;
 
-	public ChainOfEvaluationsImplementation() {
+	public DefaultChainOfEvaluations() {
 		evaluators.add(new ImmediateDangerEvaluator());
 		evaluators.add(new NextTargetEvaluator());
 		evaluators.add(new QuickCollisionEvaluator());

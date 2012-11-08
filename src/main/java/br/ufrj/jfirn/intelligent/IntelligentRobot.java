@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.intelligent.evaluation.ChainOfEvaluationsImplementation;
+import br.ufrj.jfirn.intelligent.evaluation.DefaultChainOfEvaluations;
 import br.ufrj.jfirn.intelligent.evaluation.Instruction;
 import br.ufrj.jfirn.intelligent.evaluation.ThoughtProcesor;
 import br.ufrj.jfirn.intelligent.sensors.Eye;
@@ -22,7 +22,7 @@ public class IntelligentRobot extends AbstractIntelligentRobot implements Sight,
 	 * Holds an instance of the class that defines the thought process
 	 * of this IntelligentRobot.
 	 */
-	private ThoughtProcesor evaluator = new ChainOfEvaluationsImplementation();
+	private ThoughtProcesor evaluator = new DefaultChainOfEvaluations();
 
 	/**
 	 * What this robot thinks about itself and the environment.
