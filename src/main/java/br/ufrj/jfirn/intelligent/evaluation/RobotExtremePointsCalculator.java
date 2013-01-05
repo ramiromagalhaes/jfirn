@@ -5,6 +5,14 @@ import org.apache.commons.math3.util.FastMath;
 import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
 
+
+
+/**
+ * Helper class to calculate the points located at specific angles around from a robot's position.
+ * 
+ * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
+ *
+ */
 public class RobotExtremePointsCalculator {
 	private static final double RADIUS = 10;
 
@@ -14,21 +22,21 @@ public class RobotExtremePointsCalculator {
 	 * 
 	 * This is useful to know the limits of a {@link Robot}.
 	 */
-	//TODO gimme a decent name!
-	public static Point[] makePoint(Point myPosition, double myDirection) {
+	public static Point[] pointsFromVerticalAxis(Point myPosition, double myDirection) {
 		final double d1 = myDirection - FastMath.PI / 2d;
+		final double d2 = myDirection + FastMath.PI / 2d;
+
 		final Point[] points = new Point[] {
 			new Point(
-					myPosition.x() - FastMath.cos(d1) * RADIUS,
-					myPosition.y() - FastMath.sin(d1) * RADIUS
+				myPosition.x() + FastMath.cos(d1) * RADIUS,
+				myPosition.y() + FastMath.sin(d1) * RADIUS
 			),
 			new Point(
-					myPosition.x() + FastMath.cos(d1) * RADIUS,
-					myPosition.y() + FastMath.sin(d1) * RADIUS
+				myPosition.x() + FastMath.cos(d2) * RADIUS,
+				myPosition.y() + FastMath.sin(d2) * RADIUS
 			)
 		};
 		return points;
 	}
-
 
 }

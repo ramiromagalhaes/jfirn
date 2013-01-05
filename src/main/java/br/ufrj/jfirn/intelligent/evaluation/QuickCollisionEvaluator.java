@@ -38,7 +38,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 				continue;
 			}
 
-			//If this collision is too far in the future, go verify someone else.
+			//If this collision is too far in the future, forget it and go verify someone else.
 			if (myPosition.distanceTo(collision.position) > 400d || collision.time > 20d) {
 				thoughts.removeCollision(stats.getObservedObjectId()); //remove a previous collision if it existed.
 				continue;

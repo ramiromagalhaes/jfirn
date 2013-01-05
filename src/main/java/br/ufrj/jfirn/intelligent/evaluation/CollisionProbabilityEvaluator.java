@@ -18,7 +18,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 		final Trajectory[] myTrajectory;
 		{
 			final Point points[] = RobotExtremePointsCalculator
-					.makePoint(thoughts.myPosition(), thoughts.myDirection());
+					.pointsFromVerticalAxis(thoughts.myPosition(), thoughts.myDirection());
 			myTrajectory = new Trajectory[] {
 				new Trajectory(thoughts.myDirection(), points[0]),
 				new Trajectory(thoughts.myDirection(), points[1]),
@@ -46,7 +46,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			final Point moPosition = stats.lastKnownPosition();
 
 			//Convert from XY coordinates to a polar coordinates around the mobile obstacle.
-			//Normalize the input, since BGD works only with 0 mean and 1 variance: (valor - mean) / sqrt(var)
+			//Normalize the input, since BGD works only with 0 mean and 1 variance: (value - mean) / sqrt(var)
 			for(int i = 0; i < intersections.length; i++) {
 				final Point intersection = intersections[i];
 

@@ -43,8 +43,8 @@ public class Thoughts implements Serializable {
 
 	/**
 	 * Known collision forecast for this object. Notice that I may have statistics
-	 * about an object movement, but a certain object may not forecast collisions
-	 * with them.
+	 * about an object movement, but a certain object may not have any collision
+	 * data related to it.
 	 */
 	private Map<Integer, Collision> collisions = new HashMap<>();
 
@@ -53,9 +53,10 @@ public class Thoughts implements Serializable {
 	 */
 	private Deque<Point> targets = new ArrayDeque<>();
 
+
+
 	/**
-	 * Create a zeroed instance of Thoughts. I think I'm the center of
-	 * the world.
+	 * Create an empty instance of Thoughts.
 	 */
 	public Thoughts() {
 		this.position = new Point(0, 0);
@@ -73,6 +74,52 @@ public class Thoughts implements Serializable {
 
 		this.targets = targets;
 	}
+
+
+
+	public Deque<Point> targets() {
+		return targets;
+	}
+
+	public boolean endangered() {
+		return endangered;
+	}
+
+	public void endangered(boolean e) {
+		endangered = e;
+	}
+
+	public Point myPosition() {
+		return position;
+	}
+
+	public double mySpeed() {
+		return speed;
+	}
+
+	public double myDirection() {
+		return direction;
+	}
+
+	public void myPosition(Point position) {
+		this.position = position;
+	}
+
+	public void mySpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public void myDirection(double direction) {
+		this.direction = direction;
+	}
+
+
+
+	/*
+	 * End of simple methods. Begin more complex methods about the obstacle and collision database.
+	 */
+
+
 
 	/**
 	 * If we have any movement statistics about an obstacle with a certain
@@ -126,40 +173,6 @@ public class Thoughts implements Serializable {
 		collisions.keySet().retainAll(objectIds);
 	}
 
-	public Deque<Point> targets() {
-		return targets;
-	}
 
-	public boolean endangered() {
-		return endangered;
-	}
-
-	public void endangered(boolean e) {
-		endangered = e;
-	}
-
-	public Point myPosition() {
-		return position;
-	}
-
-	public double mySpeed() {
-		return speed;
-	}
-
-	public double myDirection() {
-		return direction;
-	}
-
-	public void myPosition(Point position) {
-		this.position = position;
-	}
-
-	public void mySpeed(double speed) {
-		this.speed = speed;
-	}
-
-	public void myDirection(double direction) {
-		this.direction = direction;
-	}
 
 }

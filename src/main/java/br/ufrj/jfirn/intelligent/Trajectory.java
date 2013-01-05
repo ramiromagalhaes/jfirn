@@ -49,7 +49,7 @@ public class Trajectory {
 		final double mean = stats.directionMean();
 		final double stdDeviation = FastMath.sqrt(stats.directionVariance());
 
-		final Point[] points = RobotExtremePointsCalculator.makePoint(lkp, mean);
+		final Point[] points = RobotExtremePointsCalculator.pointsFromVerticalAxis(lkp, mean);
 
 		return new Trajectory[] {
 			new Trajectory(mean - stdDeviation, points[0]),
