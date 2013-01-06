@@ -45,7 +45,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 
 			final Point moPosition = stats.lastKnownPosition();
 
-			//Convert from XY coordinates to a polar coordinates around the mobile obstacle.
+			//Convert from XY coordinates to polar coordinates around the mobile obstacle.
 			//Normalize the input, since BGD works only with 0 mean and 1 variance: (value - mean) / sqrt(var)
 			for(int i = 0; i < intersections.length; i++) {
 				final Point intersection = intersections[i];

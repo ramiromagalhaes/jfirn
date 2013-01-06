@@ -28,8 +28,8 @@ public class BGD {
 	/**
 	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++. 
 	 * 
-	 * Returns P(X < a, Y < b, c) where X, Y are gaussian random variables N(0, 1)
-	 * of the bivariate normal distribution with correlation between X and Y c in [-1, 1].
+	 * Returns P(X < a, Y < b) where X, Y are gaussian random variables N(0, 1)
+	 * of the bivariate normal distribution with correlation c in [-1, 1] between X and Y.
 	 */
 	public static double cdf(double a, double b, double c) {
 		if (a == Double.NaN || b == Double.NaN || c == Double.NaN) {
