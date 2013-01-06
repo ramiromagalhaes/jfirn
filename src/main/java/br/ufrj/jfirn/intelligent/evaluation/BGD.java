@@ -122,7 +122,7 @@ public class BGD {
 
 
 	/**
-	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++. 
+	 * As described by Bernt Arne Ødegaard in Financial Numerical Recipes in C++.
 	 */
 	private static double f(double x, double y, double aprime, double bprime, double c) {
 		return FastMath.exp(aprime * (2d * x - aprime) + bprime * (2d * y - bprime) + 2d * c * (x - aprime) * (y - bprime));
