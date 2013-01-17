@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTable;
@@ -45,7 +44,6 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 	private final JFrame simulationFrame;
 	private final JFrame thoughtsFrame;
-	private final JLabel collisions;
 	private final JSlider tickSelector;
 	private final JTable thoughtsTable;
 
@@ -61,10 +59,6 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		tickSelector = new TimeTickSelector();
 		tickSelector.addChangeListener(this);
 
-        collisions = new JLabel();
-        collisions.setPreferredSize(new Dimension(AREA_WIDTH, 40));
-
-        simulationFrame.add(collisions, BorderLayout.NORTH);
         simulationFrame.add(new MainPane(), BorderLayout.CENTER);
         simulationFrame.add(tickSelector, BorderLayout.SOUTH);
         simulationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -388,8 +382,6 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 			imageGraphics.setColor(Color.gray);
 			imageGraphics.drawOval((int)irData.position.x() - 200, (int)irData.position.y() - 200, 400, 400);
-
-			collisions.setText(message.toString());
 
 			basicRobotPainter(irData, imageGraphics);
 		}
