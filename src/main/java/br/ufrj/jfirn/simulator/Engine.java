@@ -19,7 +19,6 @@ import br.ufrj.jfirn.simulator.renderer.SimulationRenderer;
  */
 public class Engine {
 
-	private final int iterations = 200;
 	private final Set<Robot> robots = new HashSet<>();
 	private final Set<Eye> eyes = new HashSet<>();
 	private final Set<PositioningSystem> gpss = new HashSet<>();
@@ -34,10 +33,11 @@ public class Engine {
 		this.renderers.add( renderer );
 	}
 
-	public void simulate() {
+	
+	public void simulate(int iterations) {
 		init();
 
-		for (int i = 0; i < this.iterations; i++) {
+		for (int i = 0; i < iterations; i++) {
 			sense();
 			move();
 			render();

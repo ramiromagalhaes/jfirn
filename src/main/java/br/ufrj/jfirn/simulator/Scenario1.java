@@ -43,6 +43,6 @@ public class Scenario1 {
 		engine.addRobot( new BasicRobot(300, 800, Robot.DOWN, 5) );
 		engine.addRobot( new BasicRobot(325, 800, Robot.DOWN, 5) );
 
-		engine.simulate();
+		engine.simulate(150);
 	}
 }

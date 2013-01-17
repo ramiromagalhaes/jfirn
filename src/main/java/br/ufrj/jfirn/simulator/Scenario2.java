@@ -32,6 +32,6 @@ public class Scenario2 {
 		engine.addRobot( new CrazyRobot       (250, 375, Robot.RIGHT, 5) );
 		engine.addRobot( new SquareRobot      (300, 425, Robot.UP,    5) );
 
-		engine.simulate();
+		engine.simulate(200);
 	}
 }
