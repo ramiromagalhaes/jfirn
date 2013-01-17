@@ -30,7 +30,7 @@ public class CollisionEvaluation {
 	public CollisionEvaluation(final int aboutObstacleId, final Reason reason) {
 		this.aboutObstacleId = aboutObstacleId;
 		this.collision = null;
-		setReason(reason);
+		reason(reason);
 	}
 
 	public CollisionEvaluation(final Collision collision, final Reason reason) {
@@ -40,7 +40,7 @@ public class CollisionEvaluation {
 
 		this.aboutObstacleId = collision.withObjectId;
 		this.collision = collision;
-		this.setReason(reason);
+		this.reason(reason);
 	}
 
 	public boolean hasCollision() {
@@ -55,10 +55,6 @@ public class CollisionEvaluation {
 		return this.aboutObstacleId;
 	}
 
-	public void reason(Reason reason) {
-		this.reason = reason;
-	}
-
 	public Reason reason() {
 		return reason;
 	}
@@ -68,7 +64,7 @@ public class CollisionEvaluation {
 		return aboutObstacleId;
 	}
 
-	private void setReason(final Reason reason) {
+	public void reason(final Reason reason) {
 		if (reason == null) {
 			this.reason = Reason.NO_REASON;
 		} else {
