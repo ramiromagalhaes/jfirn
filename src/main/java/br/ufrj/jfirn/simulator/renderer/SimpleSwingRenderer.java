@@ -66,6 +66,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
         thoughtsFrame = new JFrame("Thoughts");
         thoughtsFrame.setLayout(new BorderLayout());
+        thoughtsFrame.setLocation(simulationFrame.location().x + AREA_WIDTH, simulationFrame.location().y);
         thoughtsFrame.setPreferredSize(new Dimension(350, AREA_HEIGHT/4));
 
         thoughtsTable = new ThoughtsTable();
