@@ -25,7 +25,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 		}
 
 		for (CollisionEvaluation collisionEvaluation : thoughts.allColisionEvaluations()) {
-			if (!collisionEvaluation.willCollide()) {
+			if (!collisionEvaluation.hasCollision()) {
 				continue;
 			}
 

@@ -43,7 +43,7 @@ public class CollisionEvaluation {
 		this.setReason(reason);
 	}
 
-	public boolean willCollide() {
+	public boolean hasCollision() {
 		return this.collision != null;
 	}
 
