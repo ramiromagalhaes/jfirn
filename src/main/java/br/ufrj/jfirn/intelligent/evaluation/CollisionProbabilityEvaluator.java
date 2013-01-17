@@ -5,7 +5,6 @@ import java.util.Arrays;
 import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.intelligent.Collision;
 import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 import br.ufrj.jfirn.intelligent.Thoughts;
 import br.ufrj.jfirn.intelligent.Trajectory;
@@ -25,9 +24,13 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			};
 		}
 
-		for (Collision collision : thoughts.allColisions()) {
+		for (CollisionEvaluation collisionEvaluation : thoughts.allColisionEvaluations()) {
+			if (!collisionEvaluation.willCollide()) {
+				continue;
+			}
+
 			final MobileObstacleStatistics stats =
-				thoughts.obstacleStatistics(collision.withObjectId);
+				thoughts.obstacleStatistics(collisionEvaluation.obstacleId());
 
 			final Trajectory[] trajectories = Trajectory.fromStatistics(stats);
 
@@ -41,7 +44,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 				myTrajectory[1].intersect(trajectories[1])
 			};
 
-			collision.area = Arrays.copyOf(intersections, intersections.length);
+			collisionEvaluation.collision().area = Arrays.copyOf(intersections, intersections.length);
 
 			final Point moPosition = stats.lastKnownPosition();
 
@@ -57,7 +60,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 					direction = moPosition.directionTo(intersection) - stats.directionMean();
 				}
 
-				double speed = moPosition.distanceTo(intersection) / collision.time; //first, calculate the speed...
+				double speed = moPosition.distanceTo(intersection) / collisionEvaluation.collision().time; //first, calculate the speed...
 				if (stats.speedVariance() != 0d) { //...then normalize it.
 					speed = (speed - stats.speedMean()) / FastMath.sqrt(stats.speedVariance());
 				} else {
@@ -68,13 +71,15 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			}
 
 			//calculate the collision probability
-			collision.probability =
+			collisionEvaluation.collision().probability =
 				BGD.cdfOfConvexQuadrilaterals(
 					intersections[0],
 					intersections[1],
 					intersections[2],
 					intersections[3],
 					stats.speedDirectionCorrelation());
+
+			collisionEvaluation.reason(Reason.FULL_EVALUATION);
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain);

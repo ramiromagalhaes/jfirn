@@ -33,19 +33,27 @@ public class QuickCollisionEvaluator implements Evaluator {
 				stats.getObservedObjectId()
 			);
 
-			if (collision == null) { //No collision. Verify someone else.
-				thoughts.removeCollision(stats.getObservedObjectId()); //remove a previous collision if it existed.
+			if (collision == null) {
+				thoughts.putCollisionEvaluation(
+					new CollisionEvaluation(stats.getObservedObjectId(), Reason.NO_INTERSECTION)
+				);
 				continue;
 			}
 
 			//If this collision is too far in the future, forget it and go verify someone else.
 			if (myPosition.distanceTo(collision.position) > 400d || collision.time > 20d) {
-				thoughts.removeCollision(stats.getObservedObjectId()); //remove a previous collision if it existed.
+				thoughts.putCollisionEvaluation(
+					new CollisionEvaluation(stats.getObservedObjectId(), Reason.TOO_FAR_AWAY)
+				);
 				continue;
 			}
 
 			//We may need to evaluate a new collision
-			thoughts.putCollision(stats.getObservedObjectId(), collision);
+			thoughts.putCollisionEvaluation(
+				new CollisionEvaluation(
+					collision, Reason.PARTIAL_EVALUATION
+				)
+			);
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain); //keep thinking
@@ -53,7 +61,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 
 	protected Collision evaluateCollision(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed, int id) {
-		//TODO test performance?
+		//TODO test and improve performance?
 
 		//here we forecast if a collision may happen
 		final Point collisionPosition =

@@ -9,8 +9,6 @@ import java.awt.image.BufferedImage;
 import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +29,9 @@ import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.Collision;
 import br.ufrj.jfirn.intelligent.IntelligentRobot;
 import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
+import br.ufrj.jfirn.intelligent.Thoughts;
+import br.ufrj.jfirn.intelligent.evaluation.CollisionEvaluation;
+import br.ufrj.jfirn.intelligent.evaluation.Reason;
 
 /**
  * Very simple implementation of a {@link TimedSimulationRenderer}.
@@ -47,8 +48,16 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	private final JSlider tickSelector;
 	private final JTable thoughtsTable;
 
+	/**
+	 * Stores all robots positions through time.
+	 */
 	private List<List<RobotData>> robotData = new ArrayList<>(0);
-	private List<Collection<Collision>> collisionData = new ArrayList<>(0);
+	
+	/**
+	 * Represents the IR knowledge base positions through time.
+	 */
+	private List<List<Obstacle>> thoughtsData = new ArrayList<>(0);
+
 	private int currentTick;
 	private int tickToDisplay = 0;
 
@@ -66,8 +75,8 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
         thoughtsFrame = new JFrame("Thoughts");
         thoughtsFrame.setLayout(new BorderLayout());
-        thoughtsFrame.setLocation(simulationFrame.location().x + AREA_WIDTH, simulationFrame.location().y);
-        thoughtsFrame.setPreferredSize(new Dimension(350, AREA_HEIGHT/4));
+        thoughtsFrame.setLocation(simulationFrame.getLocation().x + AREA_WIDTH, simulationFrame.getLocation().y);
+        thoughtsFrame.setPreferredSize(new Dimension(550, AREA_HEIGHT/3));
 
         thoughtsTable = new ThoughtsTable();
         thoughtsFrame.add(thoughtsTable.getTableHeader(), BorderLayout.PAGE_START);
@@ -80,31 +89,24 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	public void draw(Robot robot) {
 		if (currentTick >= robotData.size()) {
 			robotData.add(new ArrayList<RobotData>());
-			collisionData.add(new ArrayList<Collision>());
+			thoughtsData.add(new ArrayList<Obstacle>());
 			tickSelector.setMaximum(currentTick);
 		}
 
-		//TODO find a more elegant way to add multiple robot data for future rendering.
-		if (robot instanceof IntelligentRobot) {
-			final IntelligentRobot ir = (IntelligentRobot)robot;
-			robotData.get(currentTick).add(
-				new IntelligentRobotData(
-					ir.position(), ir.direction(), ir.hashCode(),
-					ir.getThoughts().allObstacleStatistics(),
-					ir.getThoughts().allColisions().toArray(
-						new Collision[ir.getThoughts().allColisions().size()]
-					)
-				)
-			);
-			collisionData.get(currentTick).addAll(
-				ir.getThoughts().allColisions()
-			);
-		} else {
-			robotData.get(currentTick).add(
-				new RobotData(robot.position(), robot.direction(), robot.hashCode())
-			);
-		}
+		robotData.get(currentTick).add(
+			new RobotData(robot.position(), robot.direction(), robot.hashCode())
+		);
 
+		if (robot instanceof IntelligentRobot) {
+			final Thoughts t = ((IntelligentRobot)robot).getThoughts();
+
+			for (Integer i : t.knownObstacles()) {
+				MobileObstacleStatistics stats = t.obstacleStatistics(i);
+				CollisionEvaluation eval = t.collisionEvaluation(i);
+
+				thoughtsData.get(currentTick).add(new Obstacle(stats, eval));
+			}
+		}
 	}
 
 	@Override
@@ -128,6 +130,27 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		thoughtsFrame.repaint();
 	}
 
+
+
+	public static class Obstacle {
+		final public int id;
+		final public Point position;
+		final public double meanSpeed, meanDirection;
+		final public Collision collision;
+		final public Reason reason;
+
+		public Obstacle(MobileObstacleStatistics statistic, CollisionEvaluation evaluation) {
+			this.id = statistic.getObservedObjectId();
+			this.position = new Point(statistic.lastKnownPosition().x(), AREA_HEIGHT - statistic.lastKnownPosition().y());
+			this.meanSpeed = statistic.speedMean();
+			this.meanDirection = statistic.directionMean();
+			this.collision = evaluation.collision();
+			this.reason = evaluation.reason();
+		}
+	}
+
+
+
 	/**
 	 * Stores relevant data of robots.
 	 * 
@@ -135,9 +158,9 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	 *
 	 */
 	private static class RobotData {
-		public final Point position;
-		public final double direction;
 		public final int hashCode;
+		public final double direction;
+		public final Point position;
 
 		public RobotData(final Point position, final double direction, final int hashCode) {
 			this.position = new Point(position.x(), AREA_HEIGHT - position.y());
@@ -146,44 +169,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		}
 	}
 
-	/**
-	 * Stores relevant data of an IntelligentRobot for rendering.
-	 * 
-	 * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
-	 */
-	private static class IntelligentRobotData extends RobotData {
-		public final Collision[] collision;
-		public final Obstacle[] obstacles;
 
-		public IntelligentRobotData(final Point position, final double direction,
-				final int hashCode, Collection<MobileObstacleStatistics>statistics, final Collision[] collisions) {
-			super(position, direction, hashCode);
-			this.collision = collisions;
-
-			int i = 0;
-			obstacles = new Obstacle[statistics.size()];
-			for (MobileObstacleStatistics stats : statistics) {
-				obstacles[i] = new Obstacle(
-						stats.getObservedObjectId(),
-						stats.lastKnownPosition(),
-						stats.speedMean(), stats.directionMean());
-				i++;
-			}
-		}
-
-		public static class Obstacle {
-			final public int id;
-			final public Point position;
-			final public double meanSpeed, meanDirection;
-
-			public Obstacle(int id, Point position, double meanSpeed, double meanDirection) {
-				this.id = id;
-				this.position = new Point(position.x(), AREA_HEIGHT - position.y());
-				this.meanSpeed = meanSpeed;
-				this.meanDirection = meanDirection;
-			}
-		}
-	}
 
 	private static class TimeTickSelector extends JSlider {
 		private static final long serialVersionUID = 1L;
@@ -201,31 +187,34 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	private class ThoughtsTable extends JTable {
 		private static final long serialVersionUID = 1L;
 
-		public List<Collision> collisions = Collections.emptyList();
-
 		private final AbstractTableModel model = new AbstractTableModel() {
 			private static final long serialVersionUID = 1L;
 
 			private final String[] columnNames = {
-				"Obstacle", "Probability", "X", "Y"
+				"Obstacle", "Probability", "X", "Y", "Reason"
 			};
 
 			@Override
 			public Object getValueAt(int row, int col) {
-				Collision c = collisions.get(row);
+				Obstacle o = thoughtsData.get(tickToDisplay).get(row);
 
 				switch (col) {
-					case 0: return c.withObjectId;
-					case 1: return c.probability;
-					case 2: return c.position.x();
-					case 3: return c.position.y();
+					case 0: return o.id;
+					case 1: return o.collision != null ? o.collision.probability : 0;
+					case 2: return o.position.x();
+					case 3: return o.position.y();
+					case 4: return o.collision != null ? o.reason : "null";
 					default: throw new IllegalArgumentException();
 				}
 			}
 
 			@Override
 			public int getRowCount() {
-				return collisions.size();
+				if (thoughtsData.isEmpty()) {
+					return 0;
+				} else {
+					return thoughtsData.get(tickToDisplay).size();
+				}
 			}
 
 			@Override
@@ -249,6 +238,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 					case 1: return Double.class;
 					case 2: return Double.class;
 					case 3: return Double.class;
+					case 4: return String.class;
 					default: throw new IllegalArgumentException();
 				}
 			}
@@ -258,12 +248,6 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		public ThoughtsTable() {
 			super();
 			setModel(model);
-		}
-
-		@Override
-		protected void paintComponent(Graphics arg0) {
-			this.collisions = new ArrayList<>(collisionData.get(tickToDisplay));
-			super.paintComponent(arg0);
 		}
 
 	}
@@ -299,20 +283,56 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			imageGraphics.setColor(Color.white);
 			imageGraphics.fillRect(0, 0, AREA_WIDTH, AREA_HEIGHT);
 
+			//paint the thoughts
+			for (Obstacle obs : thoughtsData.get(tickToDisplay)) {
+				paintCollisionArea(obs, imageGraphics);
+				paintObstacle(obs, imageGraphics);
+			}
+			
 			//paint the robots
 			for (RobotData data : robotData.get(tickToDisplay)) {
-				if (data instanceof IntelligentRobotData) {
-					final IntelligentRobotData irData = (IntelligentRobotData)data;
-					intelligentRobotPainter(irData, imageGraphics);
-				} else {
-					basicRobotPainter(data, imageGraphics);
-				}
+				paintRobotData(data, imageGraphics);
 			}
 
 			//draw the image in the panel.
 			componentGraphics.drawImage(image, 0, 0, AREA_WIDTH, AREA_HEIGHT, Color.WHITE, null);
 		}
 
+
+		private void paintRobotData(RobotData data, Graphics imageGraphics) {
+			final Triangle t = new Triangle(data.position, data.direction);
+			imageGraphics.setColor(ColorPaleteForRobots.getColor(data.hashCode));
+			imageGraphics.fillPolygon(t.x, t.y, t.n);
+			imageGraphics.drawOval((int)data.position.x() - 5, (int)data.position.y() - 5, 10, 10);
+
+			//TODO use that to print the sensor around the intelligent agent when you decide how you're gonna do this 
+//			imageGraphics.setColor(Color.gray);
+//			imageGraphics.drawOval((int)irData.position.x() - 200, (int)irData.position.y() - 200, 400, 400);
+		}
+
+		private void paintObstacle(Obstacle obstacle, Graphics imageGraphics) {
+			imageGraphics.setColor(ColorPaleteForRobots.getLighter(obstacle.id));
+
+			imageGraphics.drawLine((int)obstacle.position.x(), (int)obstacle.position.y(),
+				(int)(FastMath.cos(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.x()),
+				(int)(-FastMath.sin(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.y())
+			);
+		}
+
+		private void paintCollisionArea(Obstacle obstacle, Graphics imageGraphics) {
+			if (obstacle.collision != null) {
+				final Collision collision = obstacle.collision;
+				collision.area = arrangePointsAsConvexQuadrilateral(collision.area);
+				final int[] x = new int[collision.area.length];
+				final int[] y = new int[collision.area.length];
+				for (int i = 0; i < collision.area.length; i++) {
+					x[i] = (int)collision.area[i].x();
+					y[i] = AREA_HEIGHT - (int)collision.area[i].y();
+				}
+				imageGraphics.setColor(ColorPaleteForRobots.getLighter(collision.withObjectId));
+				imageGraphics.fillPolygon(x, y, collision.area.length);
+			}
+		}
 
 		private Point[] arrangePointsAsConvexQuadrilateral(Point[] points) {
 			//TODO there probably is a better algorithm for this...
@@ -337,54 +357,6 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			}
 
 			return toReturn.toArray(new Point[4]);
-		}
-
-		private void obstaclePainter(IntelligentRobotData.Obstacle obstacle, Graphics imageGraphics) {
-			imageGraphics.setColor(ColorPaleteForRobots.getLighter(obstacle.id));
-
-			//final Triangle t = new Triangle(obstacle.position, obstacle.meanDirection);
-			//imageGraphics.fillPolygon(t.x, t.y, t.n);
-
-			imageGraphics.drawLine((int)obstacle.position.x(), (int)obstacle.position.y(),
-				(int)(FastMath.cos(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.x()),
-				(int)(-FastMath.sin(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.y())
-			);
-		}
-
-		//TODO this is not an elegant way to draw the robots. Should probably use the Strategy pattern for that
-		private void basicRobotPainter(RobotData data, Graphics imageGraphics) {
-			final Triangle t = new Triangle(data.position, data.direction);
-			imageGraphics.setColor(ColorPaleteForRobots.getColor(data.hashCode));
-			imageGraphics.fillPolygon(t.x, t.y, t.n);
-			imageGraphics.drawOval((int)data.position.x() - 5, (int)data.position.y() - 5, 10, 10);
-		}
-
-		//TODO this is not an elegant way to draw the robots. Should probably use the Strategy pattern for that
-		private void intelligentRobotPainter(IntelligentRobotData irData, Graphics imageGraphics) {
-			final StringBuilder message = new StringBuilder();
-
-			for (Collision collision : irData.collision) {
-				collision.area = arrangePointsAsConvexQuadrilateral(collision.area);
-				final int[] x = new int[collision.area.length];
-				final int[] y = new int[collision.area.length];
-				for (int i = 0; i < collision.area.length; i++) {
-					x[i] = (int)collision.area[i].x();
-					y[i] = AREA_HEIGHT - (int)collision.area[i].y();
-				}
-				imageGraphics.setColor(ColorPaleteForRobots.getLighter(collision.withObjectId));
-				imageGraphics.fillPolygon(x, y, collision.area.length);
-				message.append("Collision with " + collision.withObjectId + " with probability " + collision.probability);
-				message.append(" - ");
-			}
-
-			for (IntelligentRobotData.Obstacle obstacle : irData.obstacles) {
-				obstaclePainter(obstacle, imageGraphics);
-			}
-
-			imageGraphics.setColor(Color.gray);
-			imageGraphics.drawOval((int)irData.position.x() - 200, (int)irData.position.y() - 200, 400, 400);
-
-			basicRobotPainter(irData, imageGraphics);
 		}
 
 		/**

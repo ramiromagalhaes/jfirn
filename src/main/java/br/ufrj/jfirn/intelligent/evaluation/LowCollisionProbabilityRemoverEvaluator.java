@@ -3,7 +3,6 @@ package br.ufrj.jfirn.intelligent.evaluation;
 import java.util.LinkedList;
 import java.util.List;
 
-import br.ufrj.jfirn.intelligent.Collision;
 import br.ufrj.jfirn.intelligent.Thoughts;
 
 
@@ -20,15 +19,13 @@ public class LowCollisionProbabilityRemoverEvaluator implements Evaluator {
 		//collisions with small probability will be removed because they won't happen
 		final List<Integer> collisionsToPurge = new LinkedList<>();
 
-		for (Collision collision : thoughts.allColisions()) {
-			if (collision.probability == 0) {
-				collisionsToPurge.add(collision.withObjectId);
+		for (CollisionEvaluation collisionEvaluation : thoughts.allColisionEvaluations()) {
+			if (collisionEvaluation.willCollide() && collisionEvaluation.collision().probability == 0) {
+				collisionsToPurge.add(collisionEvaluation.obstacleId());
 			}
 		}
 
-		for (Integer id : collisionsToPurge) {
-			thoughts.removeCollision(id);
-		}
+		thoughts.removeObstacles(collisionsToPurge);
 	}
 
 }

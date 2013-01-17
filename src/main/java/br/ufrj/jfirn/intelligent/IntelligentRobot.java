@@ -81,7 +81,7 @@ public class IntelligentRobot extends AbstractIntelligentRobot implements Sight,
 		}
 
 		//only keep data of objects I see
-		thoughts.retainObstaclesData(ids);
+		thoughts.retainObstacles(ids);
 
 		//store data about what I see
 		for (SightData data : sighted) {

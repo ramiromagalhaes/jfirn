@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.intelligent.evaluation.CollisionEvaluation;
 
 /**
  * This class represents what are an intelligent robot's thoughts and plans.
@@ -37,21 +38,20 @@ public class Thoughts implements Serializable {
 	private boolean endangered = false;
 
 	/**
+	 * The target points of interest in the simulation area to where we want to go.
+	 */
+	private Deque<Point> targets = new ArrayDeque<>();
+
+	/**
 	 * Obstacles statistics data.
 	 */
 	private Map<Integer, MovementStatistics> obstacleStatistics = new HashMap<>();
 
 	/**
-	 * Known collision forecast for this object. Notice that I may have statistics
-	 * about an object movement, but a certain object may not have any collision
-	 * data related to it.
+	 * For each known object (i.e. for each object present in the obstacleStatistics
+	 * field), I have a collision evaluation.
 	 */
-	private Map<Integer, Collision> collisions = new HashMap<>();
-
-	/**
-	 * The target points of interest in the simulation area to where we want to go.
-	 */
-	private Deque<Point> targets = new ArrayDeque<>();
+	private Map<Integer, CollisionEvaluation> collisionEvaluations = new HashMap<>();
 
 
 
@@ -129,23 +129,33 @@ public class Thoughts implements Serializable {
 		return obstacleStatistics.containsKey(objectId);
 	}
 
-	public MobileObstacleStatistics obstacleStatistics(int objectId) {
-		return obstacleStatistics.get(objectId);
+	public Collection<Integer> knownObstacles() {
+		return obstacleStatistics.keySet();
 	}
 
-	public Collision collisionWith(int objectId) {
-		return collisions.get(objectId);
+	public MobileObstacleStatistics obstacleStatistics(int obstacleId) {
+		return obstacleStatistics.get(obstacleId);
 	}
 
+	public Collision collision(int obstacleId) {
+		return collisionEvaluations.get(obstacleId).collision();
+	}
+
+	public CollisionEvaluation collisionEvaluation(int obstacleId) {
+		return collisionEvaluations.get(obstacleId);
+	}
+
+	//TODO rename to appendObstacleStatistics?
 	public void addObstacleStatistics(int objectId, Point position, double direction, double speed) {
 		if (!isKnownObstacle(objectId)) {
 			this.obstacleStatistics.put(objectId, new MovementStatistics(objectId));
+			this.collisionEvaluations.put(objectId, null);
 		}
 		this.obstacleStatistics.get(objectId).addEntry(position, speed, direction);
 	}
 
-	public void putCollision(int objectId, Collision collision) {
-		this.collisions.put(objectId, collision);
+	public void putCollisionEvaluation(CollisionEvaluation collisionEvaluation) {
+		this.collisionEvaluations.put(collisionEvaluation.obstacleId(), collisionEvaluation);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -153,24 +163,25 @@ public class Thoughts implements Serializable {
 		return (Collection)this.obstacleStatistics.values();
 	}
 
-	public Collection<Collision> allColisions() {
-		return this.collisions.values();
+	public Collection<CollisionEvaluation> allColisionEvaluations() {
+		return this.collisionEvaluations.values();
 	}
 
 	public void removeObstacle(int objectId) {
 		if (isKnownObstacle(objectId)) {
 			this.obstacleStatistics.remove(objectId);
-			this.collisions.remove(objectId);
+			this.collisionEvaluations.remove(objectId);
 		}
 	}
 
-	public void removeCollision(int objectId) {
-		this.collisions.remove(objectId);
+	public void removeObstacles(List<Integer> obstacleIds) {
+		obstacleStatistics.keySet().removeAll(obstacleIds);
+		collisionEvaluations.keySet().removeAll(obstacleIds);
 	}
 
-	public void retainObstaclesData(List<Integer> objectIds) {
-		obstacleStatistics.keySet().retainAll(objectIds);
-		collisions.keySet().retainAll(objectIds);
+	public void retainObstacles(List<Integer> obstacleIds) {
+		obstacleStatistics.keySet().retainAll(obstacleIds);
+		collisionEvaluations.keySet().retainAll(obstacleIds);
 	}
 
 
