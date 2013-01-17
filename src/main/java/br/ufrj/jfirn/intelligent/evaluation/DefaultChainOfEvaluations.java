@@ -18,7 +18,6 @@ public class DefaultChainOfEvaluations implements ChainOfEvaluations, ThoughtPro
 		                                               //evaluators.add(new QuickCollisionWithoutCollisionTimeSimilaritiesEvaluator());
         //evaluators.add(new QuickCollisionWithoutCollisionTimeSimilaritiesEvaluator());
 		evaluators.add(new CollisionProbabilityEvaluator());
-		//evaluators.add(new LowCollisionProbabilityRemoverEvaluator());
 	}
 
 	/**
