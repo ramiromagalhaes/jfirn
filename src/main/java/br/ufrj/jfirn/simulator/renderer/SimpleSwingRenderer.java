@@ -203,7 +203,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 					case 1: return o.collision != null ? o.collision.probability : 0;
 					case 2: return o.position.x();
 					case 3: return o.position.y();
-					case 4: return o.collision != null ? o.reason : "null";
+					case 4: return o.reason != null ? o.reason : "null";
 					default: throw new IllegalArgumentException();
 				}
 			}
@@ -316,6 +316,11 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			imageGraphics.drawLine((int)obstacle.position.x(), (int)obstacle.position.y(),
 				(int)(FastMath.cos(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.x()),
 				(int)(-FastMath.sin(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.y())
+			);
+
+			imageGraphics.drawString(Integer.toString(obstacle.id),
+				(int)(FastMath.cos(obstacle.meanDirection + FastMath.PI) * 10 + obstacle.position.x()),
+				(int)(-FastMath.sin(obstacle.meanDirection + FastMath.PI) * 10 + obstacle.position.y())
 			);
 		}
 
