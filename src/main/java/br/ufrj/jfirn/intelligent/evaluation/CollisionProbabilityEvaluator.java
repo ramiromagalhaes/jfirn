@@ -14,15 +14,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 	@Override
 	public void evaluate(Thoughts thoughts, Instruction instruction, ChainOfEvaluations chain) {
 		//The trajectory of the extremities of the IntelligentRobot, considering its movement direction
-		final Trajectory[] myTrajectory;
-		{
-			final Point points[] = RobotExtremePointsCalculator
-					.pointsFromVerticalAxis(thoughts.myPosition(), thoughts.myDirection());
-			myTrajectory = new Trajectory[] {
-				new Trajectory(thoughts.myDirection(), points[0]),
-				new Trajectory(thoughts.myDirection(), points[1]),
-			};
-		}
+		final Trajectory[] myTrajectory = getIntelligentRobotTrajectory(thoughts);
 
 		for (CollisionEvaluation collisionEvaluation : thoughts.allColisionEvaluations()) {
 			if (!collisionEvaluation.hasCollision()) {
@@ -83,6 +75,22 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain);
+	}
+
+	/**
+	 * Calculates the trajectory of the extremities of the IntelligentRobot,
+	 * considering its movement direction.
+	 * 
+	 * @param thoughts
+	 * @return
+	 */
+	private Trajectory[] getIntelligentRobotTrajectory(Thoughts thoughts) {
+		final Point points[] = RobotExtremePointsCalculator
+				.pointsFromVerticalAxis(thoughts.myPosition(), thoughts.myDirection());
+		return new Trajectory[] {
+			new Trajectory(thoughts.myDirection(), points[0]),
+			new Trajectory(thoughts.myDirection(), points[1]),
+		};
 	}
 
 }
