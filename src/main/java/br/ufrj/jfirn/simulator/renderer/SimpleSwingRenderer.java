@@ -10,6 +10,7 @@ import java.beans.Transient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,8 +20,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTable;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -41,9 +44,13 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	private static final int AREA_HEIGHT = 768;
 
 	private final JFrame simulationFrame;
+	private final JFrame thoughtsFrame;
 	private final JLabel collisions;
 	private final JSlider tickSelector;
+	private final JTable thoughtsTable;
+
 	private List<List<RobotData>> robotData = new ArrayList<>(0);
+	private List<Collection<Collision>> collisionData = new ArrayList<>(0);
 	private int currentTick;
 	private int tickToDisplay = 0;
 
@@ -56,20 +63,29 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
         collisions = new JLabel();
         collisions.setPreferredSize(new Dimension(AREA_WIDTH, 40));
+
         simulationFrame.add(collisions, BorderLayout.NORTH);
-
         simulationFrame.add(new MainPane(), BorderLayout.CENTER);
-
         simulationFrame.add(tickSelector, BorderLayout.SOUTH);
-
         simulationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         simulationFrame.pack();
+
+        thoughtsFrame = new JFrame("Thoughts");
+        thoughtsFrame.setLayout(new BorderLayout());
+        thoughtsFrame.setPreferredSize(new Dimension(350, AREA_HEIGHT/4));
+
+        thoughtsTable = new ThoughtsTable();
+        thoughtsFrame.add(thoughtsTable.getTableHeader(), BorderLayout.PAGE_START);
+        thoughtsFrame.add(thoughtsTable, BorderLayout.CENTER);
+        thoughtsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        thoughtsFrame.pack();
 	}
 
 	@Override
 	public void draw(Robot robot) {
 		if (currentTick >= robotData.size()) {
 			robotData.add(new ArrayList<RobotData>());
+			collisionData.add(new ArrayList<Collision>());
 			tickSelector.setMaximum(currentTick);
 		}
 
@@ -84,6 +100,9 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 						new Collision[ir.getThoughts().allColisions().size()]
 					)
 				)
+			);
+			collisionData.get(currentTick).addAll(
+				ir.getThoughts().allColisions()
 			);
 		} else {
 			robotData.get(currentTick).add(
@@ -101,6 +120,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	@Override
 	public void done() {
 		simulationFrame.setVisible(true);
+        thoughtsFrame.setVisible(true);
 	}
 
 	/**
@@ -110,6 +130,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	public void stateChanged(ChangeEvent evt) {
 		this.tickToDisplay = ((JSlider)evt.getSource()).getValue();
 		simulationFrame.repaint();
+		thoughtsFrame.repaint();
 	}
 
 	/**
@@ -178,6 +199,78 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			this.setPaintTicks(false);
 			this.setPaintLabels(false);
 		}
+	}
+
+
+
+	private class ThoughtsTable extends JTable {
+		private static final long serialVersionUID = 1L;
+
+		public List<Collision> collisions = Collections.emptyList();
+
+		private final AbstractTableModel model = new AbstractTableModel() {
+			private static final long serialVersionUID = 1L;
+
+			private final String[] columnNames = {
+				"Obstacle", "Probability", "X", "Y"
+			};
+
+			@Override
+			public Object getValueAt(int row, int col) {
+				Collision c = collisions.get(row);
+
+				switch (col) {
+					case 0: return c.withObjectId;
+					case 1: return c.probability;
+					case 2: return c.position.x();
+					case 3: return c.position.y();
+					default: throw new IllegalArgumentException();
+				}
+			}
+
+			@Override
+			public int getRowCount() {
+				return collisions.size();
+			}
+
+			@Override
+			public int getColumnCount() {
+				return columnNames.length;
+			}
+
+			public boolean isCellEditable(int row, int col) {
+				return false;
+			}
+
+			@Override
+			public String getColumnName(int column) {
+				return columnNames[column];
+			}
+
+			@Override
+			public Class<?> getColumnClass(int col) {
+				switch (col) {
+					case 0: return Integer.class;
+					case 1: return Double.class;
+					case 2: return Double.class;
+					case 3: return Double.class;
+					default: throw new IllegalArgumentException();
+				}
+			}
+
+		};
+
+		public ThoughtsTable() {
+			super();
+			setModel(model);
+		}
+
+		@Override
+		protected void paintComponent(Graphics arg0) {
+			this.collisions = new ArrayList<>(collisionData.get(tickToDisplay));
+			super.paintComponent(arg0);
+		}
+
 	}
 
 
@@ -258,8 +351,8 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			//imageGraphics.fillPolygon(t.x, t.y, t.n);
 
 			imageGraphics.drawLine((int)obstacle.position.x(), (int)obstacle.position.y(),
-				(int)(FastMath.cos(obstacle.meanDirection) * 100 + obstacle.position.x()),
-				(int)(-FastMath.sin(obstacle.meanDirection) * 100 + obstacle.position.y())
+				(int)(FastMath.cos(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.x()),
+				(int)(-FastMath.sin(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.y())
 			);
 		}
 
@@ -329,6 +422,32 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			}
 		}
 
+	}
+
+}
+
+final class ColorPaleteForRobots {
+
+	private static final Color[] colorArray = {
+		Color.orange, Color.blue,
+		Color.red, Color.green,
+		Color.darkGray, Color.magenta,
+		new Color(0x9c00ff), new Color(0x23707e)
+	};
+
+	private static final Color[] lighterColorArray = {
+		new Color(0xffc880), new Color(0xa9b3ff),
+		new Color(0xff8989), new Color(0x80ff8c),
+		Color.lightGray, new Color(0xf998ff),
+		new Color(0xd085ff), new Color(0x23707e)
+	};
+
+	public static final Color getColor(int id) {
+		return colorArray[id % colorArray.length];
+	}
+
+	public static final Color getLighter(int id) {
+		return lighterColorArray[id % lighterColorArray.length];
 	}
 
 }
