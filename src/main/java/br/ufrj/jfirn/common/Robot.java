@@ -56,7 +56,8 @@ public interface Robot extends Serializable {
 	/**
 	 * Return the real direction the robot is facing. It may be different
 	 * from the one the robot thinks it is going.
-	 * Angle in radians. Zero points to the right and positive is counterclockwise.
+	 * Angle in radians and shoud be in range ]-PI, PI]. Zero points to
+	 * the right and positive is counterclockwise.
 	 * @see Robot#RIGHT
 	 * @see Robot#UP
 	 * @see Robot#LEFT
