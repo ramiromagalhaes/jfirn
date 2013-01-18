@@ -66,7 +66,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 		//here we forecast if a collision may happen
 		final Point collisionPosition =
 			intersection(myPosition, myDirection, mySpeed,
-					otherPosition, otherDirection, otherSpeed);
+				otherPosition, otherDirection, otherSpeed);
 
 		//if there is no intersection, then there is no collision
 		if (collisionPosition == null) {
@@ -136,9 +136,10 @@ public class QuickCollisionEvaluator implements Evaluator {
 	protected static boolean isTheRightDirection(Point position, double direction, Point destination) {
 		//TODO there might be a better/faster way to do this
 
-		final double y = destination.y() - position.y();
-		final double x = destination.x() - position.x();
-		final double angle = FastMath.atan2(y, x);
+		double angle = FastMath.atan2(
+			destination.y() - position.y(),
+			destination.x() - position.x()
+		);
 
 		final double sinDirection = FastMath.sin(direction);
 		final double sinAngle = FastMath.sin(angle);

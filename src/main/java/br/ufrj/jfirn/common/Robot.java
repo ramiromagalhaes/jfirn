@@ -13,7 +13,7 @@ public interface Robot extends Serializable {
 	public static final double RIGHT = 0,
 	                           UP = FastMath.PI / 2d,
 	    	                   LEFT = FastMath.PI,
-	    	    	           DOWN = 3d * FastMath.PI / 2d;
+	    	    	           DOWN = - FastMath.PI / 2d;
 
 	/**
 	 * The real x position of this Robot in the world. Notice
@@ -64,12 +64,6 @@ public interface Robot extends Serializable {
 	 */
 	public double direction();
 	public Robot direction(double direction);
-
-	/**
-	 * Same semantics as above, but angle is in degrees.
-	 */
-	public double directionDegrees();
-	public Robot directionDegrees(double direction);
 
 	/**
 	 * Considering the direction this robot is facing, return this robot

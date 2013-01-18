@@ -17,14 +17,15 @@ public class BasicRobot implements Robot {
 	}
 
 	public BasicRobot() {
-		x = y = direction = 0;
+		x = y = 0;
+		direction = Robot.RIGHT;
 		speed = 1;
 	}
 
 	public BasicRobot(double x, double y, double direction, double speed) {
 		this.x = x;
 		this.y = y;
-		this.direction = direction;
+		direction(direction);
 		this.speed = speed;
 	}
 
@@ -73,25 +74,16 @@ public class BasicRobot implements Robot {
 
 	@Override
 	public BasicRobot direction(final double direction) {
-		this.direction = direction;
-		return this;
-	}
+		if (direction > FastMath.PI) {
+			this.direction = direction % (2d * FastMath.PI);
+			this.direction -= this.direction > FastMath.PI ? 2d * FastMath.PI : 0;
+		} else if (direction <= -FastMath.PI) {
+			this.direction = direction % (2d * FastMath.PI);
+			this.direction += this.direction <= -FastMath.PI ? 2d * FastMath.PI : 0;
+		} else {
+			this.direction = direction;
+		}
 
-	/**
-	 * Return the direction on degrees. Should only be used only for
-	 * text data visualization since it takes time to properly calculate
-	 * the output.
-	 */
-	@Override
-	public final double directionDegrees() {
-		return FastMath.toDegrees(
-			FastMath.atan2(FastMath.sin(direction) , FastMath.cos(direction))
-		);
-	}
-
-	@Override
-	public final Robot directionDegrees(final double direction) {
-		this.direction = FastMath.toRadians(direction);
 		return this;
 	}
 
