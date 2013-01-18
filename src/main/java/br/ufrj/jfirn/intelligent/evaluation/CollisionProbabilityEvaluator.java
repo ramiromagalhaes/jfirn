@@ -85,7 +85,7 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 	 * @return
 	 */
 	private Trajectory[] getIntelligentRobotTrajectory(Thoughts thoughts) {
-		final Point points[] = RobotExtremePointsCalculator
+		final Point points[] = RobotBoundaries
 				.pointsFromVerticalAxis(thoughts.myPosition(), thoughts.myDirection());
 		return new Trajectory[] {
 			new Trajectory(thoughts.myDirection(), points[0]),

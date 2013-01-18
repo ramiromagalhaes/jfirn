@@ -13,7 +13,7 @@ import br.ufrj.jfirn.common.Robot;
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
-public class RobotExtremePointsCalculator {
+public class RobotBoundaries {
 	private static final double RADIUS = 10;
 
 	/**

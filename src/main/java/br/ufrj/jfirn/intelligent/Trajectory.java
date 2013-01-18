@@ -3,7 +3,7 @@ package br.ufrj.jfirn.intelligent;
 import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.intelligent.evaluation.RobotExtremePointsCalculator;
+import br.ufrj.jfirn.intelligent.evaluation.RobotBoundaries;
 
 public class Trajectory {
 
@@ -49,7 +49,7 @@ public class Trajectory {
 		final double mean = stats.directionMean();
 		final double stdDeviation = FastMath.sqrt(stats.directionVariance());
 
-		final Point[] points = RobotExtremePointsCalculator.pointsFromVerticalAxis(lkp, mean);
+		final Point[] points = RobotBoundaries.pointsFromVerticalAxis(lkp, mean);
 
 		return new Trajectory[] {
 			new Trajectory(mean - stdDeviation, points[0]),
