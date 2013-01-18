@@ -79,9 +79,8 @@ public class Engine {
 					);
 				}
 			}
-			if (!seenRobots.isEmpty()) {
-				eye.onSight(seenRobots);
-			}
+
+			eye.onSight(seenRobots);
 		}
 	}
 

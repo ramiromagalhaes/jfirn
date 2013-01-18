@@ -94,7 +94,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		}
 
 		robotData.get(currentTick).add(
-			new RobotData(robot.position(), robot.direction(), robot.hashCode())
+			new RobotData(robot.position(), robot.direction(), robot.hashCode(), robot instanceof IntelligentRobot)
 		);
 
 		if (robot instanceof IntelligentRobot) {
@@ -152,7 +152,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 
 	/**
-	 * Stores relevant data of robots.
+	 * Stores relevant data about the robots.
 	 * 
 	 * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
 	 *
@@ -161,11 +161,13 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		public final int hashCode;
 		public final double direction;
 		public final Point position;
+		public final boolean intelligent;
 
-		public RobotData(final Point position, final double direction, final int hashCode) {
+		public RobotData(final Point position, final double direction, final int hashCode, final boolean intelligent) {
 			this.position = new Point(position.x(), AREA_HEIGHT - position.y());
 			this.direction = direction;
 			this.hashCode = hashCode;
+			this.intelligent = intelligent;
 		}
 	}
 
@@ -305,9 +307,10 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			imageGraphics.fillPolygon(t.x, t.y, t.n);
 			imageGraphics.drawOval((int)data.position.x() - 5, (int)data.position.y() - 5, 10, 10);
 
-			//TODO use that to print the sensor around the intelligent agent when you decide how you're gonna do this 
-//			imageGraphics.setColor(Color.gray);
-//			imageGraphics.drawOval((int)irData.position.x() - 200, (int)irData.position.y() - 200, 400, 400);
+			if (data.intelligent) {
+				imageGraphics.setColor(Color.gray);
+				imageGraphics.drawOval((int)data.position.x() - 200, (int)data.position.y() - 200, 400, 400);
+			}
 		}
 
 		private void paintObstacle(Obstacle obstacle, Graphics imageGraphics) {
