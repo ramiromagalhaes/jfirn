@@ -6,7 +6,7 @@ public class BasicRobot implements Robot {
 
 	private static final long serialVersionUID = 1L;
 
-	private double x, y, speed, direction; //direction is in radians
+	private double x, y, speed, direction; //direction is in radians and is in range ]-PI, PI]
 	private final int id;
 	private static int robotIdGenerator = 1;
 
