@@ -22,7 +22,8 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 		x = new SummaryStatistics(),
 		y = new SummaryStatistics(),
 		speed = new SummaryStatistics(),
-		//TODO consider simplifying all thata so only one of the three attributes bellow are necessary.
+		//TODO consider simplifying all that so only one of the three attributes bellow are necessary.
+		//Beware: lazy cheap work done bellow.
 		directionSin = new SummaryStatistics(), 
 		directionCos = new SummaryStatistics(),
 		direction = new SummaryStatistics();
