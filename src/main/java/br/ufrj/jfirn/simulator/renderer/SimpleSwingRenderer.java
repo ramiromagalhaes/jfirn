@@ -76,7 +76,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
         thoughtsFrame = new JFrame("Thoughts");
         thoughtsFrame.setLayout(new BorderLayout());
         thoughtsFrame.setLocation(simulationFrame.getLocation().x + AREA_WIDTH, simulationFrame.getLocation().y);
-        thoughtsFrame.setPreferredSize(new Dimension(550, AREA_HEIGHT/3));
+        thoughtsFrame.setPreferredSize(new Dimension(AREA_WIDTH * 2/3, AREA_HEIGHT/3));
 
         thoughtsTable = new ThoughtsTable();
         thoughtsFrame.add(thoughtsTable.getTableHeader(), BorderLayout.PAGE_START);
@@ -193,7 +193,16 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			private static final long serialVersionUID = 1L;
 
 			private final String[] columnNames = {
-				"Obstacle", "Probability", "X", "Y", "Reason"
+				"Obstacle", "X", "Y", "Mean Speed", "Mean direction", "Probability", "Reason"
+			};
+			private final Class<?>[] columnTypes = {
+				Integer.class,
+				Double.class,
+				Double.class,
+				Double.class,
+				Double.class,
+				Double.class,
+				String.class
 			};
 
 			@Override
@@ -202,10 +211,12 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 				switch (col) {
 					case 0: return o.id;
-					case 1: return o.collision != null ? o.collision.probability : 0;
-					case 2: return o.position.x();
-					case 3: return o.position.y();
-					case 4: return o.reason != null ? o.reason : "null";
+					case 1: return o.position.x();
+					case 2: return o.position.y();
+					case 3: return o.meanSpeed;
+					case 4: return o.meanDirection * 180d / FastMath.PI; //display in degrees
+					case 5: return o.collision != null ? o.collision.probability : -1;
+					case 6: return o.reason != null ? o.reason : "null";
 					default: throw new IllegalArgumentException();
 				}
 			}
@@ -235,14 +246,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 			@Override
 			public Class<?> getColumnClass(int col) {
-				switch (col) {
-					case 0: return Integer.class;
-					case 1: return Double.class;
-					case 2: return Double.class;
-					case 3: return Double.class;
-					case 4: return String.class;
-					default: throw new IllegalArgumentException();
-				}
+				return columnTypes[col];
 			}
 
 		};
