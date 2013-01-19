@@ -1,6 +1,7 @@
 package br.ufrj.jfirn.intelligent;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
 
@@ -21,6 +22,9 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 		x = new SummaryStatistics(),
 		y = new SummaryStatistics(),
 		speed = new SummaryStatistics(),
+		//TODO consider simplifying all thata so only one of the three attributes bellow are necessary.
+		directionSin = new SummaryStatistics(), 
+		directionCos = new SummaryStatistics(),
 		direction = new SummaryStatistics();
 
 	public MovementStatistics(final int observedObjectId) {
@@ -40,9 +44,10 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 
 		this.speed.addValue(speed);
 
-		//Weird? See http://en.wikipedia.org/wiki/Directional_statistics#The_fundamental_difference_between_linear_and_circular_statistics
+		//Found all the code below Weird? See http://en.wikipedia.org/wiki/Directional_statistics#The_fundamental_difference_between_linear_and_circular_statistics
 		//See also http://en.wikipedia.org/wiki/Atan2
-		//this.direction.addValue(FastMath.atan2(FastMath.sin(direction), FastMath.cos(direction)));
+		this.directionSin.addValue(FastMath.sin(direction));
+		this.directionCos.addValue(FastMath.cos(direction));
 		this.direction.addValue(direction);
 	}
 
@@ -88,7 +93,10 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 
 	@Override
 	public double directionMean() {
-		return direction.getMean();
+		return FastMath.atan2(
+			directionSin.getMean(),
+			directionCos.getMean()
+		);
 	}
 
 	@Override
