@@ -11,6 +11,7 @@ public class Trajectory {
 	private final double alpha;
 	private final double beta;
 
+
 	/**
 	 * Creates an instance of this class that is a trajectory defined by the
 	 * line segment that starts in A and ends in B.
@@ -21,7 +22,7 @@ public class Trajectory {
 
 	public Trajectory(double direction, Point origin) {
 		this.alpha = FastMath.tan(direction);
-		this.beta = origin.y() - alpha * origin.x();
+		this.beta = origin.y() - this.alpha * origin.x();
 	}
 
 	public Point intersect(Trajectory other) {
@@ -29,11 +30,15 @@ public class Trajectory {
 			return null; //no intersection or infinite intersecting points. In both cases, we return null.
 		}
 
-		//the intersection of those 2 linear equations is...
-		final double x = (other.beta - this.beta) / (this.alpha - other.alpha);
-		final double y = this.alpha * x + this.beta;
+		if (FastMath.abs(this.alpha) > FastMath.abs(other.alpha)) {
+			return other.intersect(this);
+		} else {
+			//the intersection of those 2 linear equations is...
+			final double x = (other.beta - this.beta) / (this.alpha - other.alpha);
+			final double y = this.alpha * x + this.beta;
 
-		return new Point(x, y);
+			return new Point(x, y);
+		}
 	}
 
 	public boolean intersect(Point p) {

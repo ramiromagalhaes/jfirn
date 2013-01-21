@@ -1,6 +1,6 @@
 package br.ufrj.jfirn.intelligent;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
@@ -39,12 +39,13 @@ public class TrajectoryTest {
 	}
 
 	@Test
-	public void testIntersection() {
+	public void testIntersection4() {
 		Trajectory t1 = new Trajectory(Robot.DOWN, new Point(300, 280));
 		Trajectory t2 = new Trajectory(new Point(200, 200), new Point(400, 100));
 		Point intersection = t1.intersect(t2);
+		assertTrue( t1.intersect(new Point(300, 0)) );
 		assertEquals(300, intersection.x(), TEN_TO_MINUS_3);
-		assertEquals(256, intersection.y(), TEN_TO_MINUS_3);
+		assertEquals(150, intersection.y(), TEN_TO_MINUS_3);
 	}
 
 }
