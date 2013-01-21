@@ -1,5 +1,6 @@
 package br.ufrj.jfirn.common;
 
+import java.text.DecimalFormat;
 import java.util.Comparator;
 
 import org.apache.commons.math3.util.FastMath;
@@ -54,13 +55,15 @@ public class Point {
 		);
 	}
 
+	private static final DecimalFormat format = new DecimalFormat("#.00");
+
 	@Override
 	public String toString() {
 		return new StringBuilder()
 			.append("Point[")
-			.append(x)
+			.append(format.format(x))
 			.append(", ")
-			.append(y)
+			.append(format.format(y))
 			.append("]")
 			.toString();
 	}
@@ -109,7 +112,7 @@ public class Point {
 	}
 
 	/**
-	 * Sorts points in Y order, smaller to bigger.
+	 * Sorts points in Y order,) smaller to bigger.
 	 */
 	public static class YThenXComparator implements Comparator<Point> {
 		public static final YThenXComparator instance = new YThenXComparator();
