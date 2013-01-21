@@ -92,7 +92,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 			return null;
 		}
 
-		//estimate the collision time with the average of times
+		//rough estimate of the collision time
 		final double time = (myTime + otherTime) / 2d;
 
 		return new Collision(id, collisionPosition, time);
