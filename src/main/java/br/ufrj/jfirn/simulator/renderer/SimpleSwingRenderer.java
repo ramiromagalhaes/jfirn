@@ -116,8 +116,8 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 	@Override
 	public void done() {
-		simulationFrame.setVisible(true);
         thoughtsFrame.setVisible(true);
+		simulationFrame.setVisible(true);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 	public static class Obstacle {
 		final public int id;
 		final public Point position;
-		final public double meanSpeed, meanDirection;
+		final public double meanSpeed, meanDirection, stdDevDirection;
 		final public Collision collision;
 		final public Reason reason;
 
@@ -144,6 +144,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			this.position = new Point(statistic.lastKnownPosition().x(), AREA_HEIGHT - statistic.lastKnownPosition().y());
 			this.meanSpeed = statistic.speedMean();
 			this.meanDirection = statistic.directionMean();
+			this.stdDevDirection = FastMath.sqrt(statistic.directionVariance());
 			this.collision = evaluation.collision();
 			this.reason = evaluation.reason();
 		}
@@ -193,7 +194,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			private static final long serialVersionUID = 1L;
 
 			private final String[] columnNames = {
-				"Obstacle", "X", "Y", "Mean Speed", "Mean direction", "Probability", "Reason"
+				"Obstacle", "X", "Y", "μ Speed", "μ direction", "Probability", "Reason"
 			};
 			private final Class<?>[] columnTypes = {
 				Integer.class,
@@ -321,9 +322,19 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 			imageGraphics.setColor(ColorPaleteForRobots.getLighter(obstacle.id));
 
 			imageGraphics.drawLine((int)obstacle.position.x(), (int)obstacle.position.y(),
-				(int)(FastMath.cos(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.x()),
-				(int)(-FastMath.sin(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.y())
-			);
+					(int)(FastMath.cos(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.x()),
+					(int)(-FastMath.sin(obstacle.meanDirection) * 10 * obstacle.meanSpeed + obstacle.position.y())
+				);
+
+			imageGraphics.drawLine((int)obstacle.position.x(), (int)obstacle.position.y(),
+					(int)(FastMath.cos(obstacle.meanDirection + obstacle.stdDevDirection) * 30  + obstacle.position.x()),
+					(int)(-FastMath.sin(obstacle.meanDirection + obstacle.stdDevDirection) * 30 + obstacle.position.y())
+				);
+
+			imageGraphics.drawLine((int)obstacle.position.x(), (int)obstacle.position.y(),
+					(int)(FastMath.cos(obstacle.meanDirection - obstacle.stdDevDirection) * 30  + obstacle.position.x()),
+					(int)(-FastMath.sin(obstacle.meanDirection - obstacle.stdDevDirection) * 30 + obstacle.position.y())
+				);
 
 			imageGraphics.drawString(Integer.toString(obstacle.id),
 				(int)(FastMath.cos(obstacle.meanDirection + FastMath.PI) * 10 + obstacle.position.x()),
