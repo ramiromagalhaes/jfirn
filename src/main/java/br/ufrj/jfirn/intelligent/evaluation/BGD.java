@@ -72,7 +72,7 @@ public class BGD {
 			return cdf(a, 0, rho1) + cdf(b, 0, rho2) - delta;
 		}
 
-		throw new RuntimeException("Should never get here.");
+		throw new RuntimeException("Should never get here. Values of [a; b ; c] = [" + a + "; " + b + "; " + c + "].");
 	}
 
 	//TODO write documentation
