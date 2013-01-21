@@ -102,7 +102,11 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 
 	@Override
 	public double directionVariance() {
-		return direction.getVariance();
+		return FastMath.pow(
+			FastMath.atan2(
+				directionSin.getVariance(),
+				directionCos.getVariance()
+			), 2d);
 	}
 
 	@Override
