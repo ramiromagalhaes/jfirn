@@ -6,6 +6,7 @@ public enum Reason {
 	PARTIAL_EVALUATION("Did partial evaluation."),
 	NO_INTERSECTION   ("Trajectories doesn't intersect."),
 	TOO_FAR_AWAY      ("Obstacle is too far away."),
+	NOT_ENOUGH_SAMPLES("Unsuficient samples"),
 	NO_REASON         ("Unknown reason");
 
 	private final String message;
