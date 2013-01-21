@@ -9,9 +9,14 @@ public class Collision implements Serializable {
 
 	public final int withObjectId;
 	public final Point position;
-	public final double time;
+	public double time;
 	public double probability;
 	public Point[] area;
+
+	public Collision(int withObjectId, Point position) {
+		this.withObjectId = withObjectId;
+		this.position = position;
+	}
 
 	public Collision(int withObjectId, Point position, double time) {
 		this.withObjectId = withObjectId;
