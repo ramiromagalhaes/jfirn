@@ -22,11 +22,12 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 		x = new SummaryStatistics(),
 		y = new SummaryStatistics(),
 		speed = new SummaryStatistics(),
+
+		directionTimesSpeed = new SummaryStatistics(),
 		//TODO consider simplifying all that so only one of the three attributes bellow are necessary.
 		//Beware: lazy cheap work done bellow.
-		directionSin = new SummaryStatistics(), 
-		directionCos = new SummaryStatistics(),
-		direction = new SummaryStatistics();
+		directionSin = new SummaryStatistics(),
+		directionCos = new SummaryStatistics();
 
 	public MovementStatistics(final int observedObjectId) {
 		this.observedObjectId = observedObjectId;
@@ -47,13 +48,16 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 
 		//Found all the code below Weird? See http://en.wikipedia.org/wiki/Directional_statistics#The_fundamental_difference_between_linear_and_circular_statistics
 		//See also http://en.wikipedia.org/wiki/Atan2
-		this.directionSin.addValue(FastMath.sin(direction));
-		this.directionCos.addValue(FastMath.cos(direction));
-		this.direction.addValue(direction);
+		final double sin = FastMath.sin(direction);
+		final double cos = FastMath.cos(direction);
+		this.directionSin.addValue(sin);
+		this.directionCos.addValue(cos);
+
+		directionTimesSpeed.addValue(speed * FastMath.atan2(sin, cos));
 	}
 
 	@Override
-	public int entriesAdded() {
+	public int samplesCount() {
 		return (int)x.getN();
 	}
 
@@ -114,13 +118,14 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 		x.clear();
 		y.clear();
 		speed.clear();
-		direction.clear();
+		directionSin.clear();
+		directionCos.clear();
+		directionTimesSpeed.clear();
 	}
 
 	@Override
 	public double xyCorrelation() {
-		// TODO Auto-generated method stub
-		return 0;
+		return xyCovariance() / (x.getStandardDeviation() * y.getStandardDeviation());
 	}
 
 	@Override
@@ -131,14 +136,22 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 
 	@Override
 	public double speedDirectionCorrelation() {
-		// TODO Auto-generated method stub
-		return 0;
+		final double means = speed.getStandardDeviation() *
+			FastMath.atan2(
+				directionSin.getStandardDeviation(),
+				directionCos.getStandardDeviation()
+			);
+
+		return means != 0 ? speedDirectionCovariance() / means : 0;
 	}
 
 	@Override
 	public double speedDirectionCovariance() {
-		// TODO Auto-generated method stub
-		return 0;
+		return directionTimesSpeed.getMean() - speed.getMean() *
+			FastMath.atan2(
+				directionSin.getStandardDeviation(),
+				directionCos.getStandardDeviation()
+			);
 	}
 
 }

@@ -44,7 +44,7 @@ public class LastMovementData implements MobileObstacleDataLogger, MobileObstacl
 	}
 
 	@Override
-	public int entriesAdded() {
+	public int samplesCount() {
 		return entriesAdded;
 	}
 

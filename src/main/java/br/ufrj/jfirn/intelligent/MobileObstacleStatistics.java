@@ -4,7 +4,7 @@ import br.ufrj.jfirn.common.Point;
 
 public interface MobileObstacleStatistics {
 
-	public int entriesAdded();
+	public int samplesCount();
 
 	public int getObservedObjectId(); //TODO use the term ObstacleId
 
