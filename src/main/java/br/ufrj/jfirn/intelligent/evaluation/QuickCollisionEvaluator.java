@@ -23,6 +23,13 @@ public class QuickCollisionEvaluator implements Evaluator {
 		final Point myPosition = thoughts.myPosition();
 
 		for (MobileObstacleStatistics stats : thoughts.allObstacleStatistics()) { //evaluate everyone I see.
+			if (stats.samplesCount() <= 3) {
+				thoughts.putCollisionEvaluation(
+					new CollisionEvaluation(stats.getObservedObjectId(), Reason.NOT_ENOUGH_SAMPLES)
+				);
+				continue;
+			}
+
 			Collision collision = evaluateCollision(
 				myPosition,
 				thoughts.myDirection(),
