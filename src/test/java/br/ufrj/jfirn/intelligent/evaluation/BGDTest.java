@@ -6,6 +6,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
 
 import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.Polygon;
 
 public class BGDTest {
 
@@ -55,6 +56,24 @@ public class BGDTest {
 			BGD.cdfOfRectangle(1.5d * l,      l, l, l, 0);
 
 		assertEquals(expected, BGD.cdfOfConvexQuadrilaterals(a, b, c, d, 0), 0.00001d);
+	}
+
+	@Test
+	public void testCdfPolygon() {
+		final double l = FastMath.scalb(1, -4);
+
+		final Point a = new Point(0, 0);
+		final Point b = new Point(l, 0);
+		final Point c = new Point(2d * l, 2d * l);
+		final Point d = new Point(3d * l, 2d * l);
+
+		final double expected =
+			BGD.cdfOfRectangle(2.5d * l, 2d * l, l, l, 0) +
+			BGD.cdfOfRectangle(1.5d * l,      l, l, l, 0);
+
+		Polygon p = new Polygon(new Point[] {a, b, c, d});
+
+		assertEquals(expected, BGD.cdf(p, 0), 0.00001d);
 	}
 
 }

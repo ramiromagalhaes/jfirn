@@ -10,6 +10,8 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.Polygon;
+import br.ufrj.jfirn.common.Triangle;
 
 /**
  * Bivariate Gaussian Distribution utility functions.
@@ -84,8 +86,8 @@ public class BGD {
 	}
 
 	//TODO write documentation
-	public static double cdfOfRectangle(Point higherPoint, double length, double height, double c) {
-		return cdfOfRectangle(higherPoint.x(), higherPoint.y(), length, height, c);
+	public static double cdfOfRectangle(Point higherPoint, double length, double height, double correlation) {
+		return cdfOfRectangle(higherPoint.x(), higherPoint.y(), length, height, correlation);
 	}
 
 	/**
@@ -110,6 +112,46 @@ public class BGD {
 			total += BGD.cdfOfRectangle(x[1], currentY, x[1] - x[0], squareHeight, correlation);
 
 			currentY -= squareHeight;
+		}
+
+		return total;
+	}
+
+	public static double cdf(Triangle triangle, double correlation) {
+		triangle = new Triangle(
+			applyLimitsToPoint(triangle.points[0]),
+			applyLimitsToPoint(triangle.points[1]),
+			applyLimitsToPoint(triangle.points[2])
+		);
+
+		double total = 0; //will return this
+		boolean iterate = true;
+
+		double currentY = triangle.getLowestY();
+		while (iterate) {
+			double increment = squareHeight;
+
+			if (currentY + increment >= triangle.getHighestY()) {
+				increment = triangle.getHighestY() - currentY;
+				iterate = false;
+			}
+
+			currentY += increment;
+
+			final double[] x = triangle.getX(currentY - increment/2d);
+
+			total += BGD.cdfOfRectangle(x[1], currentY, x[1] - x[0], increment, correlation);
+		}
+
+		return total;
+	}
+
+	public static double cdf(Polygon polygon, double correlation) {
+		Triangle[] triangles = polygon.toTriangles();
+
+		double total = 0;
+		for (Triangle t : triangles) {
+			total += cdf(t, correlation);
 		}
 
 		return total;
