@@ -37,10 +37,14 @@ public class Engine {
 	public void simulate(int iterations) {
 		init();
 
-		for (int i = 0; i < iterations; i++) {
-			sense();
-			move();
-			render();
+		try {
+			for (int i = 0; i < iterations; i++) {
+				sense();
+				move();
+				render();
+			}
+		} catch (RuntimeException e) {
+			e.printStackTrace(System.err);
 		}
 
 		for (SimulationRenderer renderer : renderers) {
