@@ -14,11 +14,7 @@ import org.apache.commons.math3.util.FastMath;
  */
 public class Point {
 
-	protected double x, y;
-
-	public Point() {
-		x = y = 0;
-	}
+	protected final double x, y;
 
 	public Point(double x, double y) {
 		this. x = x;
@@ -55,7 +51,7 @@ public class Point {
 		);
 	}
 
-	private static final DecimalFormat format = new DecimalFormat("#.00");
+	private static final DecimalFormat format = new DecimalFormat("0.00");
 
 	@Override
 	public String toString() {
