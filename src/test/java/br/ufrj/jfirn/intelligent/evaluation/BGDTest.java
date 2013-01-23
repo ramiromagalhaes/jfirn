@@ -27,11 +27,6 @@ public class BGDTest {
 	}
 
 	@Test
-	public void testCdfOfRectangle() {
-		assertEquals(FROM_MATLAB, BGD.cdfOfRectangle(new Point(1d, 1d), 1d, 1d, 0), 0.00001d);
-	}
-
-	@Test
 	public void testCdfPolygon() {
 		final double l = FastMath.scalb(1, -4);
 

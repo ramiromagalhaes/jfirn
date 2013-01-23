@@ -87,11 +87,6 @@ public class BGD {
 			BGD.cdf(higherX - length, higherY - height, c);
 	}
 
-	//TODO write documentation
-	public static double cdfOfRectangle(Point higherPoint, double length, double height, double correlation) {
-		return cdfOfRectangle(higherPoint.x(), higherPoint.y(), length, height, correlation);
-	}
-
 	/**
 	 * Calculates an aproximate value for the BGD inside a certain triangle area.
 	 */
