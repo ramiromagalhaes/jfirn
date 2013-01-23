@@ -10,6 +10,7 @@ public class Polygon {
 	private List<Point> polygon;
 
 	public Polygon(Point[] points) {
+		checkAmountPoints(points.length);
 		polygon = ConvexHull.execute(Arrays.asList(points));
 	}
 
@@ -18,6 +19,7 @@ public class Polygon {
 	 * @param points
 	 */
 	public Polygon(List<Point> points) {
+		checkAmountPoints(points.size());
 		polygon = ConvexHull.execute(new ArrayList<>(points));
 	}
 
@@ -44,9 +46,16 @@ public class Polygon {
 		throw new IllegalArgumentException("Works only with polygins with 3, 4 or 5 vertices. This one has " + polygon.size() + ".");
 	}
 
+	public Point[] points() {
+		return polygon.toArray(new Point[polygon.size()]);
+	}
 
 
-
+	private void checkAmountPoints(final int amount) {
+		if (amount < 3) {
+			throw new IllegalArgumentException("A Polygon must have at least 3 points. This one has " + amount + ".");
+		}
+	}
 
 	private static class ConvexHull {
 
