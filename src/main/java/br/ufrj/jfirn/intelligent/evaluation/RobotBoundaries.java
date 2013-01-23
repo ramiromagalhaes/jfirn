@@ -14,11 +14,11 @@ import br.ufrj.jfirn.common.Robot;
  *
  */
 public class RobotBoundaries {
-	private static final double RADIUS = 10;
+	private static final double RADIUS = 5;
 
 	/**
-	 * Get 2 points that are 10 units away from myPosition and located at
-	 * -PI/2 an PI/2 from myDirection.
+	 * Get 2 points that are {@link RobotBoundaries#RADIUS} units away from myPosition
+	 * and located at -PI/2 an PI/2 from myDirection.
 	 * 
 	 * This is useful to know the limits of a {@link Robot}.
 	 */
