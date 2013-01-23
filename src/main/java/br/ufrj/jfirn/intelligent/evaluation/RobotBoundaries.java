@@ -14,7 +14,6 @@ import br.ufrj.jfirn.common.Robot;
  *
  */
 public class RobotBoundaries {
-	private static final double RADIUS = 5;
 
 	/**
 	 * Get 2 points that are {@link RobotBoundaries#RADIUS} units away from myPosition
@@ -28,12 +27,12 @@ public class RobotBoundaries {
 
 		final Point[] points = new Point[] {
 			new Point(
-				myPosition.x() + FastMath.cos(d1) * RADIUS,
-				myPosition.y() + FastMath.sin(d1) * RADIUS
+				myPosition.x() + FastMath.cos(d1) * RobotsConstants.SIZE_RADIUS,
+				myPosition.y() + FastMath.sin(d1) * RobotsConstants.SIZE_RADIUS
 			),
 			new Point(
-				myPosition.x() + FastMath.cos(d2) * RADIUS,
-				myPosition.y() + FastMath.sin(d2) * RADIUS
+				myPosition.x() + FastMath.cos(d2) * RobotsConstants.SIZE_RADIUS,
+				myPosition.y() + FastMath.sin(d2) * RobotsConstants.SIZE_RADIUS
 			)
 		};
 		return points;
