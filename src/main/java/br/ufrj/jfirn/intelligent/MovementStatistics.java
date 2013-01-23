@@ -34,7 +34,7 @@ public class MovementStatistics implements MobileObstacleDataLogger, MobileObsta
 	}
 
 	@Override
-	public int getObservedObjectId() {
+	public int getObstacleId() {
 		return observedObjectId;
 	}
 

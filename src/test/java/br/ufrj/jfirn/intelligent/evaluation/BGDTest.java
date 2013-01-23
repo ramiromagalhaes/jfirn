@@ -9,6 +9,8 @@ import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Polygon;
 
 public class BGDTest {
+	//took this 0.116516235668598d result from Matlab
+	private final double FROM_MATLAB = 0.116516235668598d;
 
 	@Test
 	public void testCdf() {
@@ -26,36 +28,7 @@ public class BGDTest {
 
 	@Test
 	public void testCdfOfRectangle() {
-		assertEquals(0.116516235668598d, BGD.cdfOfRectangle(new Point(1d, 1d), 1d, 1d, 0), 0.00001d);
-	}
-
-	@Test
-	public void testCdfOfConvexQuadrilaterals() {
-		assertEquals(0.116516235668598d,
-			BGD.cdfOfConvexQuadrilaterals(
-				new Point(0d, 0d),
-				new Point(1d, 0d),
-				new Point(0d, 1d),
-				new Point(1d, 1d),
-				0
-			),
-			0.00001d);
-	}
-
-	@Test
-	public void testCdfOfConvexQuadrilaterals2() {
-		final double l = FastMath.scalb(1, -4);
-
-		final Point a = new Point(0, 0);
-		final Point b = new Point(l, 0);
-		final Point c = new Point(2d * l, 2d * l);
-		final Point d = new Point(3d * l, 2d * l);
-
-		final double expected =
-			BGD.cdfOfRectangle(2.5d * l, 2d * l, l, l, 0) +
-			BGD.cdfOfRectangle(1.5d * l,      l, l, l, 0);
-
-		assertEquals(expected, BGD.cdfOfConvexQuadrilaterals(a, b, c, d, 0), 0.00001d);
+		assertEquals(FROM_MATLAB, BGD.cdfOfRectangle(new Point(1d, 1d), 1d, 1d, 0), 0.00001d);
 	}
 
 	@Test
@@ -72,6 +45,36 @@ public class BGDTest {
 			BGD.cdfOfRectangle(1.5d * l,      l, l, l, 0);
 
 		Polygon p = new Polygon(new Point[] {a, b, c, d});
+
+		assertEquals(expected, BGD.cdf(p, 0), 0.00001d);
+	}
+
+	@Test
+	public void testCdfPolygon2() {
+		Polygon p = new Polygon(new Point[] {
+			new Point(0d, 0d),
+			new Point(1d, 0d),
+			new Point(0d, 1d),
+			new Point(1d, 1d),
+		});
+
+		assertEquals(FROM_MATLAB, BGD.cdf(p, 0), 0.00001d);
+	}
+
+	@Test
+	public void testCdfPolygon3() {
+		final double l = FastMath.scalb(1, -4);
+
+		Polygon p = new Polygon(new Point[] {
+			new Point(0, 0),
+			new Point(l, 0),
+			new Point(2d * l, 2d * l),
+			new Point(3d * l, 2d * l)
+		});
+
+		final double expected =
+			BGD.cdfOfRectangle(2.5d * l, 2d * l, l, l, 0) +
+			BGD.cdfOfRectangle(1.5d * l,      l, l, l, 0);
 
 		assertEquals(expected, BGD.cdf(p, 0), 0.00001d);
 	}

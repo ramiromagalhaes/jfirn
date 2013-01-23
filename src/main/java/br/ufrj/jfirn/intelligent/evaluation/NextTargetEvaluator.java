@@ -36,7 +36,7 @@ public class NextTargetEvaluator implements Evaluator {
 	 * Used to verify if I'm close enough to a target.
 	 */
 	private boolean isInReachRadius(Point myPosition, Point otherPosition) {
-		return myPosition.distanceTo(otherPosition) <= RobotsConstants.SIZE_RADIUS;
+		return myPosition.distanceTo(otherPosition) <= RobotsUtils.SIZE_RADIUS;
 	}
 
 }

@@ -1,20 +1,22 @@
 package br.ufrj.jfirn.intelligent.evaluation;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.math3.util.FastMath;
 
+import br.ufrj.jfirn.common.Line;
 import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.Polygon;
 import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 import br.ufrj.jfirn.intelligent.Thoughts;
-import br.ufrj.jfirn.intelligent.Trajectory;
 
 public class CollisionProbabilityEvaluator implements Evaluator {
 
 	@Override
 	public void evaluate(Thoughts thoughts, Instruction instruction, ChainOfEvaluations chain) {
 		//The trajectory of the extremities of the IntelligentRobot, considering its movement direction
-		final Trajectory[] myTrajectory = getIntelligentRobotTrajectory(thoughts);
+		final Line[] irLines = getIntelligentRobotTrajectory(thoughts);
 
 		for (CollisionEvaluation collisionEvaluation : thoughts.allColisionEvaluations()) {
 			if (!collisionEvaluation.hasCollision()) {
@@ -24,19 +26,18 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			final MobileObstacleStatistics stats =
 				thoughts.obstacleStatistics(collisionEvaluation.obstacleId());
 
-			final Trajectory[] trajectories = Trajectory.fromStatistics(stats);
+			final Line[] moLines = Line.fromStatistics(stats);
 
-			//Here, intersections are points in the X, Y plane. The next step is convert them
-			//to the Angle, Speed planes because we chose to work with the probability
-			//distributions of the robot angle and the robot speed.
-			final Point[] intersections = new Point[] {
-				myTrajectory[0].intersect(trajectories[0]),
-				myTrajectory[1].intersect(trajectories[0]),
-				myTrajectory[0].intersect(trajectories[1]),
-				myTrajectory[1].intersect(trajectories[1])
-			};
+			//Intersections in the X, Y plane.
+			if (collisionEvaluation.obstacleId() == 4) {
+				System.out.println("!");
+			}
+			final Point[] intersections = evaluateIntersections(irLines, moLines);
 
-			collisionEvaluation.collision().area = Arrays.copyOf(intersections, intersections.length);
+			//Copy the intersections to the collision. We'll modify the intersections
+			collisionEvaluation.collision().area = new Polygon(intersections);
+
+
 
 			final Point moPosition = stats.lastKnownPosition();
 
@@ -64,18 +65,79 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 
 			//calculate the collision probability
 			collisionEvaluation.collision().probability =
-				BGD.cdfOfConvexQuadrilaterals(
-					intersections[0],
-					intersections[1],
-					intersections[2],
-					intersections[3],
+				BGD.cdf(
+					new Polygon(intersections),
 					stats.speedDirectionCorrelation());
 
-			collisionEvaluation.reason(Reason.FULL_EVALUATION);
+			collisionEvaluation.reason(Reason.PROBABILITY_EVALUATION);
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain);
 	}
+
+
+
+	private Point[] evaluateIntersections(final Line[] irTrajectories, final Line[] moTrajectories) {
+		//TODO Make this evaluation generic.
+		//This method will not work when the obstacle overlaps the intelligent robot. Take care while using it.
+		final List<Point> intersections = new ArrayList<>();
+		final boolean[][] intersected = new boolean[irTrajectories.length][moTrajectories.length];
+		final int[] intersectionCount = new int[irTrajectories.length];
+
+		for (int i = 0; i < irTrajectories.length; i++) {
+			final Line lir = irTrajectories[i];
+
+			for (int j = 0; j < moTrajectories.length; j++) {
+				final Line lmo = moTrajectories[j];
+
+				final Point intersection = lir.intersection(lmo);
+				if (intersection != null) {
+					intersections.add(intersection);
+					intersected[i][j] = true;
+					intersectionCount[i] += intersected[i][j] ? 1 : 0;
+				}
+			}
+		}
+
+		if (intersections.size() == 1) {
+			System.out.println("teste");
+		}
+
+		final int mainTrajectoriesCount = intersectionCount[0] + intersectionCount[1];
+
+		/*
+		 * Those 'ifs' are used to evaluate the many forms the collision area may have.
+		 * The first treats the case when the IR is crossing one of the moTrajectories,
+		 * and one of the irTrajectories intercept one moTrajectory while the other
+		 * intercept both.
+		 * The second treats the case when the IR intercepts a single moTrajectory because
+		 * it's "between" both moTrajectories.
+		 * The third if consists on the IR crossing one of the moTrajectories, but only
+		 * one intersection happens (the IR is going out of the collision area).
+		 */
+		if (intersectionCount[2] == 1 && mainTrajectoriesCount == 3) {
+			if (intersectionCount[0] == 1) {
+				intersections.add(irTrajectories[0].start());
+			} else /* intersectionCount[1] == 1 */{
+				intersections.add(irTrajectories[1].start());
+			}
+
+		} else if (intersectionCount[2] == 0 && intersectionCount[1] == 1 && intersectionCount[0] == 1) {
+			intersections.add(irTrajectories[0].start());
+			intersections.add(irTrajectories[1].start());
+
+		} else if (intersectionCount[2] == 1 && mainTrajectoriesCount == 1) {
+			if (intersectionCount[0] == 1) {
+				intersections.add(irTrajectories[1].start());
+			} else /* intersectionCount[1] == 1 */{
+				intersections.add(irTrajectories[0].start());
+			}
+		}
+
+		return intersections.toArray(new Point[intersections.size()]);
+	}
+
+
 
 	/**
 	 * Calculates the trajectory of the extremities of the IntelligentRobot,
@@ -84,12 +146,13 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 	 * @param thoughts
 	 * @return
 	 */
-	private Trajectory[] getIntelligentRobotTrajectory(Thoughts thoughts) {
+	private Line[] getIntelligentRobotTrajectory(Thoughts thoughts) {
 		final Point points[] = RobotBoundaries
-				.pointsFromVerticalAxis(thoughts.myPosition(), thoughts.myDirection());
-		return new Trajectory[] {
-			new Trajectory(thoughts.myDirection(), points[0]),
-			new Trajectory(thoughts.myDirection(), points[1]),
+			.pointsFromVerticalAxis(thoughts.myPosition(), thoughts.myDirection());
+		return new Line[] {
+			new Line(points[0], thoughts.myDirection()),
+			new Line(points[1], thoughts.myDirection()),
+			new Line(points[0], points[1])
 		};
 	}
 

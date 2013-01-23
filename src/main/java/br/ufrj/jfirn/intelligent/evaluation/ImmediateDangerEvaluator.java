@@ -1,6 +1,5 @@
 package br.ufrj.jfirn.intelligent.evaluation;
 
-import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 import br.ufrj.jfirn.intelligent.Thoughts;
@@ -15,7 +14,7 @@ public class ImmediateDangerEvaluator implements Evaluator {
 
 		//...but check for it
 		for (MobileObstacleStatistics stats : thoughts.allObstacleStatistics()) {
-			if ( this.isInDangerRadius(thoughts.myPosition(), stats.lastKnownPosition()) ) {
+			if ( RobotsUtils.isInDangerRadius(thoughts.myPosition(), stats.lastKnownPosition()) ) {
 				thoughts.endangered(true);
 				break;
 			}
@@ -28,13 +27,6 @@ public class ImmediateDangerEvaluator implements Evaluator {
 		}
 
 		chain.nextEvaluator(thoughts, instruction, chain);
-	}
-
-	/**
-	 * Used to verify if the robot is in danger.
-	 */
-	private boolean isInDangerRadius(Point myPosition, Point otherPosition) {
-		return myPosition.distanceTo(otherPosition) <= RobotsConstants.SIZE_RADIUS;
 	}
 
 }

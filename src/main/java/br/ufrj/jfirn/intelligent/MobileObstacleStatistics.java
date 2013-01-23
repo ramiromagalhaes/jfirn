@@ -6,7 +6,7 @@ public interface MobileObstacleStatistics {
 
 	public int samplesCount();
 
-	public int getObservedObjectId(); //TODO use the term ObstacleId
+	public int getObstacleId();
 
 	public Point lastKnownPosition();
 

@@ -25,7 +25,7 @@ public class LastMovementData implements MobileObstacleDataLogger, MobileObstacl
 	}
 
 	@Override
-	public int getObservedObjectId() {
+	public int getObstacleId() {
 		return observedObjectId;
 	}
 
