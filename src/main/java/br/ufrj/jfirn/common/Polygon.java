@@ -33,7 +33,7 @@ public class Polygon {
 			};
 		}
 
-		throw new IllegalArgumentException("Works only with polygins with 3, 4 or 5 vertices.");
+		throw new IllegalArgumentException("Works only with polygins with 3, 4 or 5 vertices. This one has " + polygon.size() + ".");
 	}
 
 
