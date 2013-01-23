@@ -27,12 +27,12 @@ public class RobotBoundaries {
 
 		final Point[] points = new Point[] {
 			new Point(
-				myPosition.x() + FastMath.cos(d1) * RobotsConstants.SIZE_RADIUS,
-				myPosition.y() + FastMath.sin(d1) * RobotsConstants.SIZE_RADIUS
+				myPosition.x() + FastMath.cos(d1) * RobotsUtils.SIZE_RADIUS,
+				myPosition.y() + FastMath.sin(d1) * RobotsUtils.SIZE_RADIUS
 			),
 			new Point(
-				myPosition.x() + FastMath.cos(d2) * RobotsConstants.SIZE_RADIUS,
-				myPosition.y() + FastMath.sin(d2) * RobotsConstants.SIZE_RADIUS
+				myPosition.x() + FastMath.cos(d2) * RobotsUtils.SIZE_RADIUS,
+				myPosition.y() + FastMath.sin(d2) * RobotsUtils.SIZE_RADIUS
 			)
 		};
 		return points;
