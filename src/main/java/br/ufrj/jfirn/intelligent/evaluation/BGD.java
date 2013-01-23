@@ -3,7 +3,6 @@ package br.ufrj.jfirn.intelligent.evaluation;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.util.FastMath;
 
-import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Polygon;
 import br.ufrj.jfirn.common.Triangle;
 
@@ -164,6 +163,7 @@ public class BGD {
 	 * If the parameter's x or y values are bigger than a limit,
 	 * create a new {@link Point} under this limit.
 	 */
+	/*
 	private static Point applyLimitsToPoint(Point point) {
 		//we'll avoid creating new instances of Point
 		final double limit = 3d;
@@ -186,5 +186,6 @@ public class BGD {
 			return point;
 		}
 	}
+	*/
 
 }

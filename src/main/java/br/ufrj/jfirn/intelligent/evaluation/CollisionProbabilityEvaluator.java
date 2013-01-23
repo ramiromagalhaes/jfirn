@@ -28,10 +28,6 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 
 			final Line[] moLines = Line.fromStatistics(stats);
 
-			//Intersections in the X, Y plane.
-			if (collisionEvaluation.obstacleId() == 4) {
-				System.out.println("!");
-			}
 			final Point[] intersections = evaluateIntersections(irLines, moLines);
 
 			//Copy the intersections to the collision. We'll modify the intersections

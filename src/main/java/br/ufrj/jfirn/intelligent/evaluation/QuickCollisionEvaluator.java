@@ -33,9 +33,9 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 			if (RobotsUtils.isInDangerRadius(myPosition, moPosition)) {
 				thoughts.putCollisionEvaluation(
-						new CollisionEvaluation(stats.getObstacleId(), Reason.TOO_CLOSE)
-					);
-					continue;
+					new CollisionEvaluation(stats.getObstacleId(), Reason.TOO_CLOSE)
+				);
+				continue;
 			}
 
 			final Collision collision = evaluateCollision(
