@@ -3,6 +3,7 @@ package br.ufrj.jfirn.intelligent;
 import java.io.Serializable;
 
 import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.Polygon;
 
 public class Collision implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -11,7 +12,7 @@ public class Collision implements Serializable {
 	public final Point position;
 	public double time;
 	public double probability;
-	public Point[] area;
+	public Polygon area;
 
 	public Collision(int withObjectId, Point position) {
 		this.withObjectId = withObjectId;

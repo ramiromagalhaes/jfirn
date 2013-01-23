@@ -8,11 +8,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.beans.Transient;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -140,7 +136,7 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 		final public Reason reason;
 
 		public Obstacle(MobileObstacleStatistics statistic, CollisionEvaluation evaluation) {
-			this.id = statistic.getObservedObjectId();
+			this.id = statistic.getObstacleId();
 			this.position = new Point(statistic.lastKnownPosition().x(), AREA_HEIGHT - statistic.lastKnownPosition().y());
 			this.meanSpeed = statistic.speedMean();
 			this.meanDirection = statistic.directionMean();
@@ -344,42 +340,17 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 		private void paintCollisionArea(Obstacle obstacle, Graphics imageGraphics) {
 			if (obstacle.collision != null) {
-				final Collision collision = obstacle.collision;
-				collision.area = arrangePointsAsConvexQuadrilateral(collision.area);
-				final int[] x = new int[collision.area.length];
-				final int[] y = new int[collision.area.length];
-				for (int i = 0; i < collision.area.length; i++) {
-					x[i] = (int)collision.area[i].x();
-					y[i] = AREA_HEIGHT - (int)collision.area[i].y();
+				Point[] points = obstacle.collision.area.points();
+
+				final int[] x = new int[points.length];
+				final int[] y = new int[points.length];
+				for (int i = 0; i < points.length; i++) {
+					x[i] = (int)points[i].x();
+					y[i] = AREA_HEIGHT - (int)points[i].y();
 				}
-				imageGraphics.setColor(ColorPaleteForRobots.getLighter(collision.withObjectId));
-				imageGraphics.fillPolygon(x, y, collision.area.length);
+				imageGraphics.setColor(ColorPaleteForRobots.getLighter(obstacle.collision.withObjectId));
+				imageGraphics.fillPolygon(x, y, points.length);
 			}
-		}
-
-		private Point[] arrangePointsAsConvexQuadrilateral(Point[] points) {
-			//TODO there probably is a better algorithm for this...
-			final Point center = new Point(
-				(points[0].x() + points[1].x() + points[2].x() + points[3].x()) / 4d,
-				(points[0].y() + points[1].y() + points[2].y() + points[3].y()) / 4d
-			);
-
-			final Map<Double, Point> map = new HashMap<>(4);
-			map.put(center.directionTo(points[0]), points[0]);
-			map.put(center.directionTo(points[1]), points[1]);
-			map.put(center.directionTo(points[2]), points[2]);
-			map.put(center.directionTo(points[3]), points[3]);
-
-			Double[] angles = new Double[4];
-			angles = map.keySet().toArray(angles);
-			Arrays.sort(angles);
-
-			final LinkedList<Point> toReturn = new LinkedList<>();
-			for (Double angle : angles) {
-				toReturn.addLast(map.get(angle));
-			}
-
-			return toReturn.toArray(new Point[4]);
 		}
 
 		/**
@@ -412,30 +383,30 @@ public class SimpleSwingRenderer implements SimulationRenderer, ChangeListener {
 
 	}
 
-}
+	private static final class ColorPaleteForRobots {
 
-final class ColorPaleteForRobots {
+		private static final Color[] colorArray = {
+			Color.orange, Color.blue,
+			Color.red, Color.green,
+			Color.darkGray, Color.magenta,
+			new Color(0x9c00ff), new Color(0x23707e)
+		};
 
-	private static final Color[] colorArray = {
-		Color.orange, Color.blue,
-		Color.red, Color.green,
-		Color.darkGray, Color.magenta,
-		new Color(0x9c00ff), new Color(0x23707e)
-	};
+		private static final Color[] lighterColorArray = {
+			new Color(0xffc880), new Color(0xa9b3ff),
+			new Color(0xff8989), new Color(0x80ff8c),
+			Color.lightGray, new Color(0xf998ff),
+			new Color(0xd085ff), new Color(0x23707e)
+		};
 
-	private static final Color[] lighterColorArray = {
-		new Color(0xffc880), new Color(0xa9b3ff),
-		new Color(0xff8989), new Color(0x80ff8c),
-		Color.lightGray, new Color(0xf998ff),
-		new Color(0xd085ff), new Color(0x23707e)
-	};
+		public static final Color getColor(int id) {
+			return colorArray[id % colorArray.length];
+		}
 
-	public static final Color getColor(int id) {
-		return colorArray[id % colorArray.length];
-	}
+		public static final Color getLighter(int id) {
+			return lighterColorArray[id % lighterColorArray.length];
+		}
 
-	public static final Color getLighter(int id) {
-		return lighterColorArray[id % lighterColorArray.length];
 	}
 
 }
