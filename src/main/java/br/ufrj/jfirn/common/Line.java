@@ -106,7 +106,8 @@ public class Line {
 
 		return new Line[] {
 			new Line(points[0], mean - stdDeviation),
-			new Line(points[1], mean + stdDeviation)
+			new Line(points[1], mean + stdDeviation),
+			new Line(points[0], points[1])
 		};
 	}
 
