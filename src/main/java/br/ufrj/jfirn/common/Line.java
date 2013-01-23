@@ -8,12 +8,11 @@ import br.ufrj.jfirn.intelligent.evaluation.RobotBoundaries;
 /**
  * A line in a bidimensional space.
  * 
- * @author <a href="mailto:cirosobral@gmail.com">Ciro Esteves Lima Sobral</a>
  * @author <a href="mailto:ramiro.p.magalhaes@gmail.com">Ramiro Pereira de Magalhães</a>
  *
  */
 public class Line {
-	private final Point p1, p2;
+	private final Point start, end;
 
 	/**
 	 * We assume that nothing bigger than this number is of interest to this application.
@@ -21,8 +20,8 @@ public class Line {
 	private static final double BIG_NUMBER = 999999;
 
 	public Line(Point p1, Point p2) {
-		this.p1 = p1;
-		this.p2 = p2;
+		this.start = p1;
+		this.end = p2;
 	}
 
 	public Line(Point start, double angle) {
@@ -34,49 +33,40 @@ public class Line {
 			length = BIG_NUMBER;
 		}
 
-		this.p1 = start;
-		this.p2 = new Point(this.p1.x + FastMath.cos(angle) * length,
-				            this.p1.y + FastMath.sin(angle) * length);
+		this.start = start;
+		this.end = new Point(this.start.x + FastMath.cos(angle) * length,
+				            this.start.y + FastMath.sin(angle) * length);
 	}
 
 	public double slope() {
-		return (p2.y() - p1.y()) / (p2.x() - p1.x());
+		return (end.y() - start.y()) / (end.x() - start.x());
 	}
 
 	public double slopeAngle() {
-		return FastMath.atan2(p2.y() - p1.y(), p2.x() - p1.x());
+		return FastMath.atan2(end.y() - start.y(), end.x() - start.x());
 	}
 
 	public double length() {
-		return p1.distanceTo(p2);
+		return start.distanceTo(end);
 	}
 
 	public Point start() {
-		return p1;
+		return start;
 	}
 
 	public Point end() {
-		return p2;
+		return end;
 	}
 
-	/**
-	 * Tests whether a line intersects another line in the same plane.
-	 *  
-	 * @param that to check against
-	 * @return true if this line intersects another, false otherwise 
-	 */
 	public boolean intersects(Line that) {
-		// Draws a bounding box for each line and returns false if there's not overlap.
-		if (!intersectionFastTest(that)) {
-			return false;
-		} else {
-			// Tests if the points of the testing line are above or below the other. If both are above or below the lines doesn't intersect.
-			final double z1 = (that.p1.x - this.p1.x) * (this.p2.y - this.p1.y) - (that.p1.y - this.p1.y) * (this.p2.x - this.p1.x);
-			final double z2 = (that.p2.x - this.p1.x) * (this.p2.y - this.p1.y) - (that.p2.y - this.p1.y) * (this.p2.x - this.p1.x);
-			final int s1 = (int)FastMath.signum(z1);
-			final int s2 = (int)FastMath.signum(z2);
-			return (s1 == 0 || s2 == 0) || (s1 != s2);
-		}
+		//As seen at http://www.bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
+		final Point a = this.start;
+		final Point b = this.end;
+		final Point c = that.start;
+		final Point d = that.end;
+
+		return counterclockwise(a, c, d) != counterclockwise(b, c, d) &&
+			   counterclockwise(a, b, c) != counterclockwise(a, b, d);
 	}
 
 	public Point intersection(Line that) {
@@ -85,17 +75,17 @@ public class Line {
 		}
 
 		final double denominator =
-			(this.p1.x - this.p2.x) * (that.p1.y - that.p2.y) -
-			(this.p1.y - this.p2.y) * (that.p1.x - that.p2.x);
+			(this.start.x - this.end.x) * (that.start.y - that.end.y) -
+			(this.start.y - this.end.y) * (that.start.x - that.end.x);
 
 		if (denominator == 0) {
 			return null; //this means this and that lines are parallel
 		}
 
-		final double partial_1 = this.p1.x * this.p2.y - this.p1.y * this.p2.x;
-		final double partial_2 = that.p1.x * that.p2.y - that.p1.y * that.p2.x;
-		final double xNumerator = partial_1 * (that.p1.x - that.p2.x) - (this.p1.x - this.p2.x) * partial_2;
-		final double yNumerator = partial_1 * (that.p1.y - that.p2.y) - (this.p1.y - this.p2.y) * partial_2;
+		final double partial_1 = this.start.x * this.end.y - this.start.y * this.end.x;
+		final double partial_2 = that.start.x * that.end.y - that.start.y * that.end.x;
+		final double xNumerator = partial_1 * (that.start.x - that.end.x) - (this.start.x - this.end.x) * partial_2;
+		final double yNumerator = partial_1 * (that.start.y - that.end.y) - (this.start.y - this.end.y) * partial_2;
 
 		return new Point(xNumerator / denominator,
 				         yNumerator / denominator);
@@ -137,9 +127,9 @@ public class Line {
 		}
 
 		s.append("; start: (")
-			.append(this.p1.x)
+			.append(this.start.x)
 			.append(", ")
-			.append(this.p1.y)
+			.append(this.start.y)
 			.append(")]");
 
 		return s.toString();
@@ -147,18 +137,9 @@ public class Line {
 
 
 
-	/**
-	 * This is a fast test that quickly verifies if the lines will NOT intersect. If it
-	 * returns true, it means that further investigation is needed to see if they will
-	 * intersect. If it returns false, we're sure that the lines will not intersect.
-	 * @param that
-	 * @return
-	 */
-	private boolean intersectionFastTest(final Line that) {
-		return  FastMath.max(this.p1.x, this.p2.x) >= FastMath.min(that.p1.x, that.p2.x) &&
-				FastMath.max(that.p1.x, that.p2.x) >= FastMath.min(this.p1.x, this.p2.x) &&
-				FastMath.max(this.p1.y, this.p2.y) >= FastMath.min(that.p1.y, that.p2.y) &&
-				FastMath.max(that.p1.y, that.p2.y) >= FastMath.min(this.p1.y, this.p2.y);
+	//As seen at http://www.bryceboe.com/2006/10/23/line-segment-intersection-algorithm/
+	private boolean counterclockwise(final Point a, final Point b, final Point c) {
+		return (c.y - a.y) * (b.x - a.x) > (b.y - a.y) * (c.x - a.x);
 	}
 
 }
