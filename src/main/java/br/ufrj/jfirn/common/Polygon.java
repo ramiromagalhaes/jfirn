@@ -13,6 +13,14 @@ public class Polygon {
 		polygon = ConvexHull.execute(Arrays.asList(points));
 	}
 
+	/**
+	 * New list from this list
+	 * @param points
+	 */
+	public Polygon(List<Point> points) {
+		polygon = ConvexHull.execute(new ArrayList<>(points));
+	}
+
 	public Triangle[] toTriangles() {
 		if (polygon.size() == 3) {
 			return new Triangle[] {
