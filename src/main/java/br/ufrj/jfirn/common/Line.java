@@ -3,7 +3,7 @@ package br.ufrj.jfirn.common;
 import org.apache.commons.math3.util.FastMath;
 
 import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
-import br.ufrj.jfirn.intelligent.evaluation.RobotBoundaries;
+import br.ufrj.jfirn.intelligent.evaluation.RobotsUtils;
 
 /**
  * A line in a bidimensional space.
@@ -102,7 +102,7 @@ public class Line {
 		final double mean = stats.directionMean();
 		final double stdDeviation = FastMath.sqrt(stats.directionVariance());
 
-		final Point[] points = RobotBoundaries.pointsFromVerticalAxis(stats.lastKnownPosition(), mean);
+		final Point[] points = RobotsUtils.pointsInVerticalAxisBoundaries(stats.lastKnownPosition(), mean);
 
 		return new Line[] {
 			new Line(points[0], mean - stdDeviation),
