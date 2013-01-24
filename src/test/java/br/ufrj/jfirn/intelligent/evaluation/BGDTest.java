@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
 
-import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.Polygon;
+import br.ufrj.jfirn.common.geometry.Point;
+import br.ufrj.jfirn.common.geometry.Polygon;
 
 public class BGDTest {
 	//took this 0.116516235668598d result from Matlab

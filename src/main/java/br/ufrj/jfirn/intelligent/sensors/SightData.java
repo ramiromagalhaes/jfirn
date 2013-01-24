@@ -2,7 +2,7 @@ package br.ufrj.jfirn.intelligent.sensors;
 
 import java.io.Serializable;
 
-import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.geometry.Point;
 import br.ufrj.jfirn.intelligent.IntelligentRobot;
 
 /**

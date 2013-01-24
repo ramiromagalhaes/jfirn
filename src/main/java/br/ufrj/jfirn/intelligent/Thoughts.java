@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.geometry.Point;
 import br.ufrj.jfirn.intelligent.evaluation.CollisionEvaluation;
 
 /**

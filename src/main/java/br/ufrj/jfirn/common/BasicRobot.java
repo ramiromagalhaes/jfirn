@@ -2,6 +2,8 @@ package br.ufrj.jfirn.common;
 
 import org.apache.commons.math3.util.FastMath;
 
+import br.ufrj.jfirn.common.geometry.Point;
+
 public class BasicRobot implements Robot {
 
 	private static final long serialVersionUID = 1L;

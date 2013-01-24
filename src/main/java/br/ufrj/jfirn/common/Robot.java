@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.apache.commons.math3.util.FastMath;
 
+import br.ufrj.jfirn.common.geometry.Point;
+
 
 public interface Robot extends Serializable {
 

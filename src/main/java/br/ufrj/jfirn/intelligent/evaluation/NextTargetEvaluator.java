@@ -1,7 +1,7 @@
 package br.ufrj.jfirn.intelligent.evaluation;
 
-import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.common.geometry.Point;
 import br.ufrj.jfirn.intelligent.Thoughts;
 
 public class NextTargetEvaluator implements Evaluator {

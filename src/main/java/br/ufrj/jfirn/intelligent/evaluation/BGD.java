@@ -3,8 +3,8 @@ package br.ufrj.jfirn.intelligent.evaluation;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.util.FastMath;
 
-import br.ufrj.jfirn.common.Polygon;
-import br.ufrj.jfirn.common.Triangle;
+import br.ufrj.jfirn.common.geometry.Polygon;
+import br.ufrj.jfirn.common.geometry.Triangle;
 
 /**
  * Bivariate Gaussian Distribution utility functions.

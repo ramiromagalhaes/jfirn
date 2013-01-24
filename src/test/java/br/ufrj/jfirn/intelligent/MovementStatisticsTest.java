@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.apache.commons.math3.util.FastMath;
 import org.junit.Test;
 
-import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.geometry.Point;
 
 public class MovementStatisticsTest {
 

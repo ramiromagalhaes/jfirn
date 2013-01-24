@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.apache.commons.math3.util.FastMath;
 
-import br.ufrj.jfirn.common.Line;
-import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.Polygon;
+import br.ufrj.jfirn.common.geometry.Line;
+import br.ufrj.jfirn.common.geometry.Point;
+import br.ufrj.jfirn.common.geometry.Polygon;
 import br.ufrj.jfirn.intelligent.MobileObstacleStatistics;
 import br.ufrj.jfirn.intelligent.Thoughts;
 

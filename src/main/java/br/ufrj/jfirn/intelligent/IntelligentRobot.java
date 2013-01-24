@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.geometry.Point;
 import br.ufrj.jfirn.intelligent.evaluation.DefaultChainOfEvaluations;
 import br.ufrj.jfirn.intelligent.evaluation.Instruction;
 import br.ufrj.jfirn.intelligent.evaluation.ThoughtProcesor;

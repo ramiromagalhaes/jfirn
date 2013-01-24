@@ -3,7 +3,7 @@ package br.ufrj.jfirn.intelligent;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.util.FastMath;
 
-import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.geometry.Point;
 
 /**
  * Collects data about an observed object.

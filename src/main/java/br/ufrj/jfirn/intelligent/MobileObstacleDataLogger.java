@@ -1,6 +1,6 @@
 package br.ufrj.jfirn.intelligent;
 
-import br.ufrj.jfirn.common.Point;
+import br.ufrj.jfirn.common.geometry.Point;
 
 public interface MobileObstacleDataLogger {
 

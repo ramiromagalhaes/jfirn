@@ -1,9 +1,11 @@
-package br.ufrj.jfirn.common;
+package br.ufrj.jfirn.common.geometry;
 
 import java.text.DecimalFormat;
 import java.util.Comparator;
 
 import org.apache.commons.math3.util.FastMath;
+
+import br.ufrj.jfirn.common.Robot;
 
 
 /**

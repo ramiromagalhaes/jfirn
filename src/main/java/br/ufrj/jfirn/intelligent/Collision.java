@@ -2,8 +2,8 @@ package br.ufrj.jfirn.intelligent;
 
 import java.io.Serializable;
 
-import br.ufrj.jfirn.common.Point;
-import br.ufrj.jfirn.common.Polygon;
+import br.ufrj.jfirn.common.geometry.Point;
+import br.ufrj.jfirn.common.geometry.Polygon;
 
 public class Collision implements Serializable {
 	private static final long serialVersionUID = 1L;

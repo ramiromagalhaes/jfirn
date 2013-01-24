@@ -2,8 +2,8 @@ package br.ufrj.jfirn.intelligent.evaluation;
 
 import org.apache.commons.math3.util.FastMath;
 
-import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.common.geometry.Point;
 
 public class RobotsUtils {
 

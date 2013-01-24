@@ -1,8 +1,8 @@
 package br.ufrj.jfirn.simulator;
 
 import br.ufrj.jfirn.common.BasicRobot;
-import br.ufrj.jfirn.common.Point;
 import br.ufrj.jfirn.common.Robot;
+import br.ufrj.jfirn.common.geometry.Point;
 import br.ufrj.jfirn.intelligent.IntelligentRobot;
 import br.ufrj.jfirn.intelligent.sensors.Eye;
 import br.ufrj.jfirn.mobileObstacle.CrazyRobot;
