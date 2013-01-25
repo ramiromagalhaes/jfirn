@@ -95,10 +95,6 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			}
 		}
 
-		if (intersections.size() == 1) {
-			System.out.println("teste");
-		}
-
 		final int mainTrajectoriesCount = intersectionCount[0] + intersectionCount[1];
 
 		/*
