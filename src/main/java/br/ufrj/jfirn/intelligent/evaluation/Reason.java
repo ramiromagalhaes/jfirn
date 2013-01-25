@@ -2,6 +2,7 @@ package br.ufrj.jfirn.intelligent.evaluation;
 
 public enum Reason {
 
+	NOT_QUADRILATERAL     ("Collision area is not a triangle or quadrilateral."),
 	PROBABILITY_EVALUATION("Did probability evaluation."),
 	PARTIAL_EVALUATION    ("Did partial evaluation."),
 	NO_INTERSECTION       ("Trajectories don't intersect."),

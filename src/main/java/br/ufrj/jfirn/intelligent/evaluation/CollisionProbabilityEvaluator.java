@@ -29,6 +29,12 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 			final Line[] moLines = Line.fromStatistics(stats);
 
 			final Point[] intersections = evaluateIntersections(irLines, moLines);
+			if (!(intersections.length == 4 || intersections.length == 3)) {
+				thoughts.putCollisionEvaluation(
+					new CollisionEvaluation(stats.getObstacleId(), Reason.NOT_QUADRILATERAL)
+				);
+				continue;
+			}
 
 			//Copy the intersections to the collision. We'll modify the intersections
 			collisionEvaluation.collision().area = new Polygon(intersections);
