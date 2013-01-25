@@ -17,7 +17,7 @@ public class Scenario2 {
 	public static void main(String[] args) {
 		final Engine engine = new Engine();
 
-		{ //TODO need to improve the IntelligentRobot registration process.
+		{
 			final IntelligentRobot ir = new IntelligentRobot (200, 200, 0,
 				new Point(400, 100),
 				new Point(200, 400),
@@ -25,6 +25,7 @@ public class Scenario2 {
 				new Point(200, 200)
 			);
 
+			//TODO need to improve the IntelligentRobot registration process.
 			engine.addIntelligentRobot(ir, new Eye(200, ir), ir);
 		}
 
