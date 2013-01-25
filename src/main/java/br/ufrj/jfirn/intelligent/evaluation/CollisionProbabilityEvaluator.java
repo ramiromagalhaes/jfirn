@@ -49,10 +49,10 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 				final Point intersection = intersections[i];
 
 				double direction = moPosition.directionTo(intersection); //first, calculate the direction...
-				direction = normalize(direction, stats.directionMean(), stats.directionVariance()); //...then normalize it.
+				direction = normalize(direction, stats.directionMean(), stats.directionVariance());
 
 				double speed = moPosition.distanceTo(intersection) / collisionEvaluation.collision().time; //first, calculate the speed...
-				speed = normalize(speed, stats.speedMean(), stats.speedVariance()); //...then normalize it.
+				speed = normalize(speed, stats.speedMean(), stats.speedVariance());
 
 				intersections[i] = new Point(direction, speed);
 			}
@@ -70,6 +70,8 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 	}
 
 
+
+
 	/**
 	 * Normalize value for use in a gaussian distribution with mean 0 and 1 variance.
 	 */
@@ -77,9 +79,11 @@ public class CollisionProbabilityEvaluator implements Evaluator {
 		if (variance != 0d) {//...then normalize it.
 			return (value - mean) / FastMath.sqrt(variance);
 		} else {
-			return 0;
+			return value - mean;
 		}
 	}
+
+
 
 	private Point[] evaluateIntersections(final Line[] irTrajectories, final Line[] moTrajectories) {
 		//TODO Make this evaluation generic.
