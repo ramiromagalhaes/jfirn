@@ -1,5 +1,7 @@
 package br.ufrj.jfirn.simulator;
 
+import java.util.Random;
+
 import br.ufrj.jfirn.common.BasicRobot;
 import br.ufrj.jfirn.common.Robot;
 import br.ufrj.jfirn.common.geometry.Point;
@@ -27,9 +29,9 @@ public class Scenario2 {
 		}
 
 		engine.addRobot( new BasicRobot       (185, 175, Robot.RIGHT, 5) );
-		engine.addRobot( new RandomWalkerRobot(300, 300, Robot.RIGHT, 5) );
+		engine.addRobot( new RandomWalkerRobot(750, 200, Robot.LEFT, 5, new Random(1)) );
 		engine.addRobot( new SineRobot        (535, 100, Robot.UP,    5, 7) );
-		engine.addRobot( new CrazyRobot       (250, 375, Robot.RIGHT, 5) );
+		engine.addRobot( new CrazyRobot       (250, 375, Robot.RIGHT, 5, new Random(1)) );
 		engine.addRobot( new SquareRobot      (300, 425, Robot.UP,    5) );
 
 		engine.simulate(200);
