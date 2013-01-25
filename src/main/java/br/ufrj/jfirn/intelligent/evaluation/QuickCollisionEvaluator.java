@@ -19,7 +19,7 @@ public class QuickCollisionEvaluator implements Evaluator {
 	@Override
 	public void evaluate(Thoughts thoughts, Instruction instruction, ChainOfEvaluations chain) {
 		//think and evaluate and change your thoughts and decide what to do next...
-		final Point myPosition = thoughts.myPosition();
+		final Point irPosition = thoughts.myPosition();
 
 		for (MobileObstacleStatistics stats : thoughts.allObstacleStatistics()) { //evaluate everyone I see.
 			if (stats.samplesCount() <= 3) {
@@ -31,28 +31,42 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 			final Point moPosition = stats.lastKnownPosition();
 
-			if (RobotsUtils.isInDangerRadius(myPosition, moPosition)) {
+			if (RobotsUtils.isInDangerRadius(irPosition, moPosition)) {
 				thoughts.putCollisionEvaluation(
 					new CollisionEvaluation(stats.getObstacleId(), Reason.TOO_CLOSE)
 				);
 				continue;
 			}
 
-			final Collision collision = evaluateCollision(
-				myPosition, thoughts.myDirection(), thoughts.mySpeed(),
-				moPosition, stats.directionMean(), stats.speedMean(),
-				stats.getObstacleId()
-			);
-
-			if (collision == null) {
+			//do the mean trajectories intersect?
+			final Line myTrajectory = new Line(irPosition, thoughts.myDirection());
+			final Line otherTrajectory = new Line(moPosition, stats.directionMean());
+			final Point intersection = myTrajectory.intersection(otherTrajectory);
+			if (intersection == null) {
 				thoughts.putCollisionEvaluation(
 					new CollisionEvaluation(stats.getObstacleId(), Reason.NO_INTERSECTION)
 				);
 				continue;
 			}
 
+			//when each robot will reach the collision position?
+			final double myTime = timeToReach(irPosition, thoughts.mySpeed(), intersection);
+			final double otherTime = timeToReach(moPosition, stats.speedMean(), intersection);
+			//Heuristic: I'm considering there will be a collision if the time between robots to arrive at the collision position are almost the same.
+			if (FastMath.abs(myTime - otherTime) > 6d) {
+				thoughts.putCollisionEvaluation(
+					new CollisionEvaluation(stats.getObstacleId(), Reason.DIFFERENT_TIME)
+				);
+				continue;
+			}
+
+
+			//rough estimate of the collision time
+			final double time = (myTime + otherTime) / 2d;
+			final Collision collision = new Collision(stats.getObstacleId(), intersection, time);
+
 			//If this collision is too far in the future, forget it and go verify someone else.
-			if (myPosition.distanceTo(collision.position) > 400d || collision.time > 20d) {
+			if (irPosition.distanceTo(collision.position) > 400d || collision.time > 20d) {
 				thoughts.putCollisionEvaluation(
 					new CollisionEvaluation(stats.getObstacleId(), Reason.TOO_FAR_AWAY)
 				);
@@ -69,36 +83,6 @@ public class QuickCollisionEvaluator implements Evaluator {
 
 		chain.nextEvaluator(thoughts, instruction, chain); //keep thinking
 	}
-
-
-	protected Collision evaluateCollision(Point myPosition, double myDirection, double mySpeed, Point otherPosition, double otherDirection, double otherSpeed, int id) {
-		final Line myTrajectory = new Line(myPosition, myDirection, mySpeed * 100);
-		final Line otherTrajectory = new Line(otherPosition, otherDirection, otherSpeed * 100);
-
-		final Point intersection = myTrajectory.intersection(otherTrajectory);
-
-		if (intersection == null) {
-			return null;
-		}
-
-		//now, we calculate WHEN it's going to happen...
-
-		//when each robot will reach the collision position?
-		final double myTime = timeToReach(myPosition, mySpeed, intersection);
-		final double otherTime = timeToReach(otherPosition, otherSpeed, intersection);
-
-		//Heuristic: I'm considering there will be a collision if the time between robots to arrive at the collision position are almost the same.
-		//TODO Evaluate and improve this 'if', maybe changing the time while considering objects direction, speed, size, etc.
-		if (FastMath.abs(myTime - otherTime) > 6d) {
-			return null;
-		}
-
-		//rough estimate of the collision time
-		final double time = (myTime + otherTime) / 2d;
-
-		return new Collision(id, intersection, time);
-	}
-
 
 	/**
 	 * How much time a robot at position with speed would take to reach destination?
