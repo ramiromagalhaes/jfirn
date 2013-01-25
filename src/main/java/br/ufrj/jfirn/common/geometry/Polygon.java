@@ -57,6 +57,8 @@ public class Polygon {
 		}
 	}
 
+	//Consider replacement by other geometric computation library
+	//From http://code.google.com/p/convex-hull/
 	private static class ConvexHull {
 
 		public static List<Point> execute(List<Point> points) {
